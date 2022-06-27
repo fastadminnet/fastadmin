@@ -264,7 +264,7 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                         var url = $(this).data("url") ? $(this).data("url") : (typeof Backend !== 'undefined' ? "general/attachment/select" : "user/attachment");
                         parent.Fast.api.open(url + "?element_id=" + $(this).attr("id") + "&multiple=" + multiple + "&mimetype=" + mimetype + "&admin_id=" + admin_id + "&user_id=" + user_id, __('Choose'), {
                             callback: function (data) {
-                                var button = $("#" + $(that).attr("id"));
+                                var button = $(that);
                                 var maxcount = $(button).data("maxcount");
                                 var input_id = $(button).data("input-id") ? $(button).data("input-id") : "";
                                 maxcount = typeof maxcount !== "undefined" ? maxcount : 0;
