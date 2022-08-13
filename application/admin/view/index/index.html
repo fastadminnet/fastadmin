@@ -28,12 +28,12 @@
             <div class="content-wrapper tab-content tab-addtabs">
                 {if $fixedmenu}
                 <div role="tabpanel" class="tab-pane {:$referermenu?'':'active'}" id="con_{$fixedmenu.id}">
-                    <iframe src="{$fixedmenu.url}?addtabs=1" width="100%" height="100%" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling-x="no" scrolling-y="auto" allowtransparency="yes"></iframe>
+                    <iframe src="{$fixedmenu.url}{:stripos($fixedmenu.url, '?') !== false ? '&' : '?'}addtabs=1" width="100%" height="100%" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling-x="no" scrolling-y="auto" allowtransparency="yes"></iframe>
                 </div>
                 {/if}
                 {if $referermenu}
                 <div role="tabpanel" class="tab-pane active" id="con_{$referermenu.id}">
-                    <iframe src="{$referermenu.url}?addtabs=1" width="100%" height="100%" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling-x="no" scrolling-y="auto" allowtransparency="yes"></iframe>
+                    <iframe src="{$referermenu.url}{:stripos($referermenu.url, '?') !== false ? '&' : '?'}addtabs=1" width="100%" height="100%" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling-x="no" scrolling-y="auto" allowtransparency="yes"></iframe>
                 </div>
                 {/if}
             </div>
