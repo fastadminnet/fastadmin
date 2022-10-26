@@ -1322,6 +1322,7 @@ EOD;
                     $iterator = new \FilesystemIterator($parentDir);
                     $isDirEmpty = !$iterator->valid();
                     if ($isDirEmpty) {
+                        unset($iterator);
                         rmdir($parentDir);
                         $parentDir = dirname($parentDir);
                     } else {
