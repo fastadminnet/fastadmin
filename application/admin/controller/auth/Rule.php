@@ -82,7 +82,6 @@ class Rule extends Backend
                 if ($result === false) {
                     $this->error($this->model->getError());
                 }
-                Cache::rm('__menu__');
                 $this->success();
             }
             $this->error();
@@ -124,7 +123,6 @@ class Rule extends Backend
                 if ($result === false) {
                     $this->error($row->getError());
                 }
-                Cache::rm('__menu__');
                 $this->success();
             }
             $this->error();
