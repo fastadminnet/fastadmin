@@ -23,8 +23,8 @@ class Validate extends Api
      * 检测邮箱
      *
      * @ApiMethod (POST)
-     * @param string $email 邮箱
-     * @param string $id    排除会员ID
+     * @ApiParams (name="email", type="string", required=true, description="邮箱")
+     * @ApiParams (name="id", type="string", required=true, description="排除会员ID")
      */
     public function check_email_available()
     {
@@ -41,8 +41,8 @@ class Validate extends Api
      * 检测用户名
      *
      * @ApiMethod (POST)
-     * @param string $username 用户名
-     * @param string $id       排除会员ID
+     * @ApiParams (name="username", type="string", required=true, description="用户名")
+     * @ApiParams (name="id", type="string", required=true, description="排除会员ID")
      */
     public function check_username_available()
     {
@@ -59,8 +59,8 @@ class Validate extends Api
      * 检测昵称
      *
      * @ApiMethod (POST)
-     * @param string $nickname 昵称
-     * @param string $id       排除会员ID
+     * @ApiParams (name="nickname", type="string", required=true, description="昵称")
+     * @ApiParams (name="id", type="string", required=true, description="排除会员ID")
      */
     public function check_nickname_available()
     {
@@ -77,8 +77,8 @@ class Validate extends Api
      * 检测手机
      *
      * @ApiMethod (POST)
-     * @param string $mobile 手机号
-     * @param string $id     排除会员ID
+     * @ApiParams (name="mobile", type="string", required=true, description="手机号")
+     * @ApiParams (name="id", type="string", required=true, description="排除会员ID")
      */
     public function check_mobile_available()
     {
@@ -95,7 +95,7 @@ class Validate extends Api
      * 检测手机
      *
      * @ApiMethod (POST)
-     * @param string $mobile 手机号
+     * @ApiParams (name="mobile", type="string", required=true, description="手机号")
      */
     public function check_mobile_exist()
     {
@@ -111,7 +111,7 @@ class Validate extends Api
      * 检测邮箱
      *
      * @ApiMethod (POST)
-     * @param string $mobile 邮箱
+     * @ApiParams (name="email", type="string", required=true, description="邮箱")
      */
     public function check_email_exist()
     {
@@ -127,9 +127,9 @@ class Validate extends Api
      * 检测手机验证码
      *
      * @ApiMethod (POST)
-     * @param string $mobile  手机号
-     * @param string $captcha 验证码
-     * @param string $event   事件
+     * @ApiParams (name="mobile", type="string", required=true, description="手机号")
+     * @ApiParams (name="captcha", type="string", required=true, description="验证码")
+     * @ApiParams (name="event", type="string", required=true, description="事件")
      */
     public function check_sms_correct()
     {
@@ -146,9 +146,9 @@ class Validate extends Api
      * 检测邮箱验证码
      *
      * @ApiMethod (POST)
-     * @param string $email   邮箱
-     * @param string $captcha 验证码
-     * @param string $event   事件
+     * @ApiParams (name="email", type="string", required=true, description="邮箱")
+     * @ApiParams (name="captcha", type="string", required=true, description="验证码")
+     * @ApiParams (name="event", type="string", required=true, description="事件")
      */
     public function check_ems_correct()
     {
