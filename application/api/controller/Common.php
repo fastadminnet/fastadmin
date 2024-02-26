@@ -38,9 +38,9 @@ class Common extends Api
     /**
      * 加载初始化
      *
-     * @ApiParams   (name="version", type="string", required=true, description="版本号")
-     * @ApiParams   (name="lng", type="string", required=true, description="经度")
-     * @ApiParams   (name="lat", type="string", required=true, description="纬度")
+     * @ApiParams (name="version", type="string", required=true, description="版本号")
+     * @ApiParams (name="lng", type="string", required=true, description="经度")
+     * @ApiParams (name="lat", type="string", required=true, description="纬度")
      */
     public function init()
     {
