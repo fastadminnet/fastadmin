@@ -24,7 +24,9 @@ class Category extends Model
     protected static function init()
     {
         self::afterInsert(function ($row) {
-            $row->save(['weigh' => $row['id']]);
+            if (!$row['weigh']) {
+                $row->save(['weigh' => $row['id']]);
+            }
         });
     }
 
