@@ -480,7 +480,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'template', 'cookie']
                         //如果登录已经超时,重新提醒登录
                         if (uid && uid != ret.data.uid) {
                             Controller.api.userinfo.set(null);
-                            $(".operate[data-name='" + name + "'] .btn-install").trigger("click");
+                            $(".operate[data-name='" + name + "'] .btn-install:first").trigger("click");
                             return;
                         }
                         top.Fast.api.open(ret.data.payurl, __('Pay now'), {
