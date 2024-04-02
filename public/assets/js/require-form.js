@@ -218,7 +218,7 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                         };
                         var origincallback = function (start, end) {
                             $(this.element).val(start.format(this.locale.format) + " - " + end.format(this.locale.format));
-                            $(this.element).trigger('change');
+                            $(this.element).trigger('change').trigger('validate');
                         };
                         $(".datetimerange", form).each(function () {
                             var callback = typeof $(this).data('callback') == 'function' ? $(this).data('callback') : origincallback;
@@ -226,7 +226,7 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                                 callback.call(picker, picker.startDate, picker.endDate);
                             });
                             $(this).on('cancel.daterangepicker', function (ev, picker) {
-                                $(this).val('').trigger('change');
+                                $(this).val('').trigger('change').trigger('validate');
                             });
                             $(this).daterangepicker($.extend(true, {}, options, $(this).data() || {}, $(this).data("daterangepicker-options") || {}));
                         });
