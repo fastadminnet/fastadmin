@@ -17,6 +17,13 @@ use think\View;
 
 class Install extends Command
 {
+
+    /**
+     * 最低PHP版本
+     * @var string
+     */
+    protected $minPhpVersion = '7.4.0';
+
     protected $model = null;
     /**
      * @var \think\View 视图类实例
@@ -70,7 +77,7 @@ class Install extends Command
 
         $adminName = $this->installation($hostname, $hostport, $database, $username, $password, $prefix, $adminUsername, $adminPassword, $adminEmail, $siteName);
         if ($adminName) {
-            $output->highlight("Admin url:http://www.example.com/{$adminName}");
+            $output->highlight("Admin url:https://www.example.com/{$adminName}");
         }
 
         $output->highlight("Admin username:{$adminUsername}");
@@ -309,8 +316,8 @@ class Install extends Command
         //数据库配置文件
         $dbConfigFile = APP_PATH . 'database.php';
 
-        if (version_compare(PHP_VERSION, '7.4.0', '<')) {
-            throw new Exception(__("The current version %s is too low, please use PHP 7.4 or higher", PHP_VERSION));
+        if (version_compare(PHP_VERSION, $this->minPhpVersion, '<')) {
+            throw new Exception(__("The current PHP %s is too low, please use PHP %s or higher", PHP_VERSION, $this->minPhpVersion));
         }
         if (!extension_loaded("PDO")) {
             throw new Exception(__("PDO is not currently installed and cannot be installed"));

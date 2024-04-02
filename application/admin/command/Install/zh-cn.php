@@ -27,7 +27,7 @@ return [
     'Password is too weak'                                                                                  => '密码太简单，请重新输入',
     'The two passwords you entered did not match'                                                           => '两次输入的密码不一致',
     'Please input correct website'                                                                          => '网站名称输入不正确',
-    'The current version %s is too low, please use PHP 7.4 or higher'                                       => '当前版本%s过低，请使用PHP7.4及以上版本',
+    'The current PHP %s is too low, please use PHP %s or higher'                                            => '当前版本PHP %s过低，请使用PHP %s及以上版本',
     'PDO is not currently installed and cannot be installed'                                                => '当前未开启PDO，无法进行安装',
     'The current permissions are insufficient to write the file %s'                                         => '当前权限不足，无法写入文件%s',
     'Please go to the official website to download the full package or resource package and try to install' => '当前代码仅包含核心代码，请前往官网下载完整包或资源包覆盖后再尝试安装',
