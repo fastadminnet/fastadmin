@@ -268,13 +268,13 @@ class Backend extends Controller
         $op = $this->request->get("op", '', 'trim');
         $sort = $this->request->get("sort", !empty($this->model) && $this->model->getPk() ? $this->model->getPk() : 'id');
         $order = $this->request->get("order", "DESC");
-        $offset = $this->request->get("offset/d", 0);
-        $limit = $this->request->get("limit/d", 0);
+        $offset = max(0, $this->request->get("offset/d", 0));
+        $limit = max(0, $this->request->get("limit/d", 0));
         $limit = $limit ?: 999999;
         //新增自动计算页码
         $page = $limit ? intval($offset / $limit) + 1 : 1;
         if ($this->request->has("page")) {
-            $page = $this->request->get("page/d", 1);
+            $page = max(0, $this->request->get("page/d", 1));
         }
         $this->request->get([config('paginate.var_page') => $page]);
         $filter = (array)json_decode($filter, true);
