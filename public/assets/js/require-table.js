@@ -751,7 +751,7 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                     return html.join(' ');
                 },
                 file: function (value, row, index) {
-                    Table.api.formatter.files.call(this, value, row, index);
+                    return Table.api.formatter.files.call(this, value, row, index);
                 },
                 files: function (value, row, index) {
                     value = value == null || value.length === 0 ? '' : value.toString();

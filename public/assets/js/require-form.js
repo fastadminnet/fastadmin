@@ -521,7 +521,11 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
             autocomplete: function (form) {
                 if ($("[data-role='autocomplete']", form).length > 0) {
                     require(['autocomplete'], function () {
-                        $("[data-role='autocomplete']").autocomplete();
+                        $("[data-role='autocomplete']").autocomplete({
+                            onSelect: function () {
+                                $(this).trigger('change').trigger('validate');
+                            }
+                        });
                     });
                 }
             },
