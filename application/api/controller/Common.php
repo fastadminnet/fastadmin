@@ -38,9 +38,9 @@ class Common extends Api
     /**
      * 加载初始化
      *
-     * @param string $version 版本号
-     * @param string $lng 经度
-     * @param string $lat 纬度
+     * @ApiParams (name="version", type="string", required=true, description="版本号")
+     * @ApiParams (name="lng", type="string", required=true, description="经度")
+     * @ApiParams (name="lat", type="string", required=true, description="纬度")
      */
     public function init()
     {
@@ -80,7 +80,7 @@ class Common extends Api
     /**
      * 上传文件
      * @ApiMethod (POST)
-     * @param File $file 文件流
+     * @ApiParams (name="file", type="File", required=true, description="文件流")
      */
     public function upload()
     {
@@ -148,7 +148,7 @@ class Common extends Api
 
     /**
      * 验证码
-     * @param $id
+     * @ApiParams (name="id", type="string", required=true, description="要生成验证码的标识")
      * @return \think\Response
      */
     public function captcha($id = "")
