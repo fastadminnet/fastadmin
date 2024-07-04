@@ -33,6 +33,25 @@ class Ems extends Api
         $event = $this->request->post("event");
         $event = $event ? $event : 'register';
 
+        if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->error(__('邮箱格式错误'));
+        }
+        if (!preg_match("/^[a-z0-9_\-]{3,30}\$/i", $event)) {
+            $this->error(__('事件名称错误'));
+        }
+
+        //发送前验证码
+        if (config('fastadmin.user_api_captcha')) {
+
+            if (!preg_match("/^[a-z0-9]{4,6}\$/i", $captcha)) {
+                $this->error(__('验证码格式错误'));
+            }
+
+            if (!\think\Validate::is($captcha, 'captcha')) {
+                $this->error("验证码不正确");
+            }
+        }
+
         $last = Emslib::get($email, $event);
         if ($last && time() - $last['createtime'] < 60) {
             $this->error(__('发送频繁'));
@@ -78,6 +97,17 @@ class Ems extends Api
         $event = $this->request->post("event");
         $event = $event ? $event : 'register';
         $captcha = $this->request->post("captcha");
+
+        if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->error(__('邮箱格式错误'));
+        }
+        if (!preg_match("/^[a-z0-9_\-]{3,30}\$/i", $event)) {
+            $this->error(__('事件名称错误'));
+        }
+
+        if (!preg_match("/^[a-z0-9]{4,6}\$/i", $captcha)) {
+            $this->error(__('验证码格式错误'));
+        }
 
         if ($event) {
             $userinfo = User::getByEmail($email);
