@@ -472,7 +472,7 @@ class Auth extends \fast\Auth
             ->column('name,pid');
         $pidArr = array_unique(array_filter(array_column($ruleList, 'pid')));
         foreach ($ruleList as $k => &$v) {
-            if (!in_array($v['name'], $userRule)) {
+            if (!in_array(strtolower($v['name']), $userRule)) {
                 unset($ruleList[$k]);
                 continue;
             }
