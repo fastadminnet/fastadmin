@@ -20,7 +20,7 @@ return [
     'Dashboard'                                                                                             => '进入后台',
     'Go back'                                                                                               => '返回上一页',
     'Install Successed'                                                                                     => '安装成功！',
-    'Security tips'                                                                                         => '温馨提示：请将以下后台登录入口添加到你的收藏夹，为了你的安全，不要泄漏或发送给他人！如有泄漏请及时修改！',
+    'Security tips'                                                                                         => '温馨提示：请将以下后台登录入口添加到你的收藏夹，为了你的站点安全，不要泄漏或发送给他人！如有泄漏请及时修改！',
     'Please input correct database'                                                                         => '请输入正确的数据库名',
     'Please input correct username'                                                                         => '用户名只能由3-30位数字、字母、下划线组合',
     'Please input correct password'                                                                         => '密码长度必须在6-30位之间，不能包含空格',

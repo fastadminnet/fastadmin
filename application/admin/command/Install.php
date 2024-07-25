@@ -86,7 +86,7 @@ class Install extends Command
      */
     public function index()
     {
-        $this->view = View::instance(Config::get('template'), Config::get('view_replace_str'));
+        $this->view = View::instance(array_merge(Config::get('template'), ['tpl_cache' => false]));
         $this->request = Request::instance();
 
         define('INSTALL_PATH', APP_PATH . 'admin' . DS . 'command' . DS . 'Install' . DS);
