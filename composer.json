@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-        "php": ">=7.2.0",
+        "php": ">=7.4.0",
         "topthink/framework": "dev-master",
         "topthink/think-captcha": "^1.0.9",
         "topthink/think-installer": "^1.0.14",
@@ -36,6 +36,11 @@
         "allow-plugins": {
             "topthink/think-installer": true,
             "easywechat-composer/easywechat-composer": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "addons\\": "addons/"
         }
     },
     "repositories": [

@@ -70,7 +70,7 @@ class Install extends Command
 
         $adminName = $this->installation($hostname, $hostport, $database, $username, $password, $prefix, $adminUsername, $adminPassword, $adminEmail, $siteName);
         if ($adminName) {
-            $output->highlight("Admin url:http://www.yoursite.com/{$adminName}");
+            $output->highlight("Admin url:http://www.example.com/{$adminName}");
         }
 
         $output->highlight("Admin username:{$adminUsername}");
@@ -309,8 +309,8 @@ class Install extends Command
         //数据库配置文件
         $dbConfigFile = APP_PATH . 'database.php';
 
-        if (version_compare(PHP_VERSION, '7.2.0', '<')) {
-            throw new Exception(__("The current version %s is too low, please use PHP 7.2 or higher", PHP_VERSION));
+        if (version_compare(PHP_VERSION, '7.4.0', '<')) {
+            throw new Exception(__("The current version %s is too low, please use PHP 7.4 or higher", PHP_VERSION));
         }
         if (!extension_loaded("PDO")) {
             throw new Exception(__("PDO is not currently installed and cannot be installed"));
