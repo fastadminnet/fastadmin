@@ -34,8 +34,8 @@
         <label for="icon" class="control-label col-xs-12 col-sm-2">{:__('Icon')}:</label>
         <div class="col-xs-12 col-sm-8">
             <div class="input-group input-groupp-md">
-                <span class="input-group-addon"><i class="{$row.icon}" id="icon-style"></i></span>
-                <input type="text" class="form-control" id="icon" name="row[icon]" value="{$row.icon}" />
+                <span class="input-group-addon"><i class="{$row.icon|htmlentities}" id="icon-style"></i></span>
+                <input type="text" class="form-control" id="icon" name="row[icon]" value="{$row.icon|htmlentities}" />
                 <a href="javascript:;" class="btn-search-icon input-group-addon">{:__('Search icon')}</a>
             </div>
         </div>
@@ -67,7 +67,7 @@
     <div class="form-group">
         <label for="weigh" class="control-label col-xs-12 col-sm-2">{:__('Weigh')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <input type="text" class="form-control" id="weigh" name="row[weigh]" value="{$row.weigh}" data-rule="required" />
+            <input type="text" class="form-control" id="weigh" name="row[weigh]" value="{$row.weigh|htmlentities}" data-rule="required" />
         </div>
     </div>
     <div class="form-group">

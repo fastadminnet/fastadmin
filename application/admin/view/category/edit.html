@@ -52,7 +52,7 @@
         <label for="c-image" class="control-label col-xs-12 col-sm-2">{:__('Image')}:</label>
         <div class="col-xs-12 col-sm-8">
             <div class="input-group">
-                <input id="c-image" class="form-control" size="35" name="row[image]" type="text" value="{$row.image}">
+                <input id="c-image" class="form-control" size="35" name="row[image]" type="text" value="{$row.image|htmlentities}">
                 <div class="input-group-addon no-border no-padding">
                     <span><button type="button" id="faupload-image" class="btn btn-danger faupload" data-input-id="c-image" data-mimetype="image/gif,image/jpeg,image/png,image/jpg,image/bmp" data-multiple="false" data-preview-id="p-image"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
                     <span><button type="button" id="fachoose-image" class="btn btn-primary fachoose" data-input-id="c-image" data-mimetype="image/*" data-multiple="false"><i class="fa fa-list"></i> {:__('Choose')}</button></span>
@@ -77,7 +77,7 @@
     <div class="form-group">
         <label for="c-weigh" class="control-label col-xs-12 col-sm-2">{:__('Weigh')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <input id="c-weigh" class="form-control" name="row[weigh]" type="number" value="{$row.weigh}">
+            <input id="c-weigh" class="form-control" name="row[weigh]" type="number" value="{$row.weigh|htmlentities}">
         </div>
     </div>
     <div class="form-group">

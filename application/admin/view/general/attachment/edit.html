@@ -22,13 +22,13 @@
     <div class="form-group">
         <label for="c-imagewidth" class="control-label col-xs-12 col-sm-2">{:__('Imagewidth')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <input type="text" name="row[imagewidth]" value="{$row.imagewidth}"  id="c-imagewidth" class="form-control" required />
+            <input type="text" name="row[imagewidth]" value="{$row.imagewidth|htmlentities}"  id="c-imagewidth" class="form-control" required />
         </div>
     </div>
     <div class="form-group">
         <label for="c-imageheight" class="control-label col-xs-12 col-sm-2">{:__('Imageheight')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <input type="text" name="row[imageheight]" value="{$row.imageheight}"  id="c-imageheight" class="form-control" required />
+            <input type="text" name="row[imageheight]" value="{$row.imageheight|htmlentities}"  id="c-imageheight" class="form-control" required />
         </div>
     </div>
     <div class="form-group">
@@ -40,7 +40,7 @@
     <div class="form-group">
         <label for="c-imageframes" class="control-label col-xs-12 col-sm-2">{:__('Imageframes')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <input type="number" name="row[imageframes]" value="{$row.imageframes}"  id="c-imageframes" class="form-control" />
+            <input type="number" name="row[imageframes]" value="{$row.imageframes|htmlentities}"  id="c-imageframes" class="form-control" />
         </div>
     </div>
     <div class="form-group">
@@ -52,7 +52,7 @@
     <div class="form-group">
         <label for="c-filesize" class="control-label col-xs-12 col-sm-2">{:__('Filesize')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <input type="number" name="row[filesize]" value="{$row.filesize}"  id="c-filesize" class="form-control" />
+            <input type="number" name="row[filesize]" value="{$row.filesize|htmlentities}"  id="c-filesize" class="form-control" />
         </div>
     </div>
     <div class="form-group">
@@ -76,7 +76,7 @@
     <div class="form-group">
         <label for="c-storage" class="control-label col-xs-12 col-sm-2">{:__('Storage')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <input type="text" name="row[storage]" value="{$row.storage}"  id="c-storage" class="form-control" />
+            <input type="text" name="row[storage]" value="{$row.storage|htmlentities}"  id="c-storage" class="form-control" />
         </div>
     </div>
     <div class="form-group hide layer-footer">

@@ -1,6 +1,6 @@
 <form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
     {:token()}
-    <input type="hidden" name="row[rules]" value="{$row.rules}" />
+    <input type="hidden" name="row[rules]" value="{$row.rules|htmlentities}" />
     <div class="form-group">
         <label for="c-name" class="control-label col-xs-12 col-sm-2">{:__('Name')}:</label>
         <div class="col-xs-12 col-sm-8">

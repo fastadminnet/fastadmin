@@ -1,6 +1,6 @@
 <form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
     {:token()}
-    <input type="hidden" name="row[id]" value="{$row.id}">
+    <input type="hidden" name="row[id]" value="{$row.id|htmlentities}">
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Group')}:</label>
         <div class="col-xs-12 col-sm-4">
@@ -41,7 +41,7 @@
         <label for="c-avatar" class="control-label col-xs-12 col-sm-2">{:__('Avatar')}:</label>
         <div class="col-xs-12 col-sm-8">
             <div class="input-group">
-                <input id="c-avatar" data-rule="" class="form-control" size="50" name="row[avatar]" type="text" value="{$row.avatar}">
+                <input id="c-avatar" data-rule="" class="form-control" size="50" name="row[avatar]" type="text" value="{$row.avatar|htmlentities}">
                 <div class="input-group-addon no-border no-padding">
                     <span><button type="button" id="faupload-avatar" class="btn btn-danger faupload" data-input-id="c-avatar" data-mimetype="image/gif,image/jpeg,image/png,image/jpg,image/bmp" data-multiple="false" data-preview-id="p-avatar"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
                     <span><button type="button" id="fachoose-avatar" class="btn btn-primary fachoose" data-input-id="c-avatar" data-mimetype="image/*" data-multiple="false"><i class="fa fa-list"></i> {:__('Choose')}</button></span>
@@ -54,7 +54,7 @@
     <div class="form-group">
         <label for="c-level" class="control-label col-xs-12 col-sm-2">{:__('Level')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-level" data-rule="required" class="form-control" name="row[level]" type="number" value="{$row.level}">
+            <input id="c-level" data-rule="required" class="form-control" name="row[level]" type="number" value="{$row.level|htmlentities}">
         </div>
     </div>
     <div class="form-group">
@@ -66,7 +66,7 @@
     <div class="form-group">
         <label for="c-birthday" class="control-label col-xs-12 col-sm-2">{:__('Birthday')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-birthday" data-rule="" class="form-control datetimepicker" data-date-format="YYYY-MM-DD" data-use-current="true" name="row[birthday]" type="text" value="{$row.birthday}">
+            <input id="c-birthday" data-rule="" class="form-control datetimepicker" data-date-format="YYYY-MM-DD" data-use-current="true" name="row[birthday]" type="text" value="{$row.birthday|htmlentities}">
         </div>
     </div>
     <div class="form-group">
@@ -78,25 +78,25 @@
     <div class="form-group">
         <label for="c-money" class="control-label col-xs-12 col-sm-2">{:__('Money')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-money" data-rule="required" class="form-control" name="row[money]" type="number" value="{$row.money}">
+            <input id="c-money" data-rule="required" class="form-control" name="row[money]" type="number" value="{$row.money|htmlentities}">
         </div>
     </div>
     <div class="form-group">
         <label for="c-score" class="control-label col-xs-12 col-sm-2">{:__('Score')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-score" data-rule="required" class="form-control" name="row[score]" type="number" value="{$row.score}">
+            <input id="c-score" data-rule="required" class="form-control" name="row[score]" type="number" value="{$row.score|htmlentities}">
         </div>
     </div>
     <div class="form-group">
         <label for="c-successions" class="control-label col-xs-12 col-sm-2">{:__('Successions')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-successions" data-rule="required" class="form-control" name="row[successions]" type="number" value="{$row.successions}">
+            <input id="c-successions" data-rule="required" class="form-control" name="row[successions]" type="number" value="{$row.successions|htmlentities}">
         </div>
     </div>
     <div class="form-group">
         <label for="c-maxsuccessions" class="control-label col-xs-12 col-sm-2">{:__('Maxsuccessions')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-maxsuccessions" data-rule="required" class="form-control" name="row[maxsuccessions]" type="number" value="{$row.maxsuccessions}">
+            <input id="c-maxsuccessions" data-rule="required" class="form-control" name="row[maxsuccessions]" type="number" value="{$row.maxsuccessions|htmlentities}">
         </div>
     </div>
     <div class="form-group">
@@ -114,19 +114,19 @@
     <div class="form-group">
         <label for="c-loginip" class="control-label col-xs-12 col-sm-2">{:__('Loginip')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-loginip" data-rule="required" class="form-control" name="row[loginip]" type="text" value="{$row.loginip}">
+            <input id="c-loginip" data-rule="required" class="form-control" name="row[loginip]" type="text" value="{$row.loginip|htmlentities}">
         </div>
     </div>
     <div class="form-group">
         <label for="c-loginfailure" class="control-label col-xs-12 col-sm-2">{:__('Loginfailure')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-loginfailure" data-rule="required" class="form-control" name="row[loginfailure]" type="number" value="{$row.loginfailure}">
+            <input id="c-loginfailure" data-rule="required" class="form-control" name="row[loginfailure]" type="number" value="{$row.loginfailure|htmlentities}">
         </div>
     </div>
     <div class="form-group">
         <label for="c-joinip" class="control-label col-xs-12 col-sm-2">{:__('Joinip')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-joinip" data-rule="required" class="form-control" name="row[joinip]" type="text" value="{$row.joinip}">
+            <input id="c-joinip" data-rule="required" class="form-control" name="row[joinip]" type="text" value="{$row.joinip|htmlentities}">
         </div>
     </div>
     <div class="form-group">
