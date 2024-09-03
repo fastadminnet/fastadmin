@@ -1,6 +1,6 @@
 /*
  FastAdmin Install SQL
- Date: 2023-06-07 15:17:57
+ Date: 2024-09-03 15:05:25
 */
 
 SET FOREIGN_KEY_CHECKS = 0;
@@ -32,7 +32,7 @@ CREATE TABLE `fa_admin` (
 -- Records of fa_admin
 -- ----------------------------
 BEGIN;
-INSERT INTO `fa_admin` VALUES (1, 'admin', 'Admin', '', '', '/assets/img/avatar.png', 'admin@admin.com', '', 0, 1491635035, '127.0.0.1',1491635035, 1491635035, '', 'normal');
+INSERT INTO `fa_admin` VALUES (1, 'admin', 'Admin', '', '', '/assets/img/avatar.png', 'admin@example.com', '', 0, 1491635035, '127.0.0.1',1491635035, 1491635035, '', 'normal');
 COMMIT;
 
 -- ----------------------------
@@ -81,8 +81,8 @@ CREATE TABLE `fa_attachment` (
   `admin_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '管理员ID',
   `user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '会员ID',
   `url` varchar(255) DEFAULT '' COMMENT '物理路径',
-  `imagewidth` varchar(30) DEFAULT '' COMMENT '宽度',
-  `imageheight` varchar(30) DEFAULT '' COMMENT '高度',
+  `imagewidth` int(10) unsigned DEFAULT 0 COMMENT '宽度',
+  `imageheight` int(10) unsigned DEFAULT 0 COMMENT '高度',
   `imagetype` varchar(30) DEFAULT '' COMMENT '图片类型',
   `imageframes` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '图片帧数',
   `filename` varchar(100) DEFAULT '' COMMENT '文件名称',
