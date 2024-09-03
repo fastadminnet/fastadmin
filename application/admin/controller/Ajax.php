@@ -11,6 +11,7 @@ use think\Cache;
 use think\Config;
 use think\Db;
 use think\Lang;
+use think\Loader;
 use think\Response;
 use think\Validate;
 
@@ -47,9 +48,20 @@ class Ajax extends Backend
             $header['Expires'] = gmdate("D, d M Y H:i:s", time() + $offset) . " GMT";
         }
 
+        $controllername = $this->request->get('controllername');
+        $lang = $this->request->get('lang');
+        if (!$lang || !in_array($lang, config('allow_lang_list')) || !$controllername || !preg_match("/^[a-z0-9\.]+$/i", $controllername)) {
+            return jsonp(['errmsg' => '参数错误'], 200, [], ['json_encode_param' => JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE]);
+        }
+
         $controllername = input("controllername");
-        //默认只加载了控制器对应的语言名，你还根据控制器名来加载额外的语言包
-        $this->loadlang($controllername);
+        $className = Loader::parseClass($this->request->module(), 'controller', $controllername, false);
+
+        //存在对应的类才加载
+        if (class_exists($className)) {
+            $this->loadlang($controllername);
+        }
+
         return jsonp(Lang::get(), 200, $header, ['json_encode_param' => JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE]);
     }
 
