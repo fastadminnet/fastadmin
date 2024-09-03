@@ -321,16 +321,28 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                                 }
                                 data[match[1]][match[2]] = j.value;
                             });
-                            var result = template ? [] : {};
+                            //使用数组保存
+                            var usearray = container.data("usearray") || false;
+                            //保留空数据
+                            var keepempty = container.data("keepempty") || false;
+
+                            var result = template || usearray ? [] : {};
+                            var keys = Object.keys(Object.values(data)[0] || {});
+
+                            var isassociative = !usearray && keys.indexOf("value") > -1 && (keys.length === 1 || (keys.length === 2 && keys.indexOf("key") > -1));
+                            if(isassociative && keys.length ===2){
+                                result = {};
+                            }
+
                             $.each(data, function (i, j) {
                                 if (j) {
-                                    var keys = Object.keys(j);
-                                    if (keys.indexOf("value") > -1 && (keys.length === 1 || (keys.length === 2 && keys.indexOf("key") > -1))) {
+                                    if (isassociative) {
                                         if (keys.length === 2) {
-                                            if (j.key != '') {
+                                            if (j.key != '' || keepempty) {
                                                 result['__PLACEHOLDKEY__' + j.key] = j.value;
                                             }
                                         } else {
+                                            //一维数组
                                             result.push(j.value);
                                         }
                                     } else {
