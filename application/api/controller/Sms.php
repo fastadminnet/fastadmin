@@ -19,8 +19,8 @@ class Sms extends Api
      * 发送验证码
      *
      * @ApiMethod (POST)
-     * @param string $mobile 手机号
-     * @param string $event 事件名称
+     * @ApiParams (name="mobile", type="string", required=true, description="手机号")
+     * @ApiParams (name="event", type="string", required=true, description="事件名称")
      */
     public function send()
     {
@@ -67,9 +67,9 @@ class Sms extends Api
      * 检测验证码
      *
      * @ApiMethod (POST)
-     * @param string $mobile 手机号
-     * @param string $event 事件名称
-     * @param string $captcha 验证码
+     * @ApiParams (name="mobile", type="string", required=true, description="手机号")
+     * @ApiParams (name="event", type="string", required=true, description="事件名称")
+     * @ApiParams (name="captcha", type="string", required=true, description="验证码")
      */
     public function check()
     {

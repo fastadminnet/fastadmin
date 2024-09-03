@@ -39,8 +39,8 @@ class User extends Api
      * 会员登录
      *
      * @ApiMethod (POST)
-     * @param string $account  账号
-     * @param string $password 密码
+     * @ApiParams (name="account", type="string", required=true, description="账号")
+     * @ApiParams (name="password", type="string", required=true, description="密码")
      */
     public function login()
     {
@@ -62,8 +62,8 @@ class User extends Api
      * 手机验证码登录
      *
      * @ApiMethod (POST)
-     * @param string $mobile  手机号
-     * @param string $captcha 验证码
+     * @ApiParams (name="mobile", type="string", required=true, description="手机号")
+     * @ApiParams (name="captcha", type="string", required=true, description="验证码")
      */
     public function mobilelogin()
     {
@@ -101,11 +101,11 @@ class User extends Api
      * 注册会员
      *
      * @ApiMethod (POST)
-     * @param string $username 用户名
-     * @param string $password 密码
-     * @param string $email    邮箱
-     * @param string $mobile   手机号
-     * @param string $code     验证码
+     * @ApiParams (name="username", type="string", required=true, description="用户名")
+     * @ApiParams (name="password", type="string", required=true, description="密码")
+     * @ApiParams (name="email", type="string", required=true, description="邮箱")
+     * @ApiParams (name="mobile", type="string", required=true, description="手机号")
+     * @ApiParams (name="code", type="string", required=true, description="验证码")
      */
     public function register()
     {
@@ -153,10 +153,10 @@ class User extends Api
      * 修改会员个人信息
      *
      * @ApiMethod (POST)
-     * @param string $avatar   头像地址
-     * @param string $username 用户名
-     * @param string $nickname 昵称
-     * @param string $bio      个人简介
+     * @ApiParams (name="avatar", type="string", required=true, description="头像地址")
+     * @ApiParams (name="username", type="string", required=true, description="用户名")
+     * @ApiParams (name="nickname", type="string", required=true, description="昵称")
+     * @ApiParams (name="bio", type="string", required=true, description="个人简介")
      */
     public function profile()
     {
@@ -189,8 +189,8 @@ class User extends Api
      * 修改邮箱
      *
      * @ApiMethod (POST)
-     * @param string $email   邮箱
-     * @param string $captcha 验证码
+     * @ApiParams (name="email", type="string", required=true, description="邮箱")
+     * @ApiParams (name="captcha", type="string", required=true, description="验证码")
      */
     public function changeemail()
     {
@@ -224,8 +224,8 @@ class User extends Api
      * 修改手机号
      *
      * @ApiMethod (POST)
-     * @param string $mobile  手机号
-     * @param string $captcha 验证码
+     * @ApiParams (name="mobile", type="string", required=true, description="手机号")
+     * @ApiParams (name="captcha", type="string", required=true, description="验证码")
      */
     public function changemobile()
     {
@@ -259,8 +259,8 @@ class User extends Api
      * 第三方登录
      *
      * @ApiMethod (POST)
-     * @param string $platform 平台名称
-     * @param string $code     Code码
+     * @ApiParams (name="platform", type="string", required=true, description="平台名称")
+     * @ApiParams (name="code", type="string", required=true, description="Code码")
      */
     public function third()
     {
@@ -291,9 +291,9 @@ class User extends Api
      * 重置密码
      *
      * @ApiMethod (POST)
-     * @param string $mobile      手机号
-     * @param string $newpassword 新密码
-     * @param string $captcha     验证码
+     * @ApiParams (name="mobile", type="string", required=true, description="手机号")
+     * @ApiParams (name="newpassword", type="string", required=true, description="新密码")
+     * @ApiParams (name="captcha", type="string", required=true, description="验证码")
      */
     public function resetpwd()
     {
