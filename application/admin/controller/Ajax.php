@@ -50,7 +50,7 @@ class Ajax extends Backend
 
         $controllername = $this->request->get('controllername');
         $lang = $this->request->get('lang');
-        if (!$lang || !in_array($lang, config('allow_lang_list')) || !$controllername || !preg_match("/^[a-z0-9\.]+$/i", $controllername)) {
+        if (!$lang || !in_array($lang, config('allow_lang_list')) || !$controllername || !preg_match("/^[a-z0-9_\.]+$/i", $controllername)) {
             return jsonp(['errmsg' => '参数错误'], 200, [], ['json_encode_param' => JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE]);
         }
 
