@@ -452,6 +452,7 @@ CREATE TABLE `fa_user` (
   `logintime` bigint(16) DEFAULT NULL COMMENT '登录时间',
   `loginip` varchar(50) DEFAULT '' COMMENT '登录IP',
   `loginfailure` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '失败次数',
+  `loginfailuretime` bigint(16) DEFAULT NULL COMMENT '最后登录失败时间',
   `joinip` varchar(50) DEFAULT '' COMMENT '加入IP',
   `jointime` bigint(16) DEFAULT NULL COMMENT '加入时间',
   `createtime` bigint(16) DEFAULT NULL COMMENT '创建时间',
@@ -469,7 +470,7 @@ CREATE TABLE `fa_user` (
 -- Records of fa_user
 -- ----------------------------
 BEGIN;
-INSERT INTO `fa_user` VALUES (1, 1, 'admin', 'admin', '', '', 'admin@163.com', '13000000000', '', 0, 0, '2017-04-08', '', 0, 0, 1, 1, 1491635035, 1491635035, '127.0.0.1', 0, '127.0.0.1', 1491635035, 0, 1491635035, '', 'normal','');
+INSERT INTO `fa_user` VALUES (1, 1, 'admin', 'admin', '', '', 'admin@163.com', '13000000000', '', 0, 0, '2017-04-08', '', 0, 0, 1, 1, 1491635035, 1491635035, '127.0.0.1', 0, 1491635035,'127.0.0.1', 1491635035, 0, 1491635035, '', 'normal','');
 COMMIT;
 
 -- ----------------------------

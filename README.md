@@ -24,12 +24,10 @@ FastAdmin是一款基于ThinkPHP+Bootstrap的极速后台开发框架。
 * 多语言支持，服务端及客户端支持
 * 支持大文件分片上传、剪切板粘贴上传、拖拽上传，进度条显示，图片上传前压缩
 * 支持表格固定列、固定表头、跨页选择、Excel导出、模板渲染等功能
-* 强大的第三方应用模块支持([CMS](https://www.fastadmin.net/store/cms.html)、[博客](https://www.fastadmin.net/store/blog.html)、[知识付费问答](https://www.fastadmin.net/store/ask.html)、[在线投票系统](https://www.fastadmin.net/store/vote.html)、[B2C商城](https://www.fastadmin.net/store/shopro.html)、[B2B2C商城](https://www.fastadmin.net/store/wanlshop.html))
-* 支持CMS、博客、知识付费问答无缝整合[Xunsearch全文搜索](https://www.fastadmin.net/store/xunsearch.html)
-* 第三方小程序支持([CMS小程序](https://www.fastadmin.net/store/cms.html)、[预订小程序](https://www.fastadmin.net/store/ball.html)、[问答小程序](https://www.fastadmin.net/store/ask.html)、[点餐小程序](https://www.fastadmin.net/store/unidrink.html)、[B2C小程序](https://www.fastadmin.net/store/shopro.html)、[B2B2C小程序](https://www.fastadmin.net/store/wanlshop.html)、[博客小程序](https://www.fastadmin.net/store/blog.html))
+* 强大的第三方应用模块支持([CMS](https://www.fastadmin.net/store/cms.html)、[CRM](https://www.fastadmin.net/store/facrm.html)、[企业网站管理系统](https://www.fastadmin.net/store/ldcms.html)、[知识库文档系统](https://www.fastadmin.net/store/knowbase.html)、[在线投票系统](https://www.fastadmin.net/store/vote.html)、[B2C商城](https://www.fastadmin.net/store/shopro.html)、[B2B2C商城](https://www.fastadmin.net/store/wanlshop.html))
 * 整合第三方短信接口(阿里云、腾讯云短信)
-* 无缝整合第三方云存储(七牛云、阿里云OSS、又拍云)功能，支持云储存分片上传
-* 第三方富文本编辑器支持(Summernote、Kindeditor、百度编辑器)
+* 无缝整合第三方云存储(七牛云、阿里云OSS、腾讯云存储、又拍云)功能，支持云储存分片上传
+* 第三方富文本编辑器支持(Summernote、百度编辑器)
 * 第三方登录(QQ、微信、微博)整合
 * 第三方支付(微信、支付宝)无缝整合，微信支持PC端扫码支付
 * 丰富的插件应用市场
@@ -55,8 +53,7 @@ https://demo.fastadmin.net
 
 在使用中有任何问题，请使用以下联系方式联系我们
 
-交流社区: https://ask.fastadmin.net
-
+问答社区: https://ask.fastadmin.net
 
 Github: https://github.com/karsonzhang/fastadmin
 
