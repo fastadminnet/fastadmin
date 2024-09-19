@@ -224,6 +224,7 @@ class Auth
 
         if ($user->loginfailure >= 10 && time() - $user->loginfailuretime < 86400) {
             $this->setError('Please try again after 1 day');
+            return false;
         }
 
         if ($user->password != $this->getEncryptPassword($password, $user->salt)) {
