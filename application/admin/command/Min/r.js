@@ -1253,7 +1253,7 @@ var requirejs, require, define, xpcUtil;
                     }
 
                     //If a paths config, then just load that file instead to
-                    //resolve the plugin, as it is built into that paths layer.
+                    //resolve the plugin, as it is built into that paths layerobj.
                     if (bundleId) {
                         this.map.url = context.nameToUrl(bundleId);
                         this.load();
@@ -1938,7 +1938,7 @@ var requirejs, require, define, xpcUtil;
             /**
              * Executes a module callback function. Broken out as a separate function
              * solely to allow the build system to sequence the files in the built
-             * layer in the right sequence.
+             * layerobj in the right sequence.
              *
              * @private
              */
@@ -26089,7 +26089,7 @@ function (esprima, parse, logger, lang) {
                     namespaceExists = false;
 
                 // If a bundle script with a define declaration, do not
-                // parse any further at this level. Likely a built layer
+                // parse any further at this level. Likely a built layerobj
                 // by some other tool.
                 if (node.type === 'VariableDeclarator' &&
                     node.id && node.id.name === 'define' &&
@@ -27467,7 +27467,7 @@ define('requirePatch', [ 'env!env/file', 'pragma', 'parse', 'lang', 'logger', 'c
         }
         allowRun = false;
 
-        var layer,
+        var layerobj,
             pluginBuilderRegExp = /(["']?)pluginBuilder(["']?)\s*[=\:]\s*["']([^'"\s]+)["']/,
             oldNewContext = require.s.newContext,
             oldDef,
@@ -27480,13 +27480,13 @@ define('requirePatch', [ 'env!env/file', 'pragma', 'parse', 'lang', 'logger', 'c
 
         /**
          * Reset "global" build caches that are kept around between
-         * build layer builds. Useful to do when there are multiple
+         * build layerobj builds. Useful to do when there are multiple
          * top level requirejs.optimize() calls.
          */
         require._cacheReset = function () {
             //Stored raw text caches, used by browser use.
             require._cachedRawText = {};
-            //Stored cached file contents for reuse in other layers.
+            //Stored cached file contents for reuse in other layerobjs.
             require._cachedFileContents = {};
             //Store which cached files contain a require definition.
             require._cachedDefinesRequireUrls = {};
@@ -27509,11 +27509,11 @@ define('requirePatch', [ 'env!env/file', 'pragma', 'parse', 'lang', 'logger', 'c
                     url.indexOf('empty:') !== 0 && url.indexOf('//') !== 0) {
                 return true;
             } else {
-                if (!layer.ignoredUrls[url]) {
+                if (!layerobj.ignoredUrls[url]) {
                     if (url.indexOf('empty:') === -1) {
                         logger.info('Cannot optimize network URL, skipping: ' + url);
                     }
-                    layer.ignoredUrls[url] = true;
+                    layerobj.ignoredUrls[url] = true;
                 }
                 return false;
             }
@@ -27644,8 +27644,8 @@ define('requirePatch', [ 'env!env/file', 'pragma', 'parse', 'lang', 'logger', 'c
                         url = normalizeUrlWithBase(context, moduleName, url);
 
                         //Save the module name to path  and path to module name mappings.
-                        layer.buildPathMap[moduleName] = url;
-                        layer.buildFileToModule[url] = moduleName;
+                        layerobj.buildPathMap[moduleName] = url;
+                        layerobj.buildFileToModule[url] = moduleName;
 
                         if (hasProp(context.plugins, moduleName)) {
                             //plugins need to have their source evaled as-is.
@@ -27662,8 +27662,8 @@ define('requirePatch', [ 'env!env/file', 'pragma', 'parse', 'lang', 'logger', 'c
                                 //Done here and in the else below, before the
                                 //else block removes code from the contents.
                                 //Related to #263
-                                if (!layer.existingRequireUrl && require._cachedDefinesRequireUrls[url]) {
-                                    layer.existingRequireUrl = url;
+                                if (!layerobj.existingRequireUrl && require._cachedDefinesRequireUrls[url]) {
+                                    layerobj.existingRequireUrl = url;
                                 }
                             } else {
                                 //Load the file contents, process for conditionals, then
@@ -27687,8 +27687,8 @@ define('requirePatch', [ 'env!env/file', 'pragma', 'parse', 'lang', 'logger', 'c
                                     //this so we can inject plugins right after it, but before they are needed,
                                     //and to make sure this file is first, so that define calls work.
                                     try {
-                                        if (!layer.existingRequireUrl && parse.definesRequire(url, contents)) {
-                                            layer.existingRequireUrl = url;
+                                        if (!layerobj.existingRequireUrl && parse.definesRequire(url, contents)) {
+                                            layerobj.existingRequireUrl = url;
                                             require._cachedDefinesRequireUrls[url] = true;
                                         }
                                     } catch (e1) {
@@ -27779,11 +27779,11 @@ define('requirePatch', [ 'env!env/file', 'pragma', 'parse', 'lang', 'logger', 'c
                 //Marks module has having a name, and optionally executes the
                 //callback, but only if it meets certain criteria.
                 context.execCb = function (name, cb, args, exports) {
-                    var buildShimExports = getOwn(layer.context.buildShimExports, name);
+                    var buildShimExports = getOwn(layerobj.context.buildShimExports, name);
 
                     if (buildShimExports) {
                         return buildShimExports;
-                    } else if (cb.__requireJsBuild || getOwn(layer.context.needFullExec, name)) {
+                    } else if (cb.__requireJsBuild || getOwn(layerobj.context.needFullExec, name)) {
                         return cb.apply(exports, args);
                     }
                     return undefined;
@@ -27833,17 +27833,17 @@ define('requirePatch', [ 'env!env/file', 'pragma', 'parse', 'lang', 'logger', 'c
         //above will be active.
         delete require.s.contexts._;
 
-        /** Reset state for each build layer pass. */
+        /** Reset state for each build layerobj pass. */
         require._buildReset = function () {
             var oldContext = require.s.contexts._;
 
             //Clear up the existing context.
             delete require.s.contexts._;
 
-            //Set up new context, so the layer object can hold onto it.
+            //Set up new context, so the layerobj object can hold onto it.
             require({});
 
-            layer = require._layer = {
+            layerobj = require._layerobj = {
                 buildPathMap: {},
                 buildFileToModule: {},
                 buildFilePaths: [],
@@ -27871,8 +27871,8 @@ define('requirePatch', [ 'env!env/file', 'pragma', 'parse', 'lang', 'logger', 'c
         //This function signature does not have to be exact, just match what we
         //are looking for.
         define = function (name) {
-            if (typeof name === "string" && falseProp(layer.needsDefine, name)) {
-                layer.modulesWithNames[name] = true;
+            if (typeof name === "string" && falseProp(layerobj.needsDefine, name)) {
+                layerobj.modulesWithNames[name] = true;
             }
             return oldDef.apply(require, arguments);
         };
@@ -27915,23 +27915,23 @@ define('requirePatch', [ 'env!env/file', 'pragma', 'parse', 'lang', 'logger', 'c
 
             //A plugin.
             if (map.prefix) {
-                if (falseProp(layer.pathAdded, id)) {
-                    layer.buildFilePaths.push(id);
+                if (falseProp(layerobj.pathAdded, id)) {
+                    layerobj.buildFilePaths.push(id);
                     //For plugins the real path is not knowable, use the name
                     //for both module to file and file to module mappings.
-                    layer.buildPathMap[id] = id;
-                    layer.buildFileToModule[id] = id;
-                    layer.modulesWithNames[id] = true;
-                    layer.pathAdded[id] = true;
+                    layerobj.buildPathMap[id] = id;
+                    layerobj.buildFileToModule[id] = id;
+                    layerobj.modulesWithNames[id] = true;
+                    layerobj.pathAdded[id] = true;
                 }
             } else if (map.url && require._isSupportedBuildUrl(map.url)) {
-                //If the url has not been added to the layer yet, and it
+                //If the url has not been added to the layerobj yet, and it
                 //is from an actual file that was loaded, add it now.
                 url = normalizeUrlWithBase(context, id, map.url);
-                if (!layer.pathAdded[url] && getOwn(layer.buildPathMap, id)) {
-                    //Remember the list of dependencies for this layer.
-                    layer.buildFilePaths.push(url);
-                    layer.pathAdded[url] = true;
+                if (!layerobj.pathAdded[url] && getOwn(layerobj.buildPathMap, id)) {
+                    //Remember the list of dependencies for this layerobj.
+                    layerobj.buildFilePaths.push(url);
+                    layerobj.pathAdded[url] = true;
                 }
             }
         };
@@ -27941,7 +27941,7 @@ define('requirePatch', [ 'env!env/file', 'pragma', 'parse', 'lang', 'logger', 'c
         //function normalizes on define() for dependency mapping and file
         //ordering works correctly.
         require.needsDefine = function (moduleName) {
-            layer.needsDefine[moduleName] = true;
+            layerobj.needsDefine[moduleName] = true;
         };
     };
 });
@@ -28070,10 +28070,10 @@ define('build', function (require) {
         endsWithSlashRegExp = /[\/\\]$/,
         resourceIsModuleIdRegExp = /^[\w\/\\\.]+$/,
         deepCopyProps = {
-            layer: true
+            layerobj: true
         };
 
-    //Deep copy a config object, but do not copy over the "layer" property,
+    //Deep copy a config object, but do not copy over the "layerobj" property,
     //as it can be a deeply nested structure with a full requirejs context.
     function copyConfig(obj) {
         return lang.deeplikeCopy(obj, deepCopyProps);
@@ -28157,7 +28157,7 @@ define('build', function (require) {
 
     //Method used by plugin writeFile calls, defined up here to avoid
     //jslint warning about "making a function in a loop".
-    function makeWriteFile(namespace, layer) {
+    function makeWriteFile(namespace, layerobj) {
         function writeFile(name, contents) {
             logger.trace('Saving plugin-optimized file: ' + name);
             file.saveUtf8File(name, contents);
@@ -28165,7 +28165,7 @@ define('build', function (require) {
 
         writeFile.asModule = function (moduleName, fileName, contents) {
             writeFile(fileName,
-                build.toTransport(namespace, moduleName, fileName, contents, layer));
+                build.toTransport(namespace, moduleName, fileName, contents, layerobj));
         };
 
         return writeFile;
@@ -28420,8 +28420,8 @@ define('build', function (require) {
                 }
             }
 
-            //Figure out source file location for each module layer. Do this by seeding require
-            //with source area configuration. This is needed so that later the module layers
+            //Figure out source file location for each module layerobj. Do this by seeding require
+            //with source area configuration. This is needed so that later the module layerobjs
             //can be manually copied over to the source area, since the build may be
             //require multiple times and the above copyDir call only copies newer files.
             require({
@@ -28437,7 +28437,7 @@ define('build', function (require) {
                 modules.forEach(function (module) {
                     if (module.name) {
                         module._sourcePath = buildContext.nameToUrl(module.name);
-                        //If the module does not exist, and this is not a "new" module layer,
+                        //If the module does not exist, and this is not a "new" module layerobj,
                         //as indicated by a true "create" property on the module, and
                         //it is not a plugin-loaded resource, and there is no
                         //'rawText' containing the module's source then throw an error.
@@ -28453,7 +28453,7 @@ define('build', function (require) {
             }
 
             if (config.out) {
-                //Just set up the _buildPath for the module layer.
+                //Just set up the _buildPath for the module layerobj.
                 require(config);
                 if (!config.cssIn) {
                     config.modules[0]._buildPath = typeof config.out === 'function' ?
@@ -28516,8 +28516,8 @@ define('build', function (require) {
 
                         //Call require to calculate dependencies.
                         return build.traceDependencies(module, config, baseConfig)
-                            .then(function (layer) {
-                                module.layer = layer;
+                            .then(function (layerobj) {
+                                module.layerobj = layerobj;
                             });
                     };
                 });
@@ -28528,24 +28528,24 @@ define('build', function (require) {
             var actions;
 
             if (modules) {
-                //Now build up shadow layers for anything that should be excluded.
+                //Now build up shadow layerobjs for anything that should be excluded.
                 //Do this after tracing dependencies for each module, in case one
                 //of those modules end up being one of the excluded values.
                 actions = modules.map(function (module) {
                     return function () {
                         if (module.exclude) {
-                            module.excludeLayers = [];
+                            module.excludelayerobjs = [];
                             return prim.serial(module.exclude.map(function (exclude, i) {
                                 return function () {
                                     //See if it is already in the list of modules.
                                     //If not trace dependencies for it.
                                     var found = build.findBuildModule(exclude, modules);
                                     if (found) {
-                                        module.excludeLayers[i] = found;
+                                        module.excludelayerobjs[i] = found;
                                     } else {
                                         return build.traceDependencies({name: exclude}, config, baseConfig)
-                                            .then(function (layer) {
-                                                module.excludeLayers[i] = { layer: layer };
+                                            .then(function (layerobj) {
+                                                module.excludelayerobjs[i] = { layerobj: layerobj };
                                             });
                                     }
                                 };
@@ -28563,12 +28563,12 @@ define('build', function (require) {
                         if (module.exclude) {
                             //module.exclude is an array of module names. For each one,
                             //get the nested dependencies for it via a matching entry
-                            //in the module.excludeLayers array.
+                            //in the module.excludelayerobjs array.
                             module.exclude.forEach(function (excludeModule, i) {
-                                var excludeLayer = module.excludeLayers[i].layer,
-                                    map = excludeLayer.buildFileToModule;
-                                excludeLayer.buildFilePaths.forEach(function(filePath){
-                                    build.removeModulePath(map[filePath], filePath, module.layer);
+                                var excludelayerobj = module.excludelayerobjs[i].layerobj,
+                                    map = excludelayerobj.buildFileToModule;
+                                excludelayerobj.buildFilePaths.forEach(function(filePath){
+                                    build.removeModulePath(map[filePath], filePath, module.layerobj);
                                 });
                             });
                         }
@@ -28577,19 +28577,19 @@ define('build', function (require) {
                             //shallow exclusions are just that module itself, and not
                             //its nested dependencies.
                             module.excludeShallow.forEach(function (excludeShallowModule) {
-                                var path = getOwn(module.layer.buildPathMap, excludeShallowModule);
+                                var path = getOwn(module.layerobj.buildPathMap, excludeShallowModule);
                                 if (path) {
-                                    build.removeModulePath(excludeShallowModule, path, module.layer);
+                                    build.removeModulePath(excludeShallowModule, path, module.layerobj);
                                 }
                             });
                         }
 
                         //Flatten them and collect the build output for each module.
-                        return build.flattenModule(module, module.layer, config).then(function (builtModule) {
+                        return build.flattenModule(module, module.layerobj, config).then(function (builtModule) {
                             var finalText, baseName;
-                            //Save it to a temp file for now, in case there are other layers that
+                            //Save it to a temp file for now, in case there are other layerobjs that
                             //contain optimized content that should not be included in later
-                            //layer optimizations. See issue #56.
+                            //layerobj optimizations. See issue #56.
                             if (module._buildPath === 'FUNCTION') {
                                 module._buildText = builtModule.text;
                                 module._buildSourceMap = builtModule.sourceMap;
@@ -28615,7 +28615,7 @@ define('build', function (require) {
                 bundlesConfigOutFile = config.bundlesConfigOutFile;
 
             if (modules) {
-                //Now move the build layers to their final position.
+                //Now move the build layerobjs to their final position.
                 modules.forEach(function (module) {
                     var entryConfig,
                         finalPath = module._buildPath;
@@ -28641,18 +28641,18 @@ define('build', function (require) {
                         }
 
                         //And finally, if removeCombined is specified, remove
-                        //any of the files that were used in this layer.
-                        //Be sure not to remove other build layers.
+                        //any of the files that were used in this layerobj.
+                        //Be sure not to remove other build layerobjs.
                         if (config.removeCombined && !config.out) {
-                            module.layer.buildFilePaths.forEach(function (path) {
-                                var isLayer = modules.some(function (mod) {
+                            module.layerobj.buildFilePaths.forEach(function (path) {
+                                var islayerobj = modules.some(function (mod) {
                                         return mod._buildPath === path;
                                     }),
                                     relPath = build.makeRelativeFilePath(config.dir, path);
 
                                 if (file.exists(path) &&
-                                    // not a build layer target
-                                    !isLayer &&
+                                    // not a build layerobj target
+                                    !islayerobj &&
                                     // not outside the build directory
                                     relPath.indexOf('..') !== 0) {
                                     file.deleteFile(path);
@@ -28661,7 +28661,7 @@ define('build', function (require) {
                         }
                     }
 
-                    //Signal layer is done
+                    //Signal layerobj is done
                     if (config.onModuleBundleComplete) {
                         config.onModuleBundleComplete(module.onCompleteData);
                     }
@@ -28725,7 +28725,7 @@ define('build', function (require) {
                     //Get rid of the extension
                     moduleName = moduleName.substring(0, moduleName.length - 3);
 
-                    //If there is an override for a specific layer build module,
+                    //If there is an override for a specific layerobj build module,
                     //and this file is that module, mix in the override for use
                     //by optimize.jsFile.
                     moduleIndex = getOwn(config._buildPathToModuleIndex, fileName);
@@ -28733,7 +28733,7 @@ define('build', function (require) {
                     moduleIndex = moduleIndex === 0 || moduleIndex > 0 ? moduleIndex : -1;
 
                     //Try to avoid extra work if the other files do not need to
-                    //be read. Build layers should be processed at the very
+                    //be read. Build layerobjs should be processed at the very
                     //least for optimization.
                     if (moduleIndex > -1 || !config.skipDirOptimize ||
                             config.normalizeDirDefines === "all" ||
@@ -28760,7 +28760,7 @@ define('build', function (require) {
                             }
 
                             //Only do transport normalization if this is not a build
-                            //layer (since it was already normalized) and if
+                            //layerobj (since it was already normalized) and if
                             //normalizeDirDefines indicated all should be done.
                             if (config.normalizeDirDefines === "all") {
                                 fileContents = build.toTransport(config.namespace,
@@ -28849,7 +28849,7 @@ define('build', function (require) {
                 //console.log('PLUGIN COLLECTOR: ' + JSON.stringify(pluginCollector, null, "  "));
 
 
-                //All module layers are done, write out the build.txt file.
+                //All module layerobjs are done, write out the build.txt file.
                 if (config.writeBuildTxt) {
                     file.saveUtf8File(config.dir + "build.txt", buildFileContents);
                 }
@@ -28864,7 +28864,7 @@ define('build', function (require) {
                 config.out(config.modules[0]._buildText, config.modules[0]._buildSourceMap);
             }
 
-            //Print out what was built into which layers.
+            //Print out what was built into which layerobjs.
             if (buildFileContents) {
                 logger.info(buildFileContents);
                 return buildFileContents;
@@ -29649,16 +29649,16 @@ define('build', function (require) {
     };
 
     /**
-     * Removes a module name and path from a layer, if it is supposed to be
-     * excluded from the layer.
+     * Removes a module name and path from a layerobj, if it is supposed to be
+     * excluded from the layerobj.
      * @param {String} moduleName the name of the module
      * @param {String} path the file path for the module
-     * @param {Object} layer the layer to remove the module/path from
+     * @param {Object} layerobj the layerobj to remove the module/path from
      */
-    build.removeModulePath = function (module, path, layer) {
-        var index = layer.buildFilePaths.indexOf(path);
+    build.removeModulePath = function (module, path, layerobj) {
+        var index = layerobj.buildFilePaths.indexOf(path);
         if (index !== -1) {
-            layer.buildFilePaths.splice(index, 1);
+            layerobj.buildFilePaths.splice(index, 1);
         }
     };
 
@@ -29670,11 +29670,11 @@ define('build', function (require) {
      * @param {Object} config the build config object.
      * @param {Object} [baseLoaderConfig] the base loader config to use for env resets.
      *
-     * @returns {Object} layer information about what paths and modules should
+     * @returns {Object} layerobj information about what paths and modules should
      * be in the flattened module.
      */
     build.traceDependencies = function (module, config, baseLoaderConfig) {
-        var include, override, layer, context, oldContext,
+        var include, override, layerobj, context, oldContext,
             rawTextByIds,
             syncChecks = {
                 rhino: true,
@@ -29687,10 +29687,10 @@ define('build', function (require) {
         //current context.
         oldContext = require._buildReset();
 
-        //Grab the reset layer and context after the reset, but keep the
+        //Grab the reset layerobj and context after the reset, but keep the
         //old config to reuse in the new context.
-        layer = require._layer;
-        context = layer.context;
+        layerobj = require._layerobj;
+        context = layerobj.context;
 
         //Put back basic config, use a fresh object for it.
         if (baseLoaderConfig) {
@@ -29739,7 +29739,7 @@ define('build', function (require) {
             var hasError = false;
             if (syncChecks[env.get()]) {
                 try {
-                    build.checkForErrors(context, layer);
+                    build.checkForErrors(context, layerobj);
                 } catch (e) {
                     hasError = true;
                     deferred.reject(e);
@@ -29752,14 +29752,14 @@ define('build', function (require) {
         }
         includeFinished.__requireJsBuild = true;
 
-        //Figure out module layer dependencies by calling require to do the work.
+        //Figure out module layerobj dependencies by calling require to do the work.
         require(include, includeFinished, deferred.reject);
 
         // If a sync env, then with the "two IDs to same anon module path"
         // issue, the require never completes, need to check for errors
         // here.
         if (syncChecks[env.get()]) {
-            build.checkForErrors(context, layer);
+            build.checkForErrors(context, layerobj);
         }
 
         return deferred.promise.then(function () {
@@ -29768,13 +29768,13 @@ define('build', function (require) {
                 require(copyConfig(baseLoaderConfig));
             }
 
-            build.checkForErrors(context, layer);
+            build.checkForErrors(context, layerobj);
 
-            return layer;
+            return layerobj;
         });
     };
 
-    build.checkForErrors = function (context, layer) {
+    build.checkForErrors = function (context, layerobj) {
         //Check to see if it all loaded. If not, then throw, and give
         //a message on what is left.
         var id, prop, mod, idParts, pluginId, pluginResources,
@@ -29828,7 +29828,7 @@ define('build', function (require) {
                 //Look for plugins that did not call load()
                 //But skip plugin IDs that were already inlined and called
                 //define() with a name.
-                if (!hasProp(layer.modulesWithNames, id) && idParts.length > 1) {
+                if (!hasProp(layerobj.modulesWithNames, id) && idParts.length > 1) {
                     if (falseProp(failedPluginMap, pluginId)) {
                         failedPluginIds.push(pluginId);
                     }
@@ -29904,7 +29904,7 @@ define('build', function (require) {
      *
      * @param {Object} module the module object from the build config info.
      *
-     * @param {Object} layer the layer object returned from build.traceDependencies.
+     * @param {Object} layerobj the layerobj object returned from build.traceDependencies.
      *
      * @param {Object} the build config object.
      *
@@ -29912,7 +29912,7 @@ define('build', function (require) {
      * module, and "buildText", a string of text representing which files were
      * included in the flattened module text.
      */
-    build.flattenModule = function (module, layer, config) {
+    build.flattenModule = function (module, layerobj, config) {
         var fileContents, sourceMapGenerator,
             sourceMapBase,
             buildFileContents = '';
@@ -29922,9 +29922,9 @@ define('build', function (require) {
                 moduleName, shim, packageName,
                 parts, builder, writeApi,
                 namespace, namespaceWithDot, stubModulesByName,
-                context = layer.context,
-                onLayerEnds = [],
-                onLayerEndAdded = {},
+                context = layerobj.context,
+                onlayerobjEnds = [],
+                onlayerobjEndAdded = {},
                 pkgsMainMap = {};
 
             //Use override settings, particularly for pragmas
@@ -29949,11 +29949,11 @@ define('build', function (require) {
                                  "\n----------------\n";
 
             //If there was an existing file with require in it, hoist to the top.
-            if (layer.existingRequireUrl) {
-                reqIndex = layer.buildFilePaths.indexOf(layer.existingRequireUrl);
+            if (layerobj.existingRequireUrl) {
+                reqIndex = layerobj.buildFilePaths.indexOf(layerobj.existingRequireUrl);
                 if (reqIndex !== -1) {
-                    layer.buildFilePaths.splice(reqIndex, 1);
-                    layer.buildFilePaths.unshift(layer.existingRequireUrl);
+                    layerobj.buildFilePaths.splice(reqIndex, 1);
+                    layerobj.buildFilePaths.unshift(layerobj.existingRequireUrl);
                 }
             }
 
@@ -29974,7 +29974,7 @@ define('build', function (require) {
             //Create a reverse lookup for packages main module IDs to their package
             //names, useful for knowing when to write out define() package main ID
             //adapters.
-            lang.eachProp(layer.context.config.pkgs, function(value, prop) {
+            lang.eachProp(layerobj.context.config.pkgs, function(value, prop) {
                 pkgsMainMap[value] = prop;
             });
 
@@ -29986,11 +29986,11 @@ define('build', function (require) {
                 });
             }
 
-            return prim.serial(layer.buildFilePaths.map(function (path) {
+            return prim.serial(layerobj.buildFilePaths.map(function (path) {
                 return function () {
                     var singleContents = '';
 
-                    moduleName = layer.buildFileToModule[path];
+                    moduleName = layerobj.buildFileToModule[path];
 
                     //If the moduleName is a package main, then hold on to the
                     //packageName in case an adapter needs to be written.
@@ -30002,9 +30002,9 @@ define('build', function (require) {
                         parts = context.makeModuleMap(moduleName);
                         builder = parts.prefix && getOwn(context.defined, parts.prefix);
                         if (builder) {
-                            if (builder.onLayerEnd && falseProp(onLayerEndAdded, parts.prefix)) {
-                                onLayerEnds.push(builder);
-                                onLayerEndAdded[parts.prefix] = true;
+                            if (builder.onlayerobjEnd && falseProp(onlayerobjEndAdded, parts.prefix)) {
+                                onlayerobjEnds.push(builder);
+                                onlayerobjEndAdded[parts.prefix] = true;
                             }
 
                             if (builder.write) {
@@ -30016,8 +30016,8 @@ define('build', function (require) {
                                 };
                                 writeApi.asModule = function (moduleName, input) {
                                     singleContents += "\n" +
-                                        addSemiColon(build.toTransport(namespace, moduleName, path, input, layer, {
-                                            useSourceUrl: layer.context.config.useSourceUrl
+                                        addSemiColon(build.toTransport(namespace, moduleName, path, input, layerobj, {
+                                            useSourceUrl: layerobj.context.config.useSourceUrl
                                         }), config);
                                     if (config.onBuildWrite) {
                                         singleContents = config.onBuildWrite(moduleName, path, singleContents);
@@ -30036,7 +30036,7 @@ define('build', function (require) {
                                     //Just want to insert a simple module definition instead
                                     //of the source module. Useful for plugins that inline
                                     //all their resources.
-                                    if (hasProp(layer.context.plugins, moduleName)) {
+                                    if (hasProp(layerobj.context.plugins, moduleName)) {
                                         //Slightly different content for plugins, to indicate
                                         //that dynamic loading will not work.
                                         return 'define({load: function(id){throw new Error("Dynamic load not allowed: " + id);}});';
@@ -30068,7 +30068,7 @@ define('build', function (require) {
                                     currContents = pragma.namespace(currContents, namespace);
                                 }
 
-                                currContents = build.toTransport(namespace, moduleName, path, currContents, layer, {
+                                currContents = build.toTransport(namespace, moduleName, path, currContents, layerobj, {
                                     useSourceUrl: config.useSourceUrl
                                 });
 
@@ -30098,7 +30098,7 @@ define('build', function (require) {
                         //put in a placeholder call so the require does not try to load them
                         //after the module is processed.
                         //If we have a name, but no defined module, then add in the placeholder.
-                        if (moduleName && falseProp(layer.modulesWithNames, moduleName) && !config.skipModuleInsertion) {
+                        if (moduleName && falseProp(layerobj.modulesWithNames, moduleName) && !config.skipModuleInsertion) {
                             shim = config.shim && (getOwn(config.shim, moduleName) || (packageName && getOwn(config.shim, packageName)));
                             if (shim) {
                                 shimDeps = lang.isArray(shim) ? shim : shim.deps;
@@ -30142,18 +30142,18 @@ define('build', function (require) {
                     });
                 };
             })).then(function () {
-                if (onLayerEnds.length) {
-                    onLayerEnds.forEach(function (builder, index) {
+                if (onlayerobjEnds.length) {
+                    onlayerobjEnds.forEach(function (builder, index) {
                         var path;
                         if (typeof module.out === 'string') {
                             path = module.out;
                         } else if (typeof module._buildPath === 'string') {
                             path = module._buildPath;
                         }
-                        builder.onLayerEnd(function (input) {
+                        builder.onlayerobjEnd(function (input) {
                             fileContents =
                                 appendToFileContents(fileContents, "\n" + addSemiColon(input, config),
-                                                     'onLayerEnd' + index + '.js', config, module, sourceMapGenerator);
+                                                     'onlayerobjEnd' + index + '.js', config, module, sourceMapGenerator);
                         }, {
                             name: module.name,
                             path: path
@@ -30162,7 +30162,7 @@ define('build', function (require) {
                 }
 
                 if (module.create) {
-                    //The ID is for a created layer. Write out
+                    //The ID is for a created layerobj. Write out
                     //a module definition for it in case the
                     //built file is used with enforceDefine
                     //(#432)
@@ -30207,14 +30207,14 @@ define('build', function (require) {
         }).join('","') + '"]';
     };
 
-    build.toTransport = function (namespace, moduleName, path, contents, layer, options) {
-        var baseUrl = layer && layer.context.config.baseUrl;
+    build.toTransport = function (namespace, moduleName, path, contents, layerobj, options) {
+        var baseUrl = layerobj && layerobj.context.config.baseUrl;
 
         function onFound(info) {
             //Only mark this module as having a name if not a named module,
             //or if a named module and the name matches expectations.
-            if (layer && (info.needsId || info.foundId === moduleName)) {
-                layer.modulesWithNames[moduleName] = true;
+            if (layerobj && (info.needsId || info.foundId === moduleName)) {
+                layerobj.modulesWithNames[moduleName] = true;
             }
         }
 
