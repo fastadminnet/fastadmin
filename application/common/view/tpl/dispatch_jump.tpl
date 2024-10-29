@@ -41,19 +41,18 @@
     <p class="clearfix">
         <a href="__PUBLIC__" class="btn btn-grey">{:__('Go back')}</a>
         {if $url}
-            <a id="href" href="{$url|htmlentities}" class="btn btn-primary">{:__('Jump now')}</a>
+            <a href="{$url|htmlentities}" class="btn btn-primary">{:__('Jump now')}</a>
         {/if}
     </p>
 </div>
 {if $url}
     <script type="text/javascript">
         (function () {
-            var wait = document.getElementById('wait'),
-                href = document.getElementById('href').href;
+            var wait = document.getElementById('wait');
             var interval = setInterval(function () {
                 var time = --wait.innerHTML;
                 if (time <= 0) {
-                    location.href = href;
+					location.href = "{$url|htmlentities}";
                     clearInterval(interval);
                 }
             }, 1000);
