@@ -117,10 +117,10 @@
     <div id="secondnav">
         <ul class="nav nav-tabs nav-addtabs disable-top-badge" role="tablist">
             {if $fixedmenu}
-            <li role="presentation" id="tab_{$fixedmenu.id}" class="{:$referermenu?'':'active'}"><a href="#con_{$fixedmenu.id}" node-id="{$fixedmenu.id}" aria-controls="{$fixedmenu.id}" role="tab" data-toggle="tab"><i class="fa fa-dashboard fa-fw"></i> <span>{$fixedmenu.title}</span> <span class="pull-right-container"> </span></a></li>
+            <li role="presentation" id="tab_{$fixedmenu.id|htmlentities}" class="{:$referermenu?'':'active'}"><a href="#con_{$fixedmenu.id|htmlentities}" node-id="{$fixedmenu.id|htmlentities}" aria-controls="{$fixedmenu.id|htmlentities}" role="tab" data-toggle="tab"><i class="fa fa-dashboard fa-fw"></i> <span>{$fixedmenu.title|htmlentities}</span> <span class="pull-right-container"> </span></a></li>
             {/if}
             {if $referermenu}
-            <li role="presentation" id="tab_{$referermenu.id}" class="active"><a href="#con_{$referermenu.id}" node-id="{$referermenu.id}" aria-controls="{$referermenu.id}" role="tab" data-toggle="tab"><i class="fa fa-list fa-fw"></i> <span>{$referermenu.title}</span> <span class="pull-right-container"> </span></a> <i class="close-tab fa fa-remove"></i></li>
+            <li role="presentation" id="tab_{$referermenu.id|htmlentities}" class="active"><a href="#con_{$referermenu.id|htmlentities}" node-id="{$referermenu.id|htmlentities}" aria-controls="{$referermenu.id|htmlentities}" role="tab" data-toggle="tab"><i class="fa fa-list fa-fw"></i> <span>{$referermenu.title|htmlentities}</span> <span class="pull-right-container"> </span></a> <i class="close-tab fa fa-remove"></i></li>
             {/if}
         </ul>
     </div>

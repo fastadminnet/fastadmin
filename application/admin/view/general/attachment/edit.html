@@ -8,7 +8,7 @@
             <select name="row[category]" class="form-control">
                 <option value="">{:__('Please select category')}</option>
                 {foreach name="categoryList" id="item"}
-                <option value="{$key}" {if $key==$row.category}selected{/if}>{$item}</option>
+                <option value="{$key|htmlentities}" {if $key==$row.category}selected{/if}>{$item|htmlentities}</option>
                 {/foreach}
             </select>
         </div>

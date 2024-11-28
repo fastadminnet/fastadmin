@@ -15,7 +15,7 @@
                 <select name="category-third" id="category-third" class="form-control selectpicker">
                     <option value="">{:__('Please select category')}</option>
                     {foreach name="categoryList" id="item"}
-                    <option value="{$key}">{$item}</option>
+                    <option value="{$key|htmlentities}">{$item|htmlentities}</option>
                     {/foreach}
                 </select>
             </div>
@@ -42,7 +42,7 @@
                 <select name="category-local" id="category-local" class="form-control selectpicker">
                     <option value="">{:__('Please select category')}</option>
                     {foreach name="categoryList" id="item"}
-                    <option value="{$key}">{$item}</option>
+                    <option value="{$key|htmlentities}">{$item|htmlentities}</option>
                     {/foreach}
                 </select>
             </div>

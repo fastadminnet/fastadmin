@@ -10,7 +10,7 @@
 
             <select id="c-type" data-rule="required" class="form-control selectpicker" name="row[type]">
                 {foreach name="typeList" item="vo"}
-                <option value="{$key}" {in name="key" value=""}selected{/in}>{$vo}</option>
+                <option value="{$key|htmlentities}" {in name="key" value=""}selected{/in}>{$vo|htmlentities}</option>
                 {/foreach}
             </select>
 
@@ -22,7 +22,7 @@
 
             <select id="c-pid" data-rule="required" class="form-control selectpicker" name="row[pid]">
                 {foreach name="parentList" item="vo"}
-                <option data-type="{$vo.type}" value="{$key}" {in name="key" value=""}selected{/in}>{$vo.name}</option>
+                <option data-type="{$vo.type|htmlentities}" value="{$key|htmlentities}" {in name="key" value=""}selected{/in}>{$vo.name|htmlentities}</option>
                 {/foreach}
             </select>
 
@@ -46,7 +46,7 @@
 
             <select  id="c-flag" class="form-control selectpicker" multiple="" name="row[flag][]">
                 {foreach name="flagList" item="vo"}
-                <option value="{$key}" {in name="key" value=""}selected{/in}>{$vo}</option>
+                <option value="{$key|htmlentities}" {in name="key" value=""}selected{/in}>{$vo|htmlentities}</option>
                 {/foreach}
             </select>
 

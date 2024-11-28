@@ -7,10 +7,10 @@
 
 <link rel="shortcut icon" href="__CDN__/assets/img/favicon.ico" />
 <!-- Loading Bootstrap -->
-<link href="__CDN__/assets/css/backend{$Think.config.app_debug?'':'.min'}.css?v={$Think.config.site.version}" rel="stylesheet">
+<link href="__CDN__/assets/css/backend{$Think.config.app_debug?'':'.min'}.css?v={$Think.config.site.version|htmlentities}" rel="stylesheet">
 
 {if $Think.config.fastadmin.adminskin}
-<link href="__CDN__/assets/css/skins/{$Think.config.fastadmin.adminskin}.css?v={$Think.config.site.version}" rel="stylesheet">
+<link href="__CDN__/assets/css/skins/{$Think.config.fastadmin.adminskin|htmlentities}.css?v={$Think.config.site.version|htmlentities}" rel="stylesheet">
 {/if}
 
 <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->

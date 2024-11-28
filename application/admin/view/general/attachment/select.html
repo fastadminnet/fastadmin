@@ -9,7 +9,7 @@
         <ul class="nav nav-tabs" data-field="category">
             <li class="active"><a href="#t-all" data-value="" data-toggle="tab">{:__('All')}</a></li>
             {foreach name="categoryList" item="vo"}
-            <li><a href="#t-{$key}" data-value="{$key}" data-toggle="tab">{$vo}</a></li>
+            <li><a href="#t-{$key|htmlentities}" data-value="{$key|htmlentities}" data-toggle="tab">{$vo|htmlentities}</a></li>
             {/foreach}
             {if stripos(request()->get('mimetype'),'image/')===false}
             <li class="pull-right dropdown filter-type">
@@ -17,7 +17,7 @@
                 <ul class="dropdown-menu text-left" role="menu">
                     <li class="active"><a href="javascript:" data-value="">{:__('All')}</a></li>
                     {foreach name="mimetypeList" id="item"}
-                    <li><a href="javascript:" data-value="{$key}">{$item}</a></li>
+                    <li><a href="javascript:" data-value="{$key|htmlentities}">{$item|htmlentities}</a></li>
                     {/foreach}
                 </ul>
             </li>

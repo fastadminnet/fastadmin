@@ -26,7 +26,7 @@
                                 </ol>
                                 <ol class="breadcrumb pull-right">
                                     {foreach $breadcrumb as $vo}
-                                    <li><a href="javascript:;" data-url="{$vo.url}">{$vo.title}</a></li>
+                                    <li><a href="javascript:;" data-url="{$vo.url|htmlentities}">{$vo.title|htmlentities}</a></li>
                                     {/foreach}
                                 </ol>
                             </div>

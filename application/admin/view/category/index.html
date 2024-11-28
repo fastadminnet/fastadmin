@@ -4,7 +4,7 @@
         <ul class="nav nav-tabs">
             <li class="active"><a href="#all" data-toggle="tab">{:__('All')}</a></li>
             {foreach name="typeList" item="vo"}
-                <li><a href="#{$key}" data-toggle="tab">{$vo}</a></li>
+                <li><a href="#{$key|htmlentities}" data-toggle="tab">{$vo|htmlentities}</a></li>
             {/foreach}
         </ul>
 

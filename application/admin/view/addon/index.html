@@ -136,7 +136,7 @@
                     <div class="form-group">
                         <label class="control-label">{:__('Version')}</label>
                         <input type="hidden" class="operate" data-name="faversion" value="="/>
-                        <input class="form-control" name="faversion" type="text" value="{$Think.config.fastadmin.version}">
+                        <input class="form-control" name="faversion" type="text" value="{$Think.config.fastadmin.version|htmlentities}">
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-3">

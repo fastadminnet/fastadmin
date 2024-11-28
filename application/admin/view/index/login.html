@@ -81,7 +81,7 @@
     {if $background}
         <style type="text/css">
             body{
-                background-image: url('{$background}');
+                background-image: url('{$background|htmlentities}');
             }
         </style>
     {/if}
@@ -116,7 +116,7 @@
                         {if $Think.config.fastadmin.login_captcha}
                         <div class="input-group">
                             <div class="input-group-addon"><span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span></div>
-                            <input type="text" name="captcha" class="form-control" placeholder="{:__('Captcha')}" data-rule="{:__('Captcha')}:required;length({$Think.config.captcha.length})" autocomplete="off"/>
+                            <input type="text" name="captcha" class="form-control" placeholder="{:__('Captcha')}" data-rule="{:__('Captcha')}:required;length({$Think.config.captcha.length|htmlentities})" autocomplete="off"/>
                             <span class="input-group-addon" style="padding:0;border:none;cursor:pointer;">
                                     <img src="{:rtrim('__PUBLIC__', '/')}/index.php?s=/captcha" width="100" height="30" onclick="this.src = '{:rtrim('__PUBLIC__', '/')}/index.php?s=/captcha&r=' + Math.random();"/>
                             </span>
