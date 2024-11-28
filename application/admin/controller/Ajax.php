@@ -175,18 +175,18 @@ class Ajax extends Backend
             $weighdata[$v[$prikey]] = $v[$field];
         }
         $position = array_search($changeid, $ids);
-        $desc_id = isset($sour[$position]) ? $sour[$position] : end($sour);    //移动到目标的ID值,取出所处改变前位置的值
+        $desc_id = $sour[$position] ?? end($sour);    //移动到目标的ID值,取出所处改变前位置的值
         $sour_id = $changeid;
-        $weighids = array();
+        $weighids = [];
         $temp = array_values(array_diff_assoc($ids, $sour));
         foreach ($temp as $m => $n) {
             if ($n == $sour_id) {
                 $offset = $desc_id;
             } else {
                 if ($sour_id == $temp[0]) {
-                    $offset = isset($temp[$m + 1]) ? $temp[$m + 1] : $sour_id;
+                    $offset = $temp[$m + 1] ?? $sour_id;
                 } else {
-                    $offset = isset($temp[$m - 1]) ? $temp[$m - 1] : $sour_id;
+                    $offset = $temp[$m - 1] ?? $sour_id;
                 }
             }
             if (!isset($weighdata[$offset])) {

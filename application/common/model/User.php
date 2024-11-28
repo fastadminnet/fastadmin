@@ -7,6 +7,10 @@ use think\Model;
 
 /**
  * 会员模型
+ * @method static mixed getByUsername($str) 通过用户名查询用户
+ * @method static mixed getByNickname($str) 通过昵称查询用户
+ * @method static mixed getByMobile($str) 通过手机查询用户
+ * @method static mixed getByEmail($str) 通过邮箱查询用户
  */
 class User extends Model
 {
