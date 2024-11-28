@@ -157,7 +157,7 @@
             } else {
                 key = isArray ? value : key;
             }
-            optionList.push(sprintf("<option value='" + key + "' %s>" + value + "</option>", key == vObjCol.defaultValue ? 'selected' : ''));
+            optionList.push(sprintf("<option value='" + Fast.api.escape(key) + "' %s>" + Fast.api.escape(value) + "</option>", key == vObjCol.defaultValue ? 'selected' : ''));
         });
         return optionList;
     };

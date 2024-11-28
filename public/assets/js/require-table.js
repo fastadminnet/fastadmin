@@ -866,6 +866,15 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                         value = Fast.api.escape(customValue);
                         field = this.customField;
                     }
+                    if (typeof that.searchList === 'object' && typeof that.searchList.then === 'function') {
+                        $.when(that.searchList).done(function (ret) {
+                            if (ret.data && ret.data.searchlist && $.isArray(ret.data.searchlist)) {
+                                that.searchList = ret.data.searchlist;
+                            } else if (ret.constructor === Array || ret.constructor === Object) {
+                                that.searchList = ret;
+                            }
+                        })
+                    }
                     if (typeof that.searchList === 'object' && typeof that.custom === 'undefined') {
                         var i = 0;
                         var searchValues = Object.values(colorArr);
@@ -879,7 +888,7 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
 
                     //渲染Flag
                     var html = [];
-                    var arr = value != '' ? value.split(',') : [];
+                    var arr = $.isArray(value) ? value : value != '' ? value.split(',') : [];
                     var color, display, label;
                     $.each(arr, function (i, value) {
                         value = value == null || value.length === 0 ? '' : value.toString();
