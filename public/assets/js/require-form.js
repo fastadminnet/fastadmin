@@ -102,6 +102,7 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                 //绑定select元素事件
                 if ($(".selectpicker", form).length > 0) {
                     require(['bootstrap-select', 'bootstrap-select-lang'], function () {
+                        $.fn.selectpicker.Constructor.BootstrapVersion = '3';
                         $('.selectpicker', form).selectpicker();
                         $(form).on("reset", function () {
                             setTimeout(function () {
@@ -294,6 +295,9 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                                     var url = Config.upload.fullmode ? Fast.api.cdnurl(data.url) : data.url;
                                     $("#" + input_id).val(url).trigger("change").trigger("validate");
                                 }
+
+                                // 触发选择文件自定义事件
+                                button.trigger("fa.event.selectedfile", data);
                             }
                         });
                         return false;
@@ -567,7 +571,9 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                         }
                     };
                     // @formatter:on
+                    var $disabledElements = form.find(':disabled').removeAttr('disabled');
                     var dataArr = form.serializeArray(), dataObj = {}, fieldName, fieldValue;
+                    $disabledElements.attr('disabled', 'disabled');
                     $(dataArr).each(function (i, field) {
                         fieldName = field.name;
                         fieldValue = field.value;

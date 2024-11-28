@@ -30,6 +30,7 @@ return [
     'You\'ve logged in, do not login again'                      => '你已经登录，无需重复登录',
     'Username or password can not be empty'                      => '用户名密码不能为空',
     'Username or password is incorrect'                          => '用户名或密码不正确',
+    'Username must be 3 to 30 characters'                        => '用户名只能由3-30位数字、字母、下划线组合',
     'Username is incorrect'                                      => '用户名不正确',
     'Password is incorrect'                                      => '密码不正确',
     'Admin is forbidden'                                         => '管理员已经被禁止登录',

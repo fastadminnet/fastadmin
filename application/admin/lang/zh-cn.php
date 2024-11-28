@@ -7,6 +7,7 @@ return [
     'Mobile'                                                => '手机',
     'Email'                                                 => '邮箱',
     'Password'                                              => '密码',
+    'Mobile'                                                => '手机号',
     'Sign up'                                               => '注 册',
     'Sign in'                                               => '登 录',
     'Sign out'                                              => '退 出',

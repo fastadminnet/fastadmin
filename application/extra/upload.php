@@ -27,6 +27,10 @@ return [
      */
     'multiple'  => false,
     /**
+     * 上传超时时长，这里仅用于JS上传超时控制
+     */
+    'timeout'  => 60000,
+    /**
      * 是否支持分片上传
      */
     'chunking'  => false,

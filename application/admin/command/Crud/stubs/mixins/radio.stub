@@ -1,7 +1,7 @@
 
     public function {%methodName%}($value, $data)
     {
-        $value = $value ? $value : (isset($data['{%field%}']) ? $data['{%field%}'] : '');
+        $value = $value ?: ($data['{%field%}'] ?? '');
         $list = $this->{%listMethodName%}();
-        return isset($list[$value]) ? $list[$value] : '';
+        return $list[$value] ?? '';
     }

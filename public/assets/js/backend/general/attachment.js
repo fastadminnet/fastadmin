@@ -167,7 +167,7 @@ define(['jquery', 'bootstrap', 'backend', 'form', 'table'], function ($, undefin
                         {
                             field: 'operate', title: __('Operate'), width: 85, events: {
                                 'click .btn-chooseone': function (e, value, row, index) {
-                                    Fast.api.close({url: row.url, multiple: multiple});
+                                    Fast.api.close($.extend({multiple: multiple}, row));
                                 },
                             }, formatter: function () {
                                 return '<a href="javascript:;" class="btn btn-danger btn-chooseone btn-xs"><i class="fa fa-check"></i> ' + __('Choose') + '</a>';

@@ -920,6 +920,7 @@ class Crud extends Command
                                 $replace = '\'{"custom[type]":"' . $table . '"}\'';
                             } elseif ($selectpageController == 'admin') {
                                 $attrArr['data-source'] = 'auth/admin/selectpage';
+                                $attrArr['data-field'] = 'nickname';
                             } elseif ($selectpageController == 'user') {
                                 $attrArr['data-source'] = 'user/user/index';
                                 $attrArr['data-field'] = 'nickname';

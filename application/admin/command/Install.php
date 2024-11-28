@@ -214,22 +214,27 @@ class Install extends Command
         $adminFile = ROOT_PATH . 'public' . DS . 'admin.php';
 
         // 数据库配置文件
-        $dbConfigFile = APP_PATH . 'database.php';
-        $dbConfigText = @file_get_contents($dbConfigFile);
+        $envSampleFile = ROOT_PATH . '.env.sample';
+        $envFile = ROOT_PATH . '.env';
+        if (!file_exists($envFile)) {
+            if (!copy($envSampleFile, $envFile)) {
+                throw new Exception(__('Failed to copy %s to %s', '.env.sample', '.env'));
+            }
+        }
+
+        $envText = @file_get_contents($envFile);
+
         $callback = function ($matches) use ($mysqlHostname, $mysqlHostport, $mysqlUsername, $mysqlPassword, $mysqlDatabase, $mysqlPrefix) {
             $field = "mysql" . ucfirst($matches[1]);
             $replace = $$field;
-            if ($matches[1] == 'hostport' && $mysqlHostport == 3306) {
-                $replace = '';
-            }
-            return "'{$matches[1]}'{$matches[2]}=>{$matches[3]}Env::get('database.{$matches[1]}', '{$replace}'),";
+            return "{$matches[1]} = {$replace}";
         };
-        $dbConfigText = preg_replace_callback("/'(hostname|database|username|password|hostport|prefix)'(\s+)=>(\s+)Env::get\((.*)\)\,/", $callback, $dbConfigText);
+        $envText = preg_replace_callback("/(hostname|database|username|password|hostport|prefix)\s*=\s*(.*)/", $callback, $envText);
 
         // 检测能否成功写入数据库配置
-        $result = @file_put_contents($dbConfigFile, $dbConfigText);
+        $result = @file_put_contents($envFile, $envText);
         if (!$result) {
-            throw new Exception(__('The current permissions are insufficient to write the file %s', 'application/database.php'));
+            throw new Exception(__('The current permissions are insufficient to write the file %s', '.env'));
         }
 
         // 设置新的Token随机密钥key
@@ -244,7 +249,7 @@ class Install extends Command
             throw new Exception(__('The current permissions are insufficient to write the file %s', 'application/config.php'));
         }
 
-        $avatar = request()->domain() . '/assets/img/avatar.png';
+        $avatar = '/assets/img/avatar.png';
         // 变更默认管理员密码
         $adminPassword = $adminPassword ? $adminPassword : Random::alnum(8);
         $adminEmail = $adminEmail ? $adminEmail : "admin@admin.com";

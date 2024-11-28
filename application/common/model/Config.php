@@ -219,7 +219,7 @@ class Config extends Model
         }
         file_put_contents(
             CONF_PATH . 'extra' . DS . 'site.php',
-            '<?php' . "\n\nreturn " . var_export_short($config) . ";\n"
+            '<?php' . "\n\nreturn " . var_export($config, true) . ";\n"
         );
         return true;
     }

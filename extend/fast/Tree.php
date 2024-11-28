@@ -325,7 +325,7 @@ class Tree
                     '@url'       => $childdata || !isset($value['@url']) ? "javascript:;" : $value['@url'],
                     '@addtabs'   => $childdata || !isset($value['@url']) ? "" : (stripos($value['@url'], "?") !== false ? "&" : "?") . "ref=addtabs",
                     '@caret'     => ($childdata && (!isset($value['@badge']) || !$value['@badge']) ? '<i class="fa fa-angle-left"></i>' : ''),
-                    '@badge'     => isset($value['@badge']) ? $value['@badge'] : '',
+                    '@badge'     => $value['@badge'] ?? '',
                     '@class'     => ($selected ? ' active' : '') . ($disabled ? ' disabled' : '') . ($childdata ? ' treeview' . (config('fastadmin.show_submenu') ? ' treeview-open' : '') : ''),
                 );
                 $str .= strtr($nstr, $value);
@@ -422,7 +422,7 @@ class Tree
     {
         $arr = [];
         foreach ($data as $k => $v) {
-            $childlist = isset($v['childlist']) ? $v['childlist'] : [];
+            $childlist = $v['childlist'] ?? [];
             unset($v['childlist']);
             $v[$field] = $v['spacer'] . ' ' . $v[$field];
             $v['haschild'] = $childlist ? 1 : 0;

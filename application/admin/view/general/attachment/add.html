@@ -46,9 +46,9 @@
                     {/foreach}
                 </select>
             </div>
-            <button type="button" id="faupload-local" class="btn btn-primary faupload" data-input-id="c-local" data-multiple="true" data-preview-id="p-local" data-url="{:url('ajax/upload')}"><i class="fa fa-upload"></i> {:__("Upload to local")}</button>
+            <button type="button" id="faupload-local" class="btn btn-primary faupload" data-input-id="c-local" data-multiple="true" data-preview-id="p-local" data-url="{:url('ajax/upload')}" data-cdnurl=""><i class="fa fa-upload"></i> {:__("Upload to local")}</button>
             {if $config.upload.chunking}
-            <button type="button" id="faupload-local-chunking" class="btn btn-primary faupload" data-chunking="true" data-maxsize="1gb" data-input-id="c-local" data-multiple="true" data-preview-id="p-local" data-url="{:url('ajax/upload')}"><i class="fa fa-upload"></i> {:__("Upload to local by chunk")}</button>
+            <button type="button" id="faupload-local-chunking" class="btn btn-primary faupload" data-chunking="true" data-maxsize="1gb" data-input-id="c-local" data-multiple="true" data-preview-id="p-local" data-url="{:url('ajax/upload')}" data-cdnurl=""><i class="fa fa-upload"></i> {:__("Upload to local by chunk")}</button>
             {/if}
         </div>
     </div>

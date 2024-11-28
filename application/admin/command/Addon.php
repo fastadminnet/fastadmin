@@ -201,16 +201,20 @@ class Addon extends Command
                     new \RecursiveDirectoryIterator($addonDir), \RecursiveIteratorIterator::LEAVES_ONLY
                 );
 
+                $addonDir = str_replace(DS, '/', $addonDir);
+                $excludeDirRegex = "/\/(\.git|\.svn|\.vscode|\.idea|unpackage)\//i";
                 foreach ($files as $name => $file) {
-                    if (!$file->isDir()) {
-                        $filePath = $file->getRealPath();
-                        $relativePath = str_replace(DS, '/', substr($filePath, strlen($addonDir)));
-                        if (!in_array($file->getFilename(), ['.git', '.DS_Store', 'Thumbs.db'])) {
-                            $zip->addFile($filePath, $relativePath);
-                        }
+                    $filePath = str_replace(DS, '/', $file->getPathname());
+                    if ($file->isDir() || preg_match($excludeDirRegex, $filePath))
+                        continue;
+                    $relativePath = substr($filePath, strlen($addonDir));
+                    if (!in_array($file->getFilename(), ['.DS_Store', 'Thumbs.db'])) {
+                        $zip->addFile($filePath, $relativePath);
                     }
                 }
+
                 $zip->close();
+                $output->info("Package Resource Path:" . $addonFile);
                 $output->info("Package Successed!");
                 break;
             case 'move':

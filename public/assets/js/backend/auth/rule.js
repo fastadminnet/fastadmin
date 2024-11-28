@@ -180,7 +180,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'template'], function
                 var iconfunc = function () {
                     Layer.open({
                         type: 1,
-                        area: ['99%', '98%'], //宽高
+                        area: ['80%', '80%'], //宽高
                         content: Template('chooseicontpl', {iconlist: iconlist})
                     });
                 };
@@ -192,8 +192,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'template'], function
                 });
                 $(document).on('click', ".btn-search-icon", function () {
                     if (iconlist.length == 0) {
-                        $.get(Config.site.cdnurl + "/assets/libs/font-awesome/less/variables.less", function (ret) {
-                            var exp = /fa-var-(.*):/ig;
+                        $.get(Config.site.cdnurl + "/assets/libs/font-awesome/css/font-awesome.css", function (ret) {
+                            var exp = /fa-(.*):before/ig;
                             var result;
                             while ((result = exp.exec(ret)) != null) {
                                 iconlist.push(result[1]);
