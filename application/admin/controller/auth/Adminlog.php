@@ -18,21 +18,13 @@ class Adminlog extends Backend
      * @var \app\admin\model\AdminLog
      */
     protected $model = null;
-    protected $childrenGroupIds = [];
     protected $childrenAdminIds = [];
 
     public function _initialize()
     {
         parent::_initialize();
         $this->model = model('AdminLog');
-
         $this->childrenAdminIds = $this->auth->getChildrenAdminIds(true);
-        $this->childrenGroupIds = $this->auth->getChildrenGroupIds(true);
-
-        $groupName = AuthGroup::where('id', 'in', $this->childrenGroupIds)
-            ->column('id,name');
-
-        $this->view->assign('groupdata', $groupName);
     }
 
     /**
