@@ -90,14 +90,15 @@ class Builder
 
         $typeArr = [
             'integer' => 'number',
-            'file' => 'file',
+            'file'    => 'file',
         ];
         $paramslist = array();
         foreach ($docs['ApiParams'] as $params) {
-            $inputtype = $params['type'] && isset($typeArr[$params['type']]) ? $typeArr[$params['type']] : ($params['name'] == 'password' ? 'password' : 'text');
+            $type = strtolower($params['type'] ?? 'string');
+            $inputtype = $typeArr[$type] ?? ($params['name'] == 'password' ? 'password' : 'text');
             $tr = array(
                 'name'        => $params['name'],
-                'type'        => $params['type'] ?? 'string',
+                'type'        => $type,
                 'inputtype'   => $inputtype,
                 'sample'      => $params['sample'] ?? '',
                 'required'    => $params['required'] ?? true,
@@ -162,7 +163,7 @@ class Builder
             'OPTIONS' => 'label-info'
         );
 
-        return isset($labes[$method]) ? $labes[$method] : $labes['GET'];
+        return $labes[$method] ?? $labes['GET'];
     }
 
     public function parse()
@@ -230,7 +231,7 @@ class Builder
         foreach ($docsList as $index => &$methods) {
             $methodSectorArr = [];
             foreach ($methods as $name => $method) {
-                $methodSectorArr[$name] = isset($method['weigh']) ? $method['weigh'] : 0;
+                $methodSectorArr[$name] = $method['weigh'] ?? 0;
             }
             arsort($methodSectorArr);
             $methods = array_merge(array_flip(array_keys($methodSectorArr)), $methods);
@@ -253,7 +254,6 @@ class Builder
     public function render($template, $vars = [])
     {
         $docsList = $this->parse();
-
         return $this->view->display(file_get_contents($template), array_merge($vars, ['docsList' => $docsList]));
     }
 }

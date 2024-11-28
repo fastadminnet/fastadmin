@@ -80,7 +80,7 @@ class Common extends Api
     /**
      * 上传文件
      * @ApiMethod (POST)
-     * @ApiParams (name="file", type="File", required=true, description="文件流")
+     * @ApiParams (name="file", type="file", required=true, description="文件流")
      */
     public function upload()
     {

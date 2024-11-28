@@ -154,8 +154,8 @@
             <div id="sidebar">
                 <div class="list-group panel">
                     {foreach name="docsList" id="docs"}
-                    <a href="#{$key}" class="list-group-item" data-toggle="collapse" data-parent="#sidebar">{$key}  <i class="fa fa-caret-down"></i></a>
-                    <div class="child collapse" id="{$key}">
+                    <a href="#{$key|md5|substr=0,8}" class="list-group-item" data-toggle="collapse" data-parent="#sidebar">{$key}  <i class="fa fa-caret-down"></i></a>
+                    <div class="child collapse" id="{$key|md5|substr=0,8}">
                         {foreach name="docs" id="api" }
                         <a href="javascript:;" data-id="{$api.id}" class="list-group-item">{$api.title}
                             <span class="tag">
