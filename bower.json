@@ -27,7 +27,7 @@
     "fastadmin-cxselect": "~1.4.0",
     "fastadmin-dragsort": "~1.0.0",
     "fastadmin-addtabs": "~1.0.8",
-    "fastadmin-selectpage": "~1.0.12",
+    "fastadmin-selectpage": "^1.0.12",
     "fastadmin-layer": "~3.5.1",
     "bootstrap-slider": "*"
   }
