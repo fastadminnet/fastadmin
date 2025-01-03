@@ -124,7 +124,7 @@ class Date
      */
     public static function human($remote, $local = null)
     {
-        $time_diff = (is_null($local) || $local ? time() : $local) - $remote;
+        $time_diff = (is_null($local) ? time() : $local) - $remote;
         $tense = $time_diff < 0 ? 'after' : 'ago';
         $time_diff = abs($time_diff);
         $chunks = [
@@ -146,7 +146,7 @@ class Date
                 break;
             }
         }
-        return __("%d $name%s $tense", $count, ($count > 1 ? 's' : ''));
+        return __("%d $name%s $tense", [$count, ($count > 1 ? 's' : '')]);
     }
 
     /**
