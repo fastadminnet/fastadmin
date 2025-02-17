@@ -302,7 +302,7 @@ return [
         //允许跨域的域名,多个以,分隔
         'cors_request_domain'   => 'localhost,127.0.0.1',
         //版本号
-        'version'               => '1.5.2.20240906',
+        'version'               => '1.5.3.20250217',
         //API接口地址
         'api_url'               => 'https://api.fastadmin.net',
     ],
