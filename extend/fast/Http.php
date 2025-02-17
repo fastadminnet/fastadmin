@@ -11,11 +11,11 @@ class Http
     /**
      * 发送一个POST请求
      * @param string $url     请求URL
-     * @param array $params  请求参数
-     * @param array $options 扩展参数
+     * @param array  $params  请求参数
+     * @param array  $options 扩展参数
      * @return mixed|string
      */
-    public static function post(string $url, array $params = [], array $options = [])
+    public static function post($url, $params = [], $options = [])
     {
         $req = self::sendRequest($url, $params, 'POST', $options);
         return $req['ret'] ? $req['msg'] : '';
@@ -24,11 +24,11 @@ class Http
     /**
      * 发送一个GET请求
      * @param string $url     请求URL
-     * @param array $params  请求参数
-     * @param array $options 扩展参数
+     * @param array  $params  请求参数
+     * @param array  $options 扩展参数
      * @return mixed|string
      */
-    public static function get(string $url, array $params = [], array $options = [])
+    public static function get($url, $params = [], $options = [])
     {
         $req = self::sendRequest($url, $params, 'GET', $options);
         return $req['ret'] ? $req['msg'] : '';
@@ -42,7 +42,7 @@ class Http
      * @param mixed  $options CURL的参数
      * @return array
      */
-    public static function sendRequest(string $url, $params = [], string $method = 'POST', $options = []): array
+    public static function sendRequest($url, $params = [], $method = 'POST', $options = [])
     {
         $method = strtoupper($method);
         $protocol = substr($url, 0, 5);
@@ -108,7 +108,7 @@ class Http
      * @param string $method 请求的方法
      * @return boolean TRUE
      */
-    public static function sendAsyncRequest(string $url, $params = [], string $method = 'POST'): bool
+    public static function sendAsyncRequest($url, $params = [], $method = 'POST')
     {
         $method = strtoupper($method);
         $method = $method == 'POST' ? 'POST' : 'GET';
@@ -157,10 +157,10 @@ class Http
     /**
      * 发送文件到客户端
      * @param string $file
-     * @param bool $deleteAfterSend
-     * @param bool $exitAfterSend
+     * @param bool   $delaftersend
+     * @param bool   $exitaftersend
      */
-    public static function sendToBrowser(string $file, bool $deleteAfterSend = true, bool $exitAfterSend = true)
+    public static function sendToBrowser($file, $delaftersend = true, $exitaftersend = true)
     {
         if (file_exists($file) && is_readable($file)) {
             header('Content-Description: File Transfer');
@@ -174,10 +174,10 @@ class Http
             ob_clean();
             flush();
             readfile($file);
-            if ($deleteAfterSend) {
+            if ($delaftersend) {
                 unlink($file);
             }
-            if ($exitAfterSend) {
+            if ($exitaftersend) {
                 exit;
             }
         }
