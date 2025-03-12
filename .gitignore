@@ -6,6 +6,7 @@
 /public/assets/libs/
 /public/assets/addons/*
 /public/uploads/*
+.DS_Store
 .idea
 composer.lock
 *.log
