@@ -54,7 +54,6 @@ class Profile extends Backend
                 $params,
                 array_flip(array('email', 'nickname', 'password', 'avatar'))
             ));
-            unset($v);
             if (!Validate::is($params['email'], "email")) {
                 $this->error(__("Please input correct email"));
             }
