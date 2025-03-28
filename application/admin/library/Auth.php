@@ -327,10 +327,7 @@ class Auth extends \fast\Auth
     {
         //取出当前管理员所有的分组
         $groups = $this->getGroups();
-        $groupIds = [];
-        foreach ($groups as $k => $v) {
-            $groupIds[] = $v['id'];
-        }
+        $groupIds = array_column($groups, 'id');
         $originGroupIds = $groupIds;
         foreach ($groups as $k => $v) {
             if (in_array($v['pid'], $originGroupIds)) {
@@ -371,12 +368,8 @@ class Auth extends \fast\Auth
         $childrenAdminIds = [];
         if (!$this->isSuperAdmin()) {
             $groupIds = $this->getChildrenGroupIds(false);
-            $authGroupList = \app\admin\model\AuthGroupAccess::field('uid,group_id')
-                ->where('group_id', 'in', $groupIds)
-                ->select();
-            foreach ($authGroupList as $k => $v) {
-                $childrenAdminIds[] = $v['uid'];
-            }
+            $childrenAdminIds = \app\admin\model\AuthGroupAccess::where('group_id', 'in', $groupIds)
+                ->column('uid');
         } else {
             //超级管理员拥有所有人的权限
             $childrenAdminIds = Admin::column('id');
