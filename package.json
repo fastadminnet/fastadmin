@@ -1,0 +1,110 @@
+{
+  "name": "fastadmin",
+  "version": "1.6.0",
+  "description": "FastAdmin是一款基于ThinkPHP+Bootstrap的极速后台开发框架。",
+  "scripts": {
+    "build": "grunt"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitee.com:karson/fastadmin.git"
+  },
+  "dependencies": {
+    "bootstrap": "^3.4.1",
+    "bootstrap-daterangepicker": "~2.1.25",
+    "bootstrap-select": "^1.13.18",
+    "bootstrap-slider": "^11.0.2",
+    "eonasdan-bootstrap-datetimepicker": "^4.17.49",
+    "cxselect": "^1.4.0",
+    "fastadmin-addtabs": "^1.0.8",
+    "fastadmin-arttemplate": "^3.1.4",
+    "fastadmin-bootstraptable": "^1.11.12",
+    "fastadmin-citypicker": "^1.3.6",
+    "fastadmin-cxselect": "npm:cxselect@^1.4.0",
+    "fastadmin-dragsort": "^1.0.5",
+    "fastadmin-layer": "^3.5.6",
+    "fastadmin-selectpage": "^1.1.1",
+    "fastadmin-nicevalidator": "^1.1.6",
+    "art-template": "npm:fastadmin-arttemplate@^3.1.4",
+    "bootstrap-table": "npm:fastadmin-bootstraptable@^1.11.12",
+    "nice-validator": "npm:fastadmin-nicevalidator@^1.1.6",
+    "font-awesome": "^4.6.1",
+    "jquery": "^3.7.1",
+    "jquery-slimscroll": "~1.3.8",
+    "jquery.cookie": "~1.4.1",
+    "jstree": "~3.3.2",
+    "moment": "^2.10",
+    "require-css": "~0.1.8",
+    "sortablejs": "^1.12.0",
+    "tableexport.jquery.plugin": "^1.20.0",
+    "toastr": "~2.1.3"
+  },
+  "author": "FastAdmin",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "grunt": "^1.5.3",
+    "grunt-contrib-clean": "^2.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "jsonminify": "^0.4.2",
+    "parse-config-file": "^1.0.4"
+  },
+  "overrides": {
+    "canvg": {
+      "xmldom": "^0.7.0"
+    },
+    "tableexport.jquery.plugin": {
+      "xlsx": "npm:@e965/xlsx@^0.20.3"
+    },
+    "eonasdan-bootstrap-datetimepicker": {
+      "moment-timezone": "^0.5.35"
+    }
+  },
+  "dists": {
+    "art-template": "dist/**",
+    "bootstrap": "dist/**",
+    "bootstrap-daterangepicker": [
+      "daterangepicker.js",
+      "daterangepicker.css"
+    ],
+    "bootstrap-select": "dist/**",
+    "bootstrap-slider": [
+      "dist/**",
+      "*.css",
+      "*.js"
+    ],
+    "coloris": [
+      "dist/umd/**",
+      "dist/*.css"
+    ],
+    "eonasdan-bootstrap-datetimepicker": "build/**",
+    "fastadmin-addtabs": "*.js",
+    "fastadmin-bootstraptable": "dist/**",
+    "fastadmin-citypicker": "dist/**",
+    "fastadmin-cxselect": "js/**",
+    "fastadmin-dragsort": "*.js",
+    "fastadmin-layer": "dist/**",
+    "fastadmin-selectpage": "*",
+    "font-awesome": [
+      "css/**",
+      "fonts/**"
+    ],
+    "jquery": "dist/**",
+    "jquery-slimscroll": "*.js",
+    "jquery.cookie": "*.js",
+    "jstree": "dist/**",
+    "moment": [
+      "moment.js",
+      "locale/**"
+    ],
+    "nice-validator": "dist/**",
+    "require-css": "*.js",
+    "sortablejs": "*.js",
+    "tableexport.jquery.plugin": "tableExport.min.js",
+    "toastr": [
+      "*.less",
+      "*.css",
+      "*.js",
+      "build/**"
+    ]
+  }
+}
