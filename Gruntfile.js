@@ -14,7 +14,7 @@ module.exports = function (grunt) {
             compile: {
                 options: type === 'js' ? {
                     optimizeCss: "standard",
-                    optimize: "none",   //可使用uglify|closure|none
+                    optimize: "uglify",   //可使用uglify|closure|none
                     preserveLicenseComments: true,
                     removeCombined: false,
                     baseUrl: "./public/assets/js/",    //JS文件所在的基础目录
@@ -23,7 +23,7 @@ module.exports = function (grunt) {
                 } : {
                     optimizeCss: "default",
                     optimize: "uglify",   //可使用uglify|closure|none
-                    cssIn: "./public/assets/css/" + module + ".css",    //JS文件所在的基础目录
+                    cssIn: "./public/assets/css/" + module + ".css",    //CSS文件所在的基础目录
                     out: "./public/assets/css/" + module + ".min.css"  //目标文件
                 }
             }
@@ -125,7 +125,8 @@ module.exports = function (grunt) {
         // 兼容bower历史路径文件
         files = [...files,
             {src: nodeModulesDir + "/toastr/build/toastr.min.css", dest: "public/assets/libs/toastr/toastr.min.css"},
-            {src: nodeModulesDir + "/bootstrap-slider/dist/css/bootstrap-slider.css", dest: "public/assets/libs/bootstrap-slider/slider.css"}
+            {src: nodeModulesDir + "/bootstrap-slider/dist/css/bootstrap-slider.css", dest: "public/assets/libs/bootstrap-slider/slider.css"},
+            {expand: true, cwd: nodeModulesDir + "/bootstrap-slider/dist", src: ["*.js"], dest: "public/assets/libs/bootstrap-slider/"}
         ]
 
         grunt.config.set('copy.main.files', files);
