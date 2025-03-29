@@ -55,9 +55,9 @@ https://demo.fastadmin.net
 
 问答社区: https://ask.fastadmin.net
 
-Github: https://github.com/karsonzhang/fastadmin
+Github: https://github.com/fastadminnet/fastadmin
 
-Gitee: https://gitee.com/karson/fastadmin
+Gitee: https://gitee.com/fastadminnet/fastadmin
 
 ## 特别鸣谢
 

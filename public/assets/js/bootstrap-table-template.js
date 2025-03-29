@@ -4,7 +4,7 @@
  * @author: karson
  * @version: v0.0.1
  *
- * @update 2017-06-24 <http://github.com/karsonzhang/fastadmin>
+ * @update 2017-06-24 <http://github.com/fastadminnet/fastadmin>
  */
 
 !function ($) {
