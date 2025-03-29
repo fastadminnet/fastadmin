@@ -788,6 +788,7 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                     if (typeof this.custom !== 'undefined') {
                         custom = $.extend(custom, this.custom);
                     }
+                    value = row[this.field] || value;
                     value = value == null || value.length === 0 ? '' : value.toString();
                     var keys = typeof this.searchList === 'object' ? Object.keys(this.searchList) : [];
                     var index = keys.indexOf(value);
@@ -800,6 +801,8 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                     if (!display) {
                         display = __(value.charAt(0).toUpperCase() + value.slice(1));
                     }
+                    value = Fast.api.escape(value);
+                    display = Fast.api.escape(display);
                     var html = '<span class="text-' + color + '">' + (icon ? '<i class="' + icon + '"></i> ' : '') + display + '</span>';
                     if (this.operate != false) {
                         html = '<a href="javascript:;" class="searchit" data-toggle="tooltip" title="' + __('Click to search %s', display) + '" data-field="' + this.field + '" data-value="' + value + '">' + html + '</a>';
@@ -896,6 +899,8 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                             return true;
                         color = value && typeof colorArr[value] !== 'undefined' ? colorArr[value] : 'primary';
                         display = typeof that.searchList !== 'undefined' && typeof that.searchList[value] !== 'undefined' ? that.searchList[value] : __(value.charAt(0).toUpperCase() + value.slice(1));
+                        value = Fast.api.escape(value);
+                        display = Fast.api.escape(display);
                         label = '<span class="label label-' + color + '">' + display + '</span>';
                         if (that.operate) {
                             html.push('<a href="javascript:;" class="searchit" data-toggle="tooltip" title="' + __('Click to search %s', display) + '" data-field="' + field + '" data-value="' + value + '">' + label + '</a>');
