@@ -1,5 +1,5 @@
 {
-    "name": "karsonzhang/fastadmin",
+    "name": "fastadminnet/fastadmin",
     "description": "the fastest admin framework",
     "type": "project",
     "keywords": [
@@ -21,7 +21,7 @@
         "topthink/think-installer": "^1.0.14",
         "topthink/think-queue": "1.1.6",
         "topthink/think-helper": "^1.0.7",
-        "karsonzhang/fastadmin-addons": "~1.4.0",
+        "fastadminnet/fastadmin-addons": "~1.4.0",
         "overtrue/pinyin": "^3.0",
         "phpoffice/phpspreadsheet": "^1.29.1",
         "overtrue/wechat": "^4.6",
