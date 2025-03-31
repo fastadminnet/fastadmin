@@ -10,7 +10,7 @@
     "url": "git@gitee.com:karson/fastadmin.git"
   },
   "dependencies": {
-    "bootstrap": "^3.4.1",
+    "bootstrap": "npm:fastadmin-bootstrap@^3.4.1",
     "bootstrap-daterangepicker": "~2.1.25",
     "bootstrap-select": "^1.13.18",
     "bootstrap-slider": "^11.0.2",
