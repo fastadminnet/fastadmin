@@ -30,6 +30,7 @@
         <!-- Home tab content -->
         <div class="tab-pane active" id="control-sidebar-setting-tab">
             <h4 class="control-sidebar-heading">{:__('Layout Options')}</h4>
+            <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox" data-config="simplenav" {if $Think.config.fastadmin.simplenav}checked{/if} class="pull-right"> {:__('Simple Nav')}</label><p>{:__("Simple nav tips")}</p></div>
             <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox" data-config="multiplenav" {if $Think.config.fastadmin.multiplenav}checked{/if} class="pull-right"> {:__('Multiple Nav')}</label><p>{:__("Toggle the top menu state (multiple or single)")}</p></div>
             <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox" data-config="multipletab" {if $Think.config.fastadmin.multipletab}checked{/if} class="pull-right"> {:__('Multiple Tab')}</label><p>{:__("Always show multiple tab when multiple nav is set")}</p></div>
             <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox" data-layout="sidebar-collapse" class="pull-right"> {:__('Toggle Sidebar')}</label><p>{:__("Toggle the left sidebar's state (open or collapse)")}</p></div>

@@ -32,7 +32,7 @@ class Index extends Backend
      */
     public function index()
     {
-        $cookieArr = ['adminskin' => "/^skin\-([a-z\-]+)\$/i", 'multiplenav' => "/^(0|1)\$/", 'multipletab' => "/^(0|1)\$/", 'show_submenu' => "/^(0|1)\$/"];
+        $cookieArr = ['adminskin' => "/^skin\-([a-z\-]+)\$/i", 'simplenav' => "/^(0|1)\$/", 'multiplenav' => "/^(0|1)\$/", 'multipletab' => "/^(0|1)\$/", 'show_submenu' => "/^(0|1)\$/"];
         foreach ($cookieArr as $key => $regex) {
             $cookieValue = $this->request->cookie($key);
             if (!is_null($cookieValue) && preg_match($regex, $cookieValue)) {

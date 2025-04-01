@@ -18,7 +18,9 @@
 
         <!--如果不想在顶部显示角标,则给ul加上disable-top-badge类即可-->
         <ul class="nav nav-tabs nav-addtabs disable-top-badge hidden-xs" role="tablist">
+            {if !$Think.config.fastadmin.simplenav}
             {$navlist}
+            {/if}
         </ul>
 
         <div class="navbar-custom-menu">
