@@ -34,7 +34,9 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
             singleSelect: false, //是否启用单选
             showRefresh: false,
             showJumpto: true,
-            locale: Config.language === 'zh-cn' ? 'zh-CN' : 'en-US',
+            locale: Config.language === 'en' ? 'en-US' : Config.language.replace(/\-(\w+)$/, function (value) {
+                return value.toUpperCase();
+            }),
             showToggle: true,
             showColumns: true,
             pk: 'id',

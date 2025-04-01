@@ -19,7 +19,7 @@ require.config({
         'bootstrap-table-commonsearch': 'bootstrap-table-commonsearch',
         'bootstrap-table-template': 'bootstrap-table-template',
         //
-        // 以下的包从bower的libs目录加载
+        // 以下的包从libs目录加载
         'jquery': '../libs/jquery/dist/jquery.min',
         'bootstrap': '../libs/bootstrap/dist/js/bootstrap.min',
         'bootstrap-datetimepicker': '../libs/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min',
@@ -133,6 +133,15 @@ require(['jquery', 'bootstrap'], function ($, undefined) {
     paths['lang'] = Config.moduleurl + '/ajax/lang?callback=define&controllername=' + Config.controllername + '&lang=' + Config.language;
     // 避免目录冲突
     paths['backend/'] = 'backend/';
+    // 如果是英文，则移除默认的定义
+    if (Config.language === 'en') {
+        $.each(requirejs.s.contexts._.config.paths, function (key, value) {
+            if (key.match(/\-lang$/)) {
+                define(key);
+            }
+        });
+        define('moment/locale/zh-cn');
+    }
     require.config({paths: paths});
 
     // 初始化

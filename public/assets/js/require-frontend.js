@@ -19,7 +19,7 @@ require.config({
         'bootstrap-table-commonsearch': 'bootstrap-table-commonsearch',
         'bootstrap-table-template': 'bootstrap-table-template',
         //
-        // 以下的包从bower的libs目录加载
+        // 以下的包从libs目录加载
         'jquery': '../libs/jquery/dist/jquery.min',
         'bootstrap': '../libs/bootstrap/dist/js/bootstrap.min',
         'bootstrap-datetimepicker': '../libs/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min',
@@ -132,6 +132,15 @@ require(['jquery', 'bootstrap'], function ($, undefined) {
     paths['lang'] = Config.moduleurl + '/ajax/lang?callback=define&controllername=' + Config.controllername + '&lang=' + Config.language;
     // 避免目录冲突
     paths['frontend/'] = 'frontend/';
+    // 如果是英文，则移除默认的定义
+    if (Config.language === 'en') {
+        $.each(requirejs.s.contexts._.config.paths, function (key, value) {
+            if (key.match(/\-lang$/)) {
+                define(key);
+            }
+        });
+        define('moment/locale/zh-cn');
+    }
     require.config({paths: paths});
 
     // 初始化
@@ -141,7 +150,13 @@ require(['jquery', 'bootstrap'], function ($, undefined) {
                 //加载相应模块
                 if (Config.jsname) {
                     require([Config.jsname], function (Controller) {
-                        Controller[Config.actionname] != undefined && Controller[Config.actionname]();
+                        if (Controller.hasOwnProperty(Config.actionname)) {
+                            Controller[Config.actionname]();
+                        } else {
+                            if (Controller.hasOwnProperty("_empty")) {
+                                Controller._empty();
+                            }
+                        }
                     }, function (e) {
                         console.error(e);
                         // 这里可捕获模块加载的错误
