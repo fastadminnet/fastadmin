@@ -1691,3 +1691,20 @@ table.table-nowrap {
         }
     }
 }
+
+.btn-commonsearch {
+    transition: all 0.3s ease;
+
+    &.searching {
+        &, &:focus {
+            background: @component-active-bg;
+            color: @component-active-color;
+            border: none;
+        }
+
+        &:hover, &:active, &:active:hover {
+            background: darken(@component-active-bg, 5%);
+            color: @component-active-color;
+        }
+    }
+}
