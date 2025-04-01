@@ -4,7 +4,6 @@ return [
     'User id'                                               => '会员ID',
     'Username'                                              => '用户名',
     'Nickname'                                              => '昵称',
-    'Mobile'                                                => '手机',
     'Email'                                                 => '邮箱',
     'Password'                                              => '密码',
     'Mobile'                                                => '手机号',

@@ -33,7 +33,7 @@ class User extends Model
      */
     public function getUrlAttr($value, $data)
     {
-        return "/u/" . $data['id'];
+        return str_replace("{uid}", $data['id'], config('fastadmin.user_home_url') ?: "/u/{uid}");
     }
 
     /**
@@ -45,11 +45,9 @@ class User extends Model
     public function getAvatarAttr($value, $data)
     {
         if (!$value) {
-            //如果不需要启用首字母头像，请使用
-            //$value = '/assets/img/avatar.png';
-            $value = letter_avatar($data['nickname']);
+            $value = config('fastadmin.user_letter_avatar') ? letter_avatar($data['nickname']) : '/assets/img/avatar.png';
         }
-        return $value;
+        return cdnurl($value, true);
     }
 
     /**
@@ -124,9 +122,16 @@ class User extends Model
             if ($user && $score != 0) {
                 $before = $user->score;
                 $after = $user->score + $score;
-                $level = self::nextlevel($after);
+                $data = ['score' => $after];
+                $levelrule = config('fastadmin.user_level_rule') ?: '';
+                if (in_array($levelrule, ['auto', 'up'])) {
+                    $level = self::nextlevel($after);
+                    if ($levelrule == 'auto' || $level > $user['level']) {
+                        $data['level'] = $level;
+                    }
+                }
                 //更新会员信息
-                $user->save(['score' => $after, 'level' => $level]);
+                $user->save($data);
                 //写入日志
                 ScoreLog::create(['user_id' => $user_id, 'score' => $score, 'before' => $before, 'after' => $after, 'memo' => $memo]);
             }
@@ -143,9 +148,9 @@ class User extends Model
      */
     public static function nextlevel($score = 0)
     {
-        $lv = array(1 => 0, 2 => 30, 3 => 100, 4 => 500, 5 => 1000, 6 => 2000, 7 => 3000, 8 => 5000, 9 => 8000, 10 => 10000);
+        $levelDict = config('fastadmin.user_level_dict') ?: [];
         $level = 1;
-        foreach ($lv as $key => $value) {
+        foreach ($levelDict as $key => $value) {
             if ($score >= $value) {
                 $level = $key;
             }
