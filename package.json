@@ -1,6 +1,6 @@
 {
   "name": "fastadmin",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "FastAdmin是一款基于ThinkPHP+Bootstrap的极速后台开发框架。",
   "scripts": {
     "build": "grunt"
