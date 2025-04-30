@@ -58,6 +58,67 @@ define(['jquery', 'bootstrap', 'toastr', 'layer', 'lang'], function ($, undefine
             }
         },
         api: {
+            //发送验证码
+            sendcaptcha: function (btn, type, data, success, error) {
+                $(btn).addClass("disabled", true).text("发送中...");
+                var si = {};
+                Frontend.api.ajax({url: $(btn).data("url"), data: data}, function (data, ret) {
+                    clearInterval(si[type]);
+                    var seconds = 60;
+                    si[type] = setInterval(function () {
+                        seconds--;
+                        if (seconds <= 0) {
+                            clearInterval(si);
+                            $(btn).removeClass("disabled").text("发送验证码");
+                        } else {
+                            $(btn).addClass("disabled").text(seconds + "秒后可再次发送");
+                        }
+                    }, 1000);
+                    if (typeof success == 'function') {
+                        success.call(this, data, ret);
+                    }
+                }, function (data, ret) {
+                    $(btn).removeClass("disabled").text('发送验证码');
+
+                    if (typeof error == 'function') {
+                        error.call(this, data, ret);
+                    }
+                });
+            },
+            //准备验证码
+            preparecaptcha: function (btn, type, data) {
+                require(['form'], function (Form) {
+                    Layer.open({
+                        title: '请完成验证',
+                        type: 1,
+                        content: Template("captchatpl", {}),
+                        offset: "130px",
+                        btnAlign: 'c',
+                        success: function (layero, index) {
+                            var form = $("form", layero);
+                            $("input[name=captcha]", form).focus();
+                            form.data("validator-options", {
+                                valid: function (ret) {
+                                    data.captcha = $("input[name=captcha]", form).val();
+                                    if(data.captcha.length < 4){
+                                        Toastr.error("验证码不正确");
+                                        $("input[name=captcha]", form).focus();
+                                        return false;
+                                    }
+                                    Frontend.api.sendcaptcha(btn, type, data, function (data, ret) {
+                                        Layer.close(index);
+                                        $(btn).closest("form").find("input[name='captcha']").focus();
+                                    }, function (data, ret) {
+                                        $("img.captcha-img", form).trigger("click");
+                                    });
+                                    return true;
+                                }
+                            })
+                            Form.api.bindevent(form);
+                        }
+                    });
+                });
+            },
             //发送Ajax请求
             ajax: function (options, success, error) {
                 options = typeof options === 'string' ? {url: options} : options;

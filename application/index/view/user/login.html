@@ -1,19 +1,45 @@
 <div id="content-container" class="container">
     <div class="user-section login-section">
-        <div class="logon-tab clearfix"><a class="active">{:__('Sign in')}</a> <a href="{:url('user/register')}?url={$url|urlencode|htmlentities}">{:__('Sign up')}</a></div>
+        <div class="logon-tab clearfix">
+            <a class="active">{:__('Sign in')}</a>
+            {if config('fastadmin.user_register')}
+            <a href="{:url('user/register')}?url={$url|urlencode|htmlentities}">{:__('Sign up')}</a>
+            {/if}
+        </div>
         <div class="login-main">
-            <form name="form" id="login-form" class="form-vertical" method="POST" action="">
+
+            <form name="form" id="login-form" class="form-vertical" method="POST" action="{$loginAction}">
                 <!--@IndexLoginFormBegin-->
                 <input type="hidden" name="url" value="{$url|htmlentities}"/>
                 {:token()}
-                <div class="form-group">
+                <div class="form-group {:$loginType==='mobile'?'':'hidden'}" data-login="mobile">
+                    <label class="control-label">{:__('Mobile')}</label>
+                    <div class="controls">
+                        <input type="text" id="mobile" name="mobile" value="13211111111" data-rule="required;mobile" class="form-control" placeholder="{:__('Please enter your mobile phone number')}">
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+                <div class="form-group {:$loginType==='mobile'?'':'hidden'}" data-login="mobile">
+                    <label class="control-label">{:__('Captcha')}</label>
+                    <div class="controls">
+                        <div class="input-group">
+                            <input type="text" name="captcha" class="form-control" placeholder="{:__('Please enter %s numbers', $Think.config.captcha.length)}" maxlength="{$Think.config.captcha.length}" data-rule="required;length({$Think.config.captcha.length});integer[+]"/>
+                            <span class="input-group-btn" style="padding:0;border:none;">
+                                <a href="javascript:;" class="btn btn-info btn-captcha" data-url="{:url('api/sms/send')}" data-id="login" data-type="mobile" data-event="mobilelogin">{:__('Send verification code')}</a>
+                            </span>
+                        </div>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+
+                <div class="form-group {:$loginType==='account'?'':'hidden'}" data-login="account">
                     <label class="control-label" for="account">{:__('Account')}</label>
                     <div class="controls">
                         <input class="form-control" id="account" type="text" name="account" value="" data-rule="required" placeholder="{:__('Email/Mobile/Username')}" autocomplete="off">
                         <div class="help-block"></div>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group {:$loginType==='account'?'':'hidden'}" data-login="account">
                     <label class="control-label" for="password">{:__('Password')}</label>
                     <div class="controls">
                         <input class="form-control" id="password" type="password" name="password" data-rule="required;password" placeholder="{:__('Password')}" autocomplete="off">
@@ -26,12 +52,25 @@
                                 <input type="checkbox" name="keeplogin" checked="checked" value="1"> {:__('Keep login')}
                             </label>
                         </div>
-                        <div class="pull-right"><a href="javascript:;" class="btn-forgot">{:__('Forgot password')}</a></div>
+                        <div class="pull-right {:$loginType==='account'?'':'hidden'}" data-login="account"><a href="javascript:;" class="btn-forgot">{:__('Forgot password')}</a></div>
                     </div>
                 </div>
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary btn-lg btn-block">{:__('Sign in')}</button>
-                    <a href="{:url('user/register')}?url={$url|urlencode|htmlentities}" class="btn btn-default btn-lg btn-block mt-3 no-border">{:__("Don't have an account? Sign up")}</a>
+                    <div class="row">
+                        <div class="col-xs-6 text-left py-2">
+                            <a href="javascript:" class="btn-switchlogin" data-type="{$loginType}"
+                               data-account-action="{:url('user/login')}"
+                               data-mobile-action="{:url('user/mobilelogin')}"
+                               data-account-text='{:__("Sign in with account")}'
+                               data-mobile-text='{:__("Sign in with mobile phone")}'>{:$loginType==='mobile'?__("Sign in with account"):__("Sign in with mobile phone")}</a>
+                        </div>
+                        {if config('fastadmin.user_register')}
+                        <div class="col-xs-6 text-right py-2">
+                            <a href="{:url('user/register')}?url={$url|urlencode|htmlentities}">{:__("Don\'t have an account? Sign up")}</a>
+                        </div>
+                        {/if}
+                    </div>
                 </div>
                 <!--@IndexLoginFormEnd-->
             </form>

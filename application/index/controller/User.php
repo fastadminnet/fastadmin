@@ -7,6 +7,7 @@ use app\common\controller\Frontend;
 use app\common\library\Ems;
 use app\common\library\Sms;
 use app\common\model\Attachment;
+use fast\Random;
 use think\Config;
 use think\Cookie;
 use think\Hook;
@@ -19,7 +20,7 @@ use think\Validate;
 class User extends Frontend
 {
     protected $layout = 'default';
-    protected $noNeedLogin = ['login', 'register', 'third'];
+    protected $noNeedLogin = ['login', 'mobilelogin', 'register', 'third'];
     protected $noNeedRight = ['*'];
 
     public function _initialize()
@@ -122,7 +123,8 @@ class User extends Frontend
                 $this->error(__($validate->getError()), null, ['token' => $this->request->token()]);
             }
             if ($this->auth->register($username, $password, $email, $mobile)) {
-                $this->success(__('Sign up successful'), $url ? $url : url('user/index'));
+                $this->auth->getUser()->save(['verification' => ['email' => $captchaType == 'email' ? 1 : 0, 'mobile' => $captchaType == 'mobile' ? 1 : 0]]);
+                $this->success(__('Sign up successful'), $url ?: url('user/index'));
             } else {
                 $this->error($this->auth->getError(), null, ['token' => $this->request->token()]);
             }
@@ -132,6 +134,7 @@ class User extends Frontend
         if (!$url && $referer && !preg_match("/(user\/login|user\/register|user\/logout)/i", $referer)) {
             $url = $referer;
         }
+
         $this->view->assign('captchaType', config('fastadmin.user_register_captcha'));
         $this->view->assign('url', $url);
         $this->view->assign('title', __('Register'));
@@ -175,7 +178,7 @@ class User extends Frontend
                 $this->error(__($validate->getError()), null, ['token' => $this->request->token()]);
             }
             if ($this->auth->login($account, $password)) {
-                $this->success(__('Logged in successful'), $url ? $url : url('user/index'));
+                $this->success(__('Logged in successful'), $url ?: url('user/index'), '', 0);
             } else {
                 $this->error($this->auth->getError(), null, ['token' => $this->request->token()]);
             }
@@ -183,6 +186,57 @@ class User extends Frontend
         //判断来源
         $referer = $this->request->server('HTTP_REFERER', '', 'url_clean');
         if (!$url && $referer && !preg_match("/(user\/login|user\/register|user\/logout)/i", $referer)) {
+            $url = $referer;
+        }
+        $this->view->assign('loginType', config('fastadmin.user_login_type') ?? 'mobile');
+        $this->view->assign('loginAction', config('fastadmin.user_login_type') === 'mobile' ? url('user/mobilelogin') : url('user/login'));
+        $this->view->assign('url', $url);
+        $this->view->assign('title', __('Login'));
+        return $this->view->fetch();
+    }
+
+    /**
+     * 手机号验证码登录
+     */
+    public function mobilelogin()
+    {
+        $url = $this->request->request('url', '', 'url_clean');
+        if ($this->request->isPost()) {
+            $mobile = $this->request->post('mobile');
+            $captcha = $this->request->post('smscode', $this->request->post('captcha'));
+            if (!$mobile || !$captcha) {
+                $this->error(__('Invalid parameters'));
+            }
+            if (!Validate::regex($mobile, "^1\d{10}$")) {
+                $this->error(__('Mobile is incorrect'));
+            }
+            if (!Sms::check($mobile, $captcha, 'mobilelogin')) {
+                $this->error(__('Captcha is incorrect'));
+            }
+            $user = \app\common\model\User::getByMobile($mobile);
+            if ($user) {
+                if ($user->status != 'normal') {
+                    $this->error(__('Account is locked'));
+                }
+                //如果已经有账号则直接登录
+                $ret = $this->auth->direct($user->id);
+            } else {
+                $ret = $this->auth->register($mobile, Random::alnum(), '', $mobile, []);
+                //如果是手机号首次注册则直接设定为已验证
+                $this->auth->getUser()->save(['verification' => ['email' => 0, 'mobile' => 1]]);
+            }
+            if ($ret) {
+                Sms::flush($mobile, 'mobilelogin');
+                $data = ['userinfo' => $this->auth->getUserinfo()];
+                $this->success(__('Logged in successful'), $url);
+            } else {
+                $this->error($this->auth->getError());
+            }
+        }
+        //判断来源
+        $referer = $this->request->server('HTTP_REFERER');
+        if (!$url && (strtolower(parse_url($referer, PHP_URL_HOST)) == strtolower($this->request->host()))
+            && !preg_match("/(user\/login|user\/register|user\/logout)/i", $referer)) {
             $url = $referer;
         }
         $this->view->assign('url', $url);

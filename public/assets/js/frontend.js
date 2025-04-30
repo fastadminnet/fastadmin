@@ -7,28 +7,6 @@ define(['fast', 'template', 'moment'], function (Fast, Template, Moment) {
             $(document).on("click", ".btn-captcha", function (e) {
                 var type = $(this).data("type") ? $(this).data("type") : 'mobile';
                 var btn = this;
-                Frontend.api.sendcaptcha = function (btn, type, data, callback) {
-                    $(btn).addClass("disabled", true).text("发送中...");
-
-                    Frontend.api.ajax({url: $(btn).data("url"), data: data}, function (data, ret) {
-                        clearInterval(si[type]);
-                        var seconds = 60;
-                        si[type] = setInterval(function () {
-                            seconds--;
-                            if (seconds <= 0) {
-                                clearInterval(si);
-                                $(btn).removeClass("disabled").text("发送验证码");
-                            } else {
-                                $(btn).addClass("disabled").text(seconds + "秒后可再次发送");
-                            }
-                        }, 1000);
-                        if (typeof callback == 'function') {
-                            callback.call(this, data, ret);
-                        }
-                    }, function () {
-                        $(btn).removeClass("disabled").text('发送验证码');
-                    });
-                };
                 if (['mobile', 'email'].indexOf(type) > -1) {
                     var element = $(this).data("input-id") ? $("#" + $(this).data("input-id")) : $("input[name='" + type + "']", $(this).closest("form"));
                     var text = type === 'email' ? '邮箱' : '手机号码';
@@ -47,9 +25,13 @@ define(['fast', 'template', 'moment'], function (Fast, Template, Moment) {
                     }
                     element.isValid(function (v) {
                         if (v) {
-                            var data = {event: $(btn).data("event")};
+                            var data = {event: $(btn).data("event"), id: $(btn).data("id")};
                             data[type] = element.val();
-                            Frontend.api.sendcaptcha(btn, type, data);
+                            if ($("#captchatpl").length === 0) {
+                                Frontend.api.sendcaptcha(btn, type, data);
+                            } else {
+                                Frontend.api.preparecaptcha(btn, type, data);
+                            }
                         } else {
                             Layer.msg("请确认已经输入了正确的" + text + "！");
                         }
@@ -57,7 +39,13 @@ define(['fast', 'template', 'moment'], function (Fast, Template, Moment) {
                 } else {
                     var data = {event: $(btn).data("event")};
                     Frontend.api.sendcaptcha(btn, type, data, function (data, ret) {
-                        Layer.open({title: false, area: ["400px", "430px"], content: "<img src='" + data.image + "' width='400' height='400' /><div class='text-center panel-title'>扫一扫关注公众号获取验证码</div>", type: 1});
+                        Layer.open({
+                            title: false,
+                            area: [Math.min($(window).width(), 400) + "px", "430px"],
+                            offset: "130px",
+                            content: "<img src='" + data.image + "' width='400' height='400' /><div class='text-center panel-title'>扫一扫关注公众号获取验证码</div>",
+                            type: 1
+                        });
                     });
                 }
                 return false;

@@ -1,1 +1,24 @@
+{if $Think.config.fastadmin.user_api_captcha}
+<script type="text/html" id="captchatpl">
+    <div class="p-4 form-section">
+        <form name="captcha-form" class="form-vertical" action="" method="post">
+            <div class="form-group mb-4">
+                <label class="control-label hidden">{:__('Captcha')}</label>
+                <div class="controls">
+                    <div class="input-group">
+                        <input type="text" name="captcha" class="form-control" data-rule="required;length({$Think.config.captcha.length})" />
+                        <span class="input-group-btn" style="padding:0;border:none;">
+                            <img src="{:captcha_src()}" width="107" height="32" class="captcha-img" onclick="this.src = '{:captcha_src()}?r=' + Math.random();"/>
+                        </span>
+                    </div>
+                    <span class="msg-box n-right" style="left:0;top:33px;text-align: left;" for="captcha"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary btn-block" type="submit">{:__('Submit')}</button>
+            </div>
+        </form>
+    </div>
+</script>
+{/if}
 <script src="__CDN__/assets/js/require{$Think.config.app_debug?'':'.min'}.js" data-main="__CDN__/assets/js/require-frontend{$Think.config.app_debug?'':'.min'}.js?v={$site.version|htmlentities}"></script>
