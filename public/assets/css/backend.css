@@ -1649,12 +1649,13 @@ table.table-nowrap thead > tr > th {
 .btn-commonsearch.searching:focus {
   background: #444c69;
   color: #fff;
-  border: none;
+  border-color: #444c69;
 }
 .btn-commonsearch.searching:hover,
 .btn-commonsearch.searching:active,
 .btn-commonsearch.searching:active:hover {
   background: #3a415a;
   color: #fff;
+  outline: none;
 }
 /*# sourceMappingURL=backend.css.map */

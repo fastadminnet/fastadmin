@@ -813,12 +813,11 @@ footer.footer .copyright a:hover {
 }
 .login-section .logon-tab {
   margin: -15px -15px 0 -15px;
+  display: flex;
 }
 .login-section .logon-tab > a {
-  display: block;
   padding: 20px;
-  float: left;
-  width: 50%;
+  width: 100%;
   font-size: 16px;
   text-align: center;
   color: #616161;
