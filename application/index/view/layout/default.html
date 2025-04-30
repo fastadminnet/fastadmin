@@ -38,9 +38,10 @@
                                 <li><a href="{:url('user/logout')}"><i class="fa fa-sign-out fa-fw"></i>{:__('Sign out')}</a></li>
                                 {else /}
                                 <li><a href="{:url('user/login')}"><i class="fa fa-sign-in fa-fw"></i> {:__('Sign in')}</a></li>
+                                {if config('fastadmin.user_register')}
                                 <li><a href="{:url('user/register')}"><i class="fa fa-user-o fa-fw"></i> {:__('Sign up')}</a></li>
                                 {/if}
-
+                                {/if}
                             </ul>
                         </li>
                     </ul>

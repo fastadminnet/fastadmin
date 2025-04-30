@@ -66,9 +66,12 @@ class User extends Frontend
      */
     public function register()
     {
+        if (!config('fastadmin.user_register')) {
+            $this->error(__('User register already closed'));
+        }
         $url = $this->request->request('url', '', 'url_clean');
         if ($this->auth->id) {
-            $this->success(__('You\'ve logged in, do not login again'), $url ? $url : url('user/index'));
+            $this->success(__('You\'ve logged in, do not login again'), $url ?: url('user/index'));
         }
         if ($this->request->isPost()) {
             $username = $this->request->post('username');

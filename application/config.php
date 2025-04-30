@@ -269,7 +269,9 @@ return [
     'fastadmin'              => [
         //是否开启前台会员中心
         'usercenter'            => true,
-        //会员注册验证码类型email/mobile/wechat/text/false
+        //是否开启用户注册，不会影响使用手机号快捷注册登录
+        'user_register'         => true,
+        //会员注册验证码类型,支持email/mobile/wechat/text/false
         'user_register_captcha' => 'text',
         //是否启用发送前验证码(用于短信和邮件发送)
         'user_api_captcha'      => false,
@@ -279,9 +281,11 @@ return [
         'user_home_url'         => '/u/{uid}',
         //是否启用会员字母头像
         'user_letter_avatar'    => true,
-        //是否启用会员等级规则none/auto/up,auto表示自动升降级,up表示只升不降
+        //会员默认头像，仅当user_letter_avatar为false时有效
+        'user_default_avatar'   => '/assets/img/avatar.png',
+        //是否启用会员等级规则,支持none/auto/up,none表示不影响等级,auto表示自动升降级,up表示只升不降
         'user_level_rule'       => '',
-        //会员等级积分字典
+        //会员等级积分字典，键名表示等级，值表示所需的积分
         'user_level_dict'       => [1 => 0, 2 => 30, 3 => 100, 4 => 500, 5 => 1000, 6 => 2000, 7 => 3000, 8 => 5000, 9 => 8000, 10 => 10000],
         //登录验证码
         'login_captcha'         => true,
