@@ -15,18 +15,39 @@ class Sms extends Api
     protected $noNeedLogin = '*';
     protected $noNeedRight = '*';
 
+    public function _initialize()
+    {
+        parent::_initialize();
+        if (!$this->request->isPost()) {
+            $this->error(__('请求错误'));
+        }
+    }
+
     /**
      * 发送验证码
      *
      * @ApiMethod (POST)
      * @ApiParams (name="mobile", type="string", required=true, description="手机号")
      * @ApiParams (name="event", type="string", required=true, description="事件名称")
+     * @ApiParams (name="type", type="string", required=false, description="验证类型，auto为自动验证，system为系统验证码")
+     * @ApiParams (name="source_id", type="string", required=false, description="来源ID")
      */
     public function send()
     {
         $mobile = $this->request->post("mobile");
+        $captcha = $this->request->post("captcha");
         $event = $this->request->post("event");
-        $event = $event ? $event : 'register';
+        $event = $event ?: 'register';
+        $type = $this->request->post("type", 'auto');
+        $source_id = $this->request->post("source_id", '');
+
+        //发送前验证码
+        if (config('fastadmin.user_api_captcha')) {
+            $valid = $type === 'auto' ? \think\Validate::is($captcha, 'captcha') : captcha_check($captcha, $source_id);
+            if (!$valid) {
+                $this->error("验证码不正确");
+            }
+        }
 
         if (!$mobile || !\think\Validate::regex($mobile, "^1\d{10}$")) {
             $this->error(__('手机号不正确'));
@@ -75,7 +96,7 @@ class Sms extends Api
     {
         $mobile = $this->request->post("mobile");
         $event = $this->request->post("event");
-        $event = $event ? $event : 'register';
+        $event = $event ?: 'register';
         $captcha = $this->request->post("captcha");
 
         if (!$mobile || !\think\Validate::regex($mobile, "^1\d{10}$")) {

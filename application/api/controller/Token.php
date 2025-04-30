@@ -13,6 +13,14 @@ class Token extends Api
     protected $noNeedLogin = [];
     protected $noNeedRight = '*';
 
+    public function _initialize()
+    {
+        parent::_initialize();
+        if (!$this->request->isPost()) {
+            $this->error(__('请求错误'));
+        }
+    }
+
     /**
      * 检测Token是否过期
      *

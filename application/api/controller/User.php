@@ -25,6 +25,10 @@ class User extends Api
             $this->error(__('User center already closed'));
         }
 
+        if (!$this->request->isPost() && $this->request->action() !== 'index') {
+            $this->error(__('请求错误'));
+        }
+
     }
 
     /**
@@ -68,7 +72,7 @@ class User extends Api
     public function mobilelogin()
     {
         $mobile = $this->request->post('mobile');
-        $captcha = $this->request->post('captcha');
+        $captcha = $this->request->post('smscode', $this->request->post('captcha'));
         if (!$mobile || !$captcha) {
             $this->error(__('Invalid parameters'));
         }
@@ -87,6 +91,7 @@ class User extends Api
             $ret = $this->auth->direct($user->id);
         } else {
             $ret = $this->auth->register($mobile, Random::alnum(), '', $mobile, []);
+            $this->auth->getUser()->save(['verification' => ['email' => 0, 'mobile' => 1]]);
         }
         if ($ret) {
             Sms::flush($mobile, 'mobilelogin');
@@ -109,6 +114,10 @@ class User extends Api
      */
     public function register()
     {
+        if (!config('fastadmin.user_register')) {
+            $this->error(__('User register already closed'));
+        }
+
         $username = $this->request->post('username');
         $password = $this->request->post('password');
         $email = $this->request->post('email');
@@ -129,6 +138,7 @@ class User extends Api
         }
         $ret = $this->auth->register($username, $password, $email, $mobile, []);
         if ($ret) {
+            $this->auth->getUser()->save(['verification' => ['email' => 0, 'mobile' => 1]]);
             $data = ['userinfo' => $this->auth->getUserinfo()];
             $this->success(__('Sign up successful'), $data);
         } else {
