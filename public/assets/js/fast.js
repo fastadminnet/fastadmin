@@ -68,7 +68,7 @@ define(['jquery', 'bootstrap', 'toastr', 'layer', 'lang'], function ($, undefine
                     si[type] = setInterval(function () {
                         seconds--;
                         if (seconds <= 0) {
-                            clearInterval(si);
+                            clearInterval(si[type]);
                             $(btn).removeClass("disabled").text("发送验证码");
                         } else {
                             $(btn).addClass("disabled").text(seconds + "秒后可再次发送");
