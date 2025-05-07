@@ -23,7 +23,7 @@
                     <label class="control-label">{:__('Captcha')}</label>
                     <div class="controls">
                         <div class="input-group">
-                            <input type="text" name="captcha" class="form-control" placeholder="{:__('Please enter %s numbers', $Think.config.captcha.length)}" maxlength="{$Think.config.captcha.length}" data-rule="required;length({$Think.config.captcha.length});integer[+]"/>
+                            <input type="text" name="captcha" class="form-control" placeholder="{:__('Please enter %s numbers', $Think.config.captcha.length)}" maxlength="{$Think.config.captcha.length}" data-rule="required;length({$Think.config.captcha.length})"/>
                             <span class="input-group-btn" style="padding:0;border:none;">
                                 <a href="javascript:;" class="btn btn-info btn-captcha" data-url="{:url('api/sms/send')}" data-id="login" data-type="mobile" data-event="mobilelogin">{:__('Send verification code')}</a>
                             </span>
