@@ -222,16 +222,12 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'adminlte', 'form'], functi
 
             //如果是刷新操作则直接返回刷新前的页面
             if (Config.referer) {
-                if (Config.referer === $(addtabs).attr("url")) {
-                    var active = $("ul.sidebar-menu li a[addtabs=" + $(addtabs).attr("addtabs") + "]");
-                    if (multiplenav && active.length == 0) {
-                        active = $("ul li a[addtabs='" + $(addtabs).attr("addtabs") + "']");
-                    }
-                    if (active.length > 0) {
-                        active.trigger("click");
-                    } else {
-                        $(addtabs).appendTo(document.body).addClass("hide").trigger("click");
-                    }
+                var active = $("ul.sidebar-menu li a[url='" + Config.referer + "']");
+                if (multiplenav && active.length === 0) {
+                    active = $("ul li a[url='" + Config.referer + "']");
+                }
+                if (active.length > 0) {
+                    active.trigger("click");
                 } else {
                     //刷新页面后跳到到刷新前的页面
                     Backend.api.addtabs(Config.referer);
@@ -333,7 +329,7 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'adminlte', 'form'], functi
 
             // 切换菜单栏
             $(document).on("click", ".sidebar-toggle", function () {
-                setTimeout(function(){
+                setTimeout(function () {
                     var value = $("body").hasClass("sidebar-collapse") ? 1 : 0;
                     setTimeout(function () {
                         $(window).trigger("resize");
