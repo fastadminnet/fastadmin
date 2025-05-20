@@ -865,6 +865,10 @@ footer.footer .copyright a:hover {
 .form-section .n-bootstrap .n-right .msg-wrap {
   position: relative;
 }
+.login-section .n-bootstrap .n-right[for="agreement"],
+.form-section .n-bootstrap .n-right[for="agreement"] {
+  top: -12px;
+}
 main.content {
   width: 100%;
   overflow: auto;

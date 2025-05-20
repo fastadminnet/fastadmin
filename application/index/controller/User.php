@@ -20,7 +20,7 @@ use think\Validate;
 class User extends Frontend
 {
     protected $layout = 'default';
-    protected $noNeedLogin = ['login', 'mobilelogin', 'register', 'third'];
+    protected $noNeedLogin = ['login', 'mobilelogin', 'register', 'third', 'agreement'];
     protected $noNeedRight = ['*'];
 
     public function _initialize()
@@ -385,6 +385,12 @@ class User extends Frontend
         $mimetype = substr($mimetype, -1) === '/' ? $mimetype . '*' : $mimetype;
         $this->view->assign('mimetype', $mimetype);
         $this->view->assign("mimetypeList", \app\common\model\Attachment::getMimetypeList());
+        return $this->view->fetch();
+    }
+
+    public function agreement()
+    {
+        $this->view->assign('title', __('User agreement'));
         return $this->view->fetch();
     }
 }

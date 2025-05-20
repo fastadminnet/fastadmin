@@ -277,6 +277,8 @@ return [
         'user_api_captcha'      => false,
         //会员登录默认类型,支持mobile和account
         'user_login_type'       => 'account',
+        //用户注册协议
+        'user_register_agreement' => true,
         //会员主页URL规则，{uid}表示用户的ID
         'user_home_url'         => '/u/{uid}',
         //是否启用会员字母头像

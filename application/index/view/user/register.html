@@ -50,6 +50,14 @@
                 {/if}
                 <!--@CaptchaEnd-->
 
+                {if config('fastadmin.user_register_agreement')}
+                <div class="form-group">
+                    <div class="controls checkbox">
+                        <label for="agreement"><input type="checkbox" name="agreement" id="agreement" data-rule="checked" data-msg-checked="{:__('Please read and agree to the agreement')}"> {:__('Have read and agree to the agreement')}《<a href="{:url('user/agreement')}" target="_blank">{:__('User Agreement')}</a>》</label>
+                    </div>
+                </div>
+                {/if}
+
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary btn-lg btn-block">{:__('Sign up')}</button>
                     <a href="{:url('user/login')}?url={$url|urlencode|htmlentities}" class="btn btn-default btn-lg btn-block mt-3 no-border">{:__('Already have an account? Sign in')}</a>
