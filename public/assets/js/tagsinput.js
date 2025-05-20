@@ -1,7 +1,7 @@
 /*
- * bootstrap-tagsinput v0.8.0
+ * bootstrap-tagsinput v1.0.0
  *
- * For details, see the web site: https://github.com/bootstrap-tagsinput/bootstrap-tagsinput
+ * For details, see the web site: https://github.com/fastadminnet/fastadmin-tagsinput
  */
 
 (function ($) {
@@ -29,6 +29,7 @@
         delimiter: ',',
         inputMinWidth: 80,
         delimiterRegex: null,
+        pasteDelimeterForNewLine: ",",
         cancelConfirmKeysOnEmpty: false,
         onTagExists: function (item, $tag) {
             $tag.hide().fadeIn();
@@ -86,7 +87,7 @@
 
             // Throw an error when trying to add an object while the itemValue option was not set
             if (typeof item === "object" && !self.objectItems)
-                throw("Can't add objects when itemValue option is not set");
+                throw ("Can't add objects when itemValue option is not set");
 
             // Ignore strings only containg whitespace
             if (item.toString().match(/^\s*$/))
@@ -135,7 +136,7 @@
                 return;
 
             // raise beforeItemAdd arg
-            var beforeItemAddEvent = $.Event('beforeItemAdd', {item: item, cancel: false, options: options});
+            var beforeItemAddEvent = $.Event('beforeItemAdd', { item: item, cancel: false, options: options });
             self.$element.trigger(beforeItemAddEvent);
             if (beforeItemAddEvent.cancel)
                 return;
@@ -145,7 +146,7 @@
 
             // add a tag element
 
-            var $tag = $('<span class="tag ' + htmlEncode(tagClass) + (itemTitle !== null ? ('" title="' + itemTitle) : '') + '">' + htmlEncode(itemText) + '<span data-role="remove"></span></span>');
+            var $tag = $('<span class="tag ' + htmlEncode(tagClass) + (itemTitle !== null ? ('" title="' + htmlEncode(itemTitle)) : '') + '">' + htmlEncode(itemText) + '<span data-role="remove"></span></span>');
             $tag.data('item', item);
             self.findInputWrapper().before($tag);
             $tag.after(' ');
@@ -160,7 +161,7 @@
             if (self.isSelect && !optionExists) {
                 var $option = $('<option selected>' + htmlEncode(itemText) + '</option>');
                 $option.data('item', item);
-                $option.attr('value', itemValue);
+                $option.val(itemValue);
                 self.$element.append($option);
             }
 
@@ -171,15 +172,58 @@
             if (self.options.maxTags === self.itemsArray.length || self.items().toString().length === self.options.maxInputLength)
                 self.$container.addClass('bootstrap-tagsinput-max');
 
+
             // If using autocomplete, once the tag has been added, clear the autocomplete value so it does not stick around in the input.
             if (self.options.autocomplete) {
                 // self.$input.autocomplete('clear');
             }
 
+
             if (this.isInit) {
-                self.$element.trigger($.Event('itemAddedOnInit', {item: item, options: options}));
+                self.$element.trigger($.Event('itemAddedOnInit', { item: item, options: options }));
             } else {
-                self.$element.trigger($.Event('itemAdded', {item: item, options: options}));
+                self.$element.trigger($.Event('itemAdded', { item: item, options: options }));
+            }
+        },
+
+        /**
+         * 删除指定的标签元素
+         */
+        removeTagElement: function (item, dontPushVal, options) {
+            var self = this;
+
+            if (item) {
+                // 触发beforeItemRemove事件，与remove方法保持一致
+                var beforeItemRemoveEvent = $.Event('beforeItemRemove', { item: item, cancel: false, options: options });
+                self.$element.trigger(beforeItemRemoveEvent);
+                if (beforeItemRemoveEvent.cancel)
+                    return;
+
+                // 只删除第一个匹配的标签
+                var $tag = $('.tag', self.$container).filter(function () {
+                    return $(this).is(item);
+                }).first();
+                var $index = $tag.index();
+                $tag.remove();
+
+                // 只删除第一个匹配的选项
+                var $option = $('option', self.$element).filter(function () {
+                    return $(this).is(item);
+                }).first();
+                $option.remove();
+
+                // 从数组中删除该项
+                if ($index !== -1)
+                    self.itemsArray.splice($index, 1);
+
+                if (!dontPushVal)
+                    self.pushVal(self.options.triggerChange);
+
+                // Remove class when reached maxTags
+                if (self.options.maxTags > self.itemsArray.length)
+                    self.$container.removeClass('bootstrap-tagsinput-max');
+
+                self.$element.trigger($.Event('itemRemoved', { item: item, options: options }));
             }
         },
 
@@ -204,7 +248,7 @@
             }
 
             if (item) {
-                var beforeItemRemoveEvent = $.Event('beforeItemRemove', {item: item, cancel: false, options: options});
+                var beforeItemRemoveEvent = $.Event('beforeItemRemove', { item: item, cancel: false, options: options });
                 self.$element.trigger(beforeItemRemoveEvent);
                 if (beforeItemRemoveEvent.cancel)
                     return;
@@ -226,7 +270,7 @@
             if (self.options.maxTags > self.itemsArray.length)
                 self.$container.removeClass('bootstrap-tagsinput-max');
 
-            self.$element.trigger($.Event('itemRemoved', {item: item, options: options}));
+            self.$element.trigger($.Event('itemRemoved', { item: item, options: options }));
         },
 
         /**
@@ -268,7 +312,7 @@
                     var option = $('option', self.$element).filter(function () {
                         return $(this).data('item') === item;
                     });
-                    option.attr('value', itemValue);
+                    option.val(itemValue);
                 }
             });
         },
@@ -312,9 +356,6 @@
             var self = this;
 
             self.options = $.extend({}, defaultOptions, options);
-            // When itemValue is set, freeInput should always be false
-            if (self.objectItems)
-                self.options.freeInput = false;
 
             makeOptionItemFunction(self.options, 'itemValue');
             makeOptionItemFunction(self.options, 'itemText');
@@ -339,9 +380,10 @@
                 }, autocomplete));
             }
 
+
             self.$container.on('click', $.proxy(function (event) {
-                if (!self.$element.attr('disabled')) {
-                    self.$input.removeAttr('disabled');
+                if (!self.$element.prop('disabled')) {
+                    self.$input.prop('disabled', false);
                 }
                 self.$input.focus();
                 if (self.options.autocomplete && self.$input.autocomplete().visible) {
@@ -378,12 +420,22 @@
                 },
             });
 
+            /**
+             * Replace New Line Character with Delimeter Before further execution
+             */
+            self.$input.on("paste", $.proxy(function (event) {
+                event.preventDefault();
+                var clipboadContent = (event.originalEvent || event).clipboardData.getData('text/plain');
+                self.$input.val(clipboadContent.replaceAll("\n", self.options.pasteDelimeterForNewLine));
+                self.$input.css("width", self.options.inputMinWidth);
+            }, self));
+
             self.$container.on('keydown', 'input', $.proxy(function (event) {
                 var $input = $(event.target),
                     $inputWrapper = self.findInputWrapper();
 
-                if (self.$element.attr('disabled')) {
-                    self.$input.attr('disabled', 'disabled');
+                if (self.$element.prop('disabled')) {
+                    self.$input.prop('disabled', true);
                     return;
                 }
 
@@ -393,7 +445,7 @@
                         if (doGetCaretPosition($input[0]) === 0) {
                             var prev = $inputWrapper.prev();
                             if (prev.length) {
-                                self.remove(prev.data('item'));
+                                self.removeTagElement(prev);
                             }
                         }
                         break;
@@ -403,7 +455,7 @@
                         if (doGetCaretPosition($input[0]) === 0) {
                             var next = $inputWrapper.next();
                             if (next.length) {
-                                self.remove(next.data('item'));
+                                self.removeTagElement(next);
                             }
                         }
                         break;
@@ -437,8 +489,8 @@
             self.$container.on('keypress', 'input', $.proxy(function (event) {
                 var $input = $(event.target);
 
-                if (self.$element.attr('disabled')) {
-                    self.$input.attr('disabled', 'disabled');
+                if (self.$element.prop('disabled')) {
+                    self.$input.prop('disabled', true);
                     return;
                 }
 
@@ -463,10 +515,10 @@
 
             // Remove icon clicked
             self.$container.on('click', '[data-role=remove]', $.proxy(function (event) {
-                if (self.$element.attr('disabled')) {
+                if (self.$element.prop('disabled')) {
                     return;
                 }
-                self.remove($(event.target).closest('.tag').data('item'));
+                self.removeTagElement($(event.target).closest('.tag'));
             }, self));
 
             // Only add existing value as tags when using strings as tags
@@ -475,7 +527,7 @@
                     self.add(self.$element.val());
                 } else {
                     $('option', self.$element).each(function () {
-                        self.add($(this).attr('value'), true);
+                        self.add($(this).val(), true);
                     });
                 }
             }
@@ -552,7 +604,7 @@
                 results.push(tagsinput);
 
                 if (this.tagName === 'SELECT') {
-                    $('option', $(this)).attr('selected', 'selected');
+                    $('option', $(this)).prop('selected', true);
                 }
 
                 // Init tags from $(this).val()
@@ -573,7 +625,12 @@
             }
         });
 
-        return results.length > 1 ? results : results[0];
+        if (typeof arg1 == 'string') {
+            // Return the results from the invoked function calls
+            return results.length > 1 ? results : results[0];
+        } else {
+            return results;
+        }
     };
 
     $.fn.tagsinput.Constructor = TagsInput;
@@ -587,7 +644,13 @@
         if (typeof options[key] !== 'function') {
             var propertyName = options[key];
             options[key] = function (item) {
-                return item[propertyName];
+                if (typeof item === "object") {
+                    return item[propertyName];
+                } else {
+                    //fall back to returning the item itself, if it's not an object
+                    //allows for "freeInput" even when items are objects
+                    return item ? item.toString() : item;
+                }
             };
         }
     }
