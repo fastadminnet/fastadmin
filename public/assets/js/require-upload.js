@@ -367,7 +367,7 @@ define(['jquery', 'bootstrap', 'dropzone', 'template'], function ($, undefined, 
                                     var suffix = /[\.]?([a-zA-Z0-9]+)$/.exec(j);
                                     suffix = suffix ? suffix[1] : 'file';
                                     var btnData = $(that).data();
-                                    var fullurl = typeof btnData.cdnurl!=='undefined' ? Fast.api.cdnurl(j, btnData.cdnurl) : Fast.api.cdnurl(j);
+                                    var fullurl = typeof btnData.cdnurl !== 'undefined' ? Fast.api.cdnurl(j, btnData.cdnurl) : Fast.api.cdnurl(j);
                                     j = Config.upload.fullmode ? fullurl : j;
                                     var value = (json && typeof json[i] !== 'undefined' ? json[i] : null);
                                     var data = {url: j, fullurl: fullurl, data: btnData, key: i, index: i, value: value, row: value, suffix: suffix};
@@ -440,10 +440,14 @@ define(['jquery', 'bootstrap', 'dropzone', 'template'], function ($, undefined, 
                     return Upload.api.upload(element, onUploadSuccess, onUploadError, onUploadComplete);
                 },
                 // AJAX异步上传
-                send: function (file, onUploadSuccess, onUploadError, onUploadComplete) {
+                send: function (file, onUploadSuccess, onUploadError, onUploadComplete, options) {
                     var index = Layer.msg(__('Uploading'), {offset: 't', time: 0});
                     var id = "dropzone-" + Dropzone.uuidv4();
-                    $('<button type="button" id="' + id + '" class="btn btn-danger hidden faupload" />').appendTo("body");
+                    var button = $('<button type="button" id="' + id + '" class="btn btn-danger hidden faupload" />');
+                    if(options && typeof options === 'object'){
+                        button.data(options);
+                    }
+                    button.appendTo("body");
                     $("#" + id).data("upload-complete", function (files) {
                         Layer.close(index);
                         Upload.list[id].removeAllFiles(true);
