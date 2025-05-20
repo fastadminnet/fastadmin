@@ -334,7 +334,7 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                             var keys = Object.keys(Object.values(data)[0] || {});
 
                             var isassociative = !usearray && keys.indexOf("value") > -1 && (keys.length === 1 || (keys.length === 2 && keys.indexOf("key") > -1));
-                            if(isassociative && keys.length ===2){
+                            if (isassociative && keys.length === 2) {
                                 result = {};
                             }
 
@@ -674,7 +674,9 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                 Fast.api.ajax({
                     type: type,
                     url: url,
-                    data: form.serialize() + (Object.keys(params).length > 0 ? '&' + $.param(params) : ''),
+                    data: form.find('input, select, textarea, keygen') // 找到所有可序列化的元素
+                        .not('.fieldlist[data-ignoreorigin="true"] [fieldlist-item] *') // 排除掉 fieldlist 中的元素
+                        .serialize() + (Object.keys(params).length > 0 ? '&' + $.param(params) : ''),
                     dataType: 'json',
                     complete: function (xhr) {
                         var token = xhr.getResponseHeader('__token__');
