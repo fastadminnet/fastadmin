@@ -79,7 +79,7 @@ class Index extends Backend
             $token = $this->request->post('__token__');
             $rule = [
                 'username'  => 'require|length:3,30',
-                'password'  => 'require|length:3,30',
+                'password'  => 'require|length:6,30',
                 '__token__' => 'require|token',
             ];
             $data = [
