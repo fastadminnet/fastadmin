@@ -56,10 +56,13 @@ define(['fast', 'template', 'moment'], function (Fast, Template, Moment) {
                             var id = Math.floor(new Date().valueOf() * Math.random());
                             icon = typeof icon !== 'undefined' ? icon : 'fa fa-circle-o';
                             title = typeof title !== 'undefined' ? title : '';
-                            top.window.$("<a />").append('<i class="' + icon + '"></i> <span>' + title + '</span>').prop("href", url).attr({
-                                url: url,
-                                addtabs: id
-                            }).addClass("hide").appendTo(top.window.document.body).trigger("click");
+                            var newAnchor = top.window.$("<a />").prop('href', url).attr('url', url).append('<i class="' + icon + '"></i> <span>' + title + '</span>').addClass("hide").appendTo(top.window.document.body);
+                            if (window.self === window.top && Config.controllername + '/' + Config.actionname !== 'index/index') {
+                                newAnchor.prop('target', '_blank').get(0).click();
+                                newAnchor.remove();
+                            } else {
+                                newAnchor.attr('addtabs', id).trigger("click");
+                            }
                         }
                     }
                 }
