@@ -42,7 +42,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 search: false,
                 commonSearch: false,
                 rowAttributes: function (row, index) {
-                    return row.pid == 0 ? {} : {style: "display:none"};
+                    var expanded = $(".btn-toggle-all i").hasClass("fa-minus");
+                    return row.pid == 0 || expanded ? {} : {style: "display:none"};
                 }
             });
 
