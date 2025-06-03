@@ -335,7 +335,7 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                         if ($(".export .exporttips").length === 0) {
                             $(".export .dropdown-menu").prepend("<li class='exporttips alert alert-warning-light mb-0 no-border p-2'></li>")
                         }
-                        $(".export .exporttips").html("导出记录：" + (selectedIds.length > 0 ? "选中" : "全部"));
+                        $(".export .exporttips").html("导出记录：" + (selectedIds.length > 0 ? "仅选中" : "全部"));
 
                     }
                     $(Table.config.disabledbtn, toolbar).toggleClass('disabled', !options.selectedIds.length);
@@ -503,8 +503,9 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                                     pid: pid,
                                     field: Table.config.dragsortfield,
                                     orderway: options.sortOrder,
-                                    table: options.extend.table,
-                                    pk: options.pk
+                                    table: options.extend.table || '',
+                                    pk: options.pk,
+                                    controllername: Config.controllername || ''
                                 }
                             };
                             Fast.api.ajax(params, function (data, ret) {

@@ -38,7 +38,6 @@ class Ajax extends Frontend
             return jsonp(['errmsg' => '参数错误'], 200, [], ['json_encode_param' => JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE]);
         }
 
-        $controllername = input("controllername");
         $className = Loader::parseClass($this->request->module(), 'controller', $controllername, false);
 
         //存在对应的类才加载

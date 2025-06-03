@@ -6,6 +6,8 @@ use app\admin\model\AuthRule;
 use app\common\controller\Backend;
 use fast\Tree;
 use think\Cache;
+use think\db\Query;
+use think\exception\HttpResponseException;
 
 /**
  * 规则管理
@@ -31,7 +33,7 @@ class Rule extends Backend
         }
         $this->model = model('AuthRule');
         // 必须将结果集转换为数组
-        $ruleList = \think\Db::name("auth_rule")->field('type,condition,remark,createtime,updatetime', true)->order('weigh DESC,id ASC')->select();
+        $ruleList = \think\Db::name("auth_rule")->field('type,condition,remark,menutype,extend,pinyin,py,createtime,updatetime', true)->order('weigh DESC,id ASC')->select();
         foreach ($ruleList as $k => &$v) {
             $v['title'] = __($v['title']);
         }
@@ -153,5 +155,19 @@ class Rule extends Backend
             }
         }
         $this->error();
+    }
+
+    /**
+     * 排序
+     */
+    public function dragsort()
+    {
+
+        // 注册Hook
+        \think\Hook::add('admin_dragsort_after', function ($model) {
+            Cache::rm('__menu__');
+        });
+
+        parent::dragsort();
     }
 }

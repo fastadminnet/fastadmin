@@ -10,7 +10,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     edit_url: 'category/edit',
                     del_url: 'category/del',
                     multi_url: 'category/multi',
-                    dragsort_url: 'ajax/weigh',
+                    dragsort_url: 'category/dragsort',
                     table: 'category',
                 }
             });

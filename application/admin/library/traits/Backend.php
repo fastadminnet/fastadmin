@@ -15,7 +15,9 @@ use think\db\exception\ModelNotFoundException;
 use think\exception\DbException;
 use think\exception\PDOException;
 use think\exception\ValidateException;
+use think\Hook;
 use think\response\Json;
+use think\Validate;
 
 trait Backend
 {
@@ -32,7 +34,7 @@ trait Backend
                     unset($params[$field]);
                 }
             }
-        } else if (array_key_exists($this->excludeFields, $params)) {
+        } elseif (array_key_exists($this->excludeFields, $params)) {
             unset($params[$this->excludeFields]);
         }
         return $params;
@@ -342,6 +344,128 @@ trait Backend
     }
 
     /**
+     * 排序
+     *
+     * @return void
+     */
+    public function dragsort()
+    {
+        $idsString = $this->request->post("ids");
+        $changeid = $this->request->post("changeid");
+        $field = $this->request->post("field", "weigh");
+        $pk = $this->request->post("pk");
+        $pid = $this->request->post("pid", "");
+        $orderway = $this->request->post("orderway", "desc");
+
+        // 检测参数是否有效
+        if (empty($idsString) || empty($changeid)) {
+            $this->error(__('Invalid parameters'));
+        }
+
+        // 验证排序方式
+        $orderway = strtolower($orderway);
+        if (!in_array($orderway, ['asc', 'desc'])) {
+            $orderway = 'desc';
+        }
+
+        // 获取模型表名
+        $table = $this->model->getTable();
+
+        $ids = explode(',', $idsString);
+
+        // 验证changeid是否在ids中
+        if (!in_array($changeid, $ids)) {
+            $this->error(__('Invalid parameters'));
+        }
+
+        // 允许的排序字段白名单
+        $allowedFields = explode(',', $this->dragsortFields);
+        $field = in_array($field, $allowedFields) ? $field : '';
+
+        if (!$field) {
+            $this->error(__('You have no permission'));
+        }
+
+        // 获取主键
+        $prikey = $this->model->getPk();
+
+        // 开始事务
+        Db::startTrans();
+
+        try {
+            // 处理pid筛选
+            if ($pid !== '') {
+                $pidValues = explode(',', $pid); // 支持多个pid值
+                $validRecords = Db::table($table)->where($prikey, 'in', $ids)->where('pid', 'in', $pidValues)->column($prikey);
+
+                // 只保留有效的ID
+                $ids = array_values(array_intersect($ids, $validRecords));
+
+                if (empty($ids)) {
+                    Db::rollback();
+                    exception(__('No rows were updated'));
+                }
+            }
+
+            // 获取当前记录的权重值
+            $currentWeights = Db::table($table)->where($prikey, 'in', $ids)->column($field, $prikey);
+
+            // 直接从$currentWeights获取最大和最小权重值
+            $minWeight = !empty($currentWeights) ? min($currentWeights) : 1;
+            $maxWeight = !empty($currentWeights) ? max($currentWeights) : count($ids);
+
+            // 计算权重步长
+            $step = 1;
+
+            // 准备批量更新数据 - 直接根据新顺序分配权重
+            $updateData = [];
+
+            // 根据排序方式设置初始权重和步长方向
+            if ($orderway == 'asc') {
+                // 升序：从小到大排列
+                $newWeight = $minWeight;
+                $step = abs($step);
+            } else {
+                // 降序：从大到小排列
+                $newWeight = $maxWeight;
+                $step = -abs($step);
+            }
+
+            // 根据新的顺序分配权重值
+            foreach ($ids as $index => $id) {
+                // 计算该记录应有的新权重值
+                $expectedWeight = $newWeight;
+                $newWeight += $step;
+
+                // 如果当前权重与期望权重不同，才需要更新
+                if (!isset($currentWeights[$id]) || $currentWeights[$id] != $expectedWeight) {
+                    $updateData[] = [$prikey => $id, $field => $expectedWeight];
+                }
+            }
+
+            // 批量更新
+            if (!empty($updateData)) {
+
+                foreach ($updateData as $data) {
+                    Db::table($table)->where($prikey, $data[$prikey])->update([$field => $data[$field]]);
+                }
+            }
+
+            // 提交事务
+            Db::commit();
+
+        } catch (\Exception $e) {
+            // 发生异常时回滚事务
+            Db::rollback();
+            $this->error();
+        }
+
+        Hook::listen("admin_dragsort_after", $this->model);
+
+        $this->success();
+    }
+
+    /**
      * 导入
      *
      * @return void
@@ -391,7 +515,7 @@ trait Backend
         }
 
         //导入文件首行类型,默认是注释,如果需要使用字段名称请使用name
-        $importHeadType = isset($this->importHeadType) ? $this->importHeadType : 'comment';
+        $importHeadType = $this->importHeadType ?? 'comment';
 
         $table = $this->model->getQuery()->getTable();
         $database = \think\Config::get('database.database');
