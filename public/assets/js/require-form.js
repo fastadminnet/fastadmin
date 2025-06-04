@@ -540,7 +540,7 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                 var checkCondition = function (condition) {
                     var conditionArr = condition.split(/&&/);
                     var success = 0;
-                    var baseregex = /^([a-z0-9\_]+)([>|<|=|\!]=?)(.*)$/i, strregex = /^('|")(.*)('|")$/, regregex = /^regex:(.*)$/;
+                    var baseregex = /^([a-z0-9\_\[\]]+)([>|<|=|\!]=?)(.*)$/i, strregex = /^('|")(.*)('|")$/, regregex = /^regex:(.*)$/;
                     // @formatter:off
                     var operator_result = {
                         '>': function (a, b) {
@@ -595,7 +595,15 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                                 operator = 'regex';
                                 value = regmatches[1];
                             }
-                            var chkname = "row[" + name + "]";
+                            var chkname;
+                            if (name.match(/[\[\]]+/)) {
+                                chkname = name;
+                            } else {
+                                chkname = "row[" + name + "]";
+                                if (typeof dataObj[chkname] === 'undefined' && typeof dataObj[name] !== 'undefined') {
+                                    chkname = name;
+                                }
+                            }
                             if (typeof dataObj[chkname] === 'undefined') {
                                 return false;
                             }
