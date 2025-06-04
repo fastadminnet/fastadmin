@@ -39,6 +39,10 @@ class Index extends Backend
                 config('fastadmin.' . $key, $cookieValue);
             }
         }
+        //如同时启用简洁和多级菜单，简洁菜单将失效
+        if (config('fastadmin.simplenav') && config('fastadmin.multiplenav')) {
+            config('fastadmin.simplenav', false);
+        }
         //左侧菜单
         list($menulist, $navlist, $fixedmenu, $referermenu) = $this->auth->getSidebar([
             'dashboard' => 'hot',

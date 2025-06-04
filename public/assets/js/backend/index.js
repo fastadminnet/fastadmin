@@ -335,10 +335,13 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'adminlte', 'form'], functi
                 }, 0);
             });
 
-            // 切换简洁模式菜单
+            // 切换简洁菜单
             $(document).on("click", "[data-config='simplenav']", function () {
                 var value = $(this).prop("checked") ? 1 : 0;
                 createCookie('simplenav', value);
+                if ($("[data-config='multiplenav']").prop("checked")) {
+                    createCookie('multiplenav', 0);
+                }
                 location.reload();
             });
 
@@ -346,6 +349,9 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'adminlte', 'form'], functi
             $(document).on("click", "[data-config='multiplenav']", function () {
                 var value = $(this).prop("checked") ? 1 : 0;
                 createCookie('multiplenav', value);
+                if ($("[data-config='simplenav']").prop("checked")) {
+                    createCookie('simplenav', 0);
+                }
                 location.reload();
             });
 
