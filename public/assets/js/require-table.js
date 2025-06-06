@@ -154,7 +154,9 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                 var _onPageListChange = $.fn.bootstrapTable.Constructor.prototype.onPageListChange;
                 $.fn.bootstrapTable.Constructor.prototype.onPageListChange = function () {
                     _onPageListChange.apply(this, Array.prototype.slice.apply(arguments));
-                    localStorage.setItem('pagesize', this.options.pageSize);
+                    if (!isNaN(this.options.pageSize)) {
+                        localStorage.setItem('pagesize', this.options.pageSize);
+                    }
                     return false;
                 };
                 // 写入bootstrap-table默认配置
