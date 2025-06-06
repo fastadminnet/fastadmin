@@ -36,7 +36,7 @@ module.exports = function (grunt) {
         var matches = content.match(pattern);
         if (matches) {
             if (type === 'js') {
-                var data = matches[1].replaceAll(/(urlArgs|baseUrl):(.*)\n/gi, '');
+                var data = matches[1].replace(/(urlArgs|baseUrl):[^\r\n]*[\r\n]*/gi, '');
                 const parse = require('parse-config-file'), fs = require('fs');
                 require('jsonminify');
 
