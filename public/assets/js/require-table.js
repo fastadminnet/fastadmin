@@ -18,11 +18,45 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
             exportTypes: ['json', 'xml', 'csv', 'txt', 'doc', 'excel'],
             exportOptions: {
                 fileName: 'export_' + Moment().format("YYYY-MM-DD"),
-                preventInjection: false,
+                htmlContent: false,
                 mso: {
                     onMsoNumberFormat: function (cell, row, col) {
-                        return !isNaN($(cell).text()) ? '\\@' : '';
-                    },
+                        var text = $(cell).text().trim();
+                        return text !== '' && !isNaN(text) ? '\\@' : '';
+                    }
+                },
+                onCellHtmlData: function (cell, row, col, html) {
+                    var text = cell.text();
+
+                    var path = location.pathname.match(/\/[^\/]+/)[0];
+                    path = path.indexOf(".php") > -1 ? path : '';
+                    if (cell.is("th")) {
+                        return text;
+                    } else if ($("input", cell).length > 0) {
+                        var inputArr = [];
+                        $("input", cell).each(function (key, item) {
+                            inputArr.push($(item).val());
+                        });
+                        return inputArr.join(",");
+                    } else if ($(">a", cell).length > 0) {
+                        var anchorArr = [];
+                        $(">a", cell).each(function (key, item) {
+                            if (html.match(/ajax\/icon\?suffix=/)) {
+                                anchorArr.push($(item).attr("href"));
+                            } else if ($(item).find("i.fa-toggle-on").length > 0) {
+                                anchorArr.push($(item).data("value"));
+                            } else {
+                                if ($(">img", item).length > 0 && !$.fn.bootstrapTable.defaults.exportOptions.htmlContent) {
+                                    anchorArr.push($(">img", item).prop("src").replace(new RegExp(path, "g"), ''));
+                                } else {
+                                    anchorArr.push($(item).html().replace(new RegExp(path, "g"), ''));
+                                }
+                            }
+                        });
+                        return anchorArr.join(",");
+                    } else {
+                        return html.replace(new RegExp(path, "g"), '');
+                    }
                 },
                 ignoreColumn: [0, 'operate'] //默认不导出第一列(checkbox)与操作(operate)列
             },
@@ -828,7 +862,7 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                     if (typeof this.disable !== "undefined") {
                         disable = typeof this.disable === "function" ? this.disable.call(this, value, row, index) : this.disable;
                     }
-                    return "<a href='javascript:;' data-toggle='tooltip' title='" + __('Click to toggle') + "' class='btn-change " + (disable ? 'btn disabled no-padding' : '') + "' data-index='" + index + "' data-id='"
+                    return "<a href='javascript:;' data-toggle='tooltip' data-value='" + value + "' title='" + __('Click to toggle') + "' class='btn-change " + (disable ? 'btn disabled no-padding' : '') + "' data-index='" + index + "' data-id='"
                         + row[pk] + "' " + (url ? "data-url='" + url + "'" : "") + (confirm ? "data-confirm='" + confirm + "'" : "") + " data-params='" + this.field + "=" + (value == yes ? no : yes) + "'><i class='fa fa-toggle-on text-success text-" + color + " " + (value == yes ? '' : 'fa-flip-horizontal text-gray') + " fa-2x'></i></a>";
                 },
                 url: function (value, row, index) {
