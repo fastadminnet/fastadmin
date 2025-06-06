@@ -21,6 +21,7 @@ class AdminLog extends Model
     //忽略的链接正则列表
     protected static $ignoreRegex = [
         '/^(.*)\/(selectpage|index)$/i',
+        '/^(.*)\/addon\/get_table_list$/i',
     ];
 
     public static function setTitle($title)
@@ -69,14 +70,7 @@ class AdminLog extends Model
             $content = self::getPureContent($content);
         }
         $title = $title ?: self::$title;
-        if (!$title) {
-            $title = [];
-            $breadcrumb = Auth::instance()->getBreadcrumb($path);
-            foreach ($breadcrumb as $k => $v) {
-                $title[] = $v['title'];
-            }
-            $title = implode(' / ', $title);
-        }
+        $title = $title ?: implode(' / ', array_column(Auth::instance()->getBreadcrumb($path), 'title'));
         self::create([
             'title'     => $title,
             'content'   => !is_scalar($content) ? json_encode($content, JSON_UNESCAPED_UNICODE) : $content,

@@ -2,6 +2,7 @@
 
 namespace app\admin\controller;
 
+use app\admin\model\AdminLog;
 use app\common\controller\Backend;
 use app\common\exception\UploadException;
 use app\common\library\Upload;
@@ -72,6 +73,9 @@ class Ajax extends Backend
 
         //必须还原upload配置,否则分片及cdnurl函数计算错误
         Config::load(APP_PATH . 'extra/upload.php', 'upload');
+
+        //自定义日志标题
+        AdminLog::setTitle(__('Upload'));
 
         $chunkid = $this->request->post("chunkid");
         if ($chunkid) {
