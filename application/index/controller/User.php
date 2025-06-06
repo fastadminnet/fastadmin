@@ -224,9 +224,9 @@ class User extends Frontend
                 //如果已经有账号则直接登录
                 $ret = $this->auth->direct($user->id);
             } else {
-                $ret = $this->auth->register($mobile, Random::alnum(), '', $mobile, []);
-                //如果是手机号首次注册则直接设定为已验证
-                $this->auth->getUser()->save(['verification' => ['email' => 0, 'mobile' => 1]]);
+                $username = \fast\Random::username();
+                $nickname = '用户' . substr($mobile, -4);
+                $ret = $this->auth->register($username, Random::alnum(), '', $mobile, ['nickname' => $nickname, 'verification' => ['mobile' => 1]]);
             }
             if ($ret) {
                 Sms::flush($mobile, 'mobilelogin');
@@ -321,6 +321,9 @@ class User extends Frontend
         return $this->view->fetch();
     }
 
+    /**
+     *  附件管理
+     */
     public function attachment()
     {
         //设置过滤方法
@@ -388,6 +391,9 @@ class User extends Frontend
         return $this->view->fetch();
     }
 
+    /**
+     * 用户协议
+     */
     public function agreement()
     {
         $this->view->assign('title', __('User agreement'));

@@ -90,6 +90,15 @@ class Random
     }
 
     /**
+     * 生成随机用户名
+     * @return string
+     */
+    public static function username(): string
+    {
+        return 'user_'.bin2hex(random_bytes(8)) . substr(uniqid(), -8);
+    }
+
+    /**
      * 获取全球唯一标识
      * @return string
      */

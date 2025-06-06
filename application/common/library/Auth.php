@@ -133,52 +133,51 @@ class Auth
      */
     public function register($username, $password, $email = '', $mobile = '', $extend = [])
     {
-        // 检测用户名、昵称、邮箱、手机号是否存在
-        if (User::getByUsername($username)) {
-            $this->setError('Username already exist');
-            return false;
-        }
-        if (User::getByNickname($username)) {
-            $this->setError('Nickname already exist');
-            return false;
-        }
-        if ($email && User::getByEmail($email)) {
-            $this->setError('Email already exist');
-            return false;
-        }
-        if ($mobile && User::getByMobile($mobile)) {
-            $this->setError('Mobile already exist');
-            return false;
-        }
-
-        $ip = request()->ip();
-        $time = time();
-
-        $data = [
-            'username' => $username,
-            'password' => $password,
-            'email'    => $email,
-            'mobile'   => $mobile,
-            'level'    => 1,
-            'score'    => 0,
-            'avatar'   => '',
-        ];
-        $params = array_merge($data, [
-            'nickname'  => preg_match("/^1[3-9]{1}\d{9}$/", $username) ? substr_replace($username, '****', 3, 4) : $username,
-            'salt'      => Random::alnum(),
-            'jointime'  => $time,
-            'joinip'    => $ip,
-            'logintime' => $time,
-            'loginip'   => $ip,
-            'prevtime'  => $time,
-            'status'    => 'normal'
-        ]);
-        $params['password'] = $this->getEncryptPassword($password, $params['salt']);
-        $params = array_merge($params, $extend);
-
         //账号注册时需要开启事务,避免出现垃圾数据
         Db::startTrans();
         try {
+            // 检测用户名、邮箱、手机号是否存在
+            if ($username && User::checkExists('username', $username)) {
+                $this->setError('Username already exist');
+                Db::rollback();
+                return false;
+            }
+            if ($email && User::checkExists('email', $email)) {
+                $this->setError('Email already exist');
+                Db::rollback();
+                return false;
+            }
+            if ($mobile && User::checkExists('mobile', $mobile)) {
+                $this->setError('Mobile already exist');
+                Db::rollback();
+                return false;
+            }
+
+            $ip = request()->ip();
+            $time = time();
+
+            $data = [
+                'username' => $username,
+                'password' => $password,
+                'email'    => $email,
+                'mobile'   => $mobile,
+                'level'    => 1,
+                'score'    => 0,
+                'avatar'   => '',
+            ];
+            $params = array_merge($data, [
+                'nickname'  => preg_match("/^1[3-9]{1}\d{9}$/", $username) ? substr_replace($username, '****', 3, 4) : $username,
+                'salt'      => Random::alnum(),
+                'jointime'  => $time,
+                'joinip'    => $ip,
+                'logintime' => $time,
+                'loginip'   => $ip,
+                'prevtime'  => $time,
+                'status'    => 'normal'
+            ]);
+            $params['password'] = $this->getEncryptPassword($password, $params['salt']);
+            $params = array_merge($params, $extend);
+
             $user = User::create($params, true);
 
             $this->_user = User::get($user->id);

@@ -83,6 +83,16 @@ class User extends Model
     }
 
     /**
+     * 判断指定字段的值是否存在
+     * @param string $field 字段名
+     * @param string $value 字段值
+     */
+    public static function checkExists($field, $value)
+    {
+        return self::lock(true)->where($field, $value)->find();
+    }
+
+    /**
      * 变更会员余额
      * @param int    $money   余额
      * @param int    $user_id 会员ID
