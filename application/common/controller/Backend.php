@@ -103,6 +103,11 @@ class Backend extends Controller
     protected $excludeFields = "";
 
     /**
+     * 排序字段
+     */
+    protected $dragsortFields = 'weigh';
+
+    /**
      * 导入文件首行类型
      * 支持comment/name
      * 表示注释或字段名

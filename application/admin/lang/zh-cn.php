@@ -23,6 +23,7 @@ return [
     'All'                                                   => '全部',
     'Detail'                                                => '详情',
     'Multi'                                                 => '批量更新',
+    'Dragsort'                                              => '排序',
     'Setting'                                               => '配置',
     'Move'                                                  => '移动',
     'Name'                                                  => '名称',

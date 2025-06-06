@@ -299,7 +299,7 @@ return [
         'loginip_check'         => true,
         //登录页默认背景图
         'login_background'      => "",
-        //是否启用简洁导航
+        //是否启用简洁导航，如同时启用多级菜单导航，简洁导航将失效
         'simplenav'             => false,
         //是否启用多级菜单导航
         'multiplenav'           => false,
