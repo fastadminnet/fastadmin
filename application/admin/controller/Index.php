@@ -77,6 +77,8 @@ class Index extends Backend
         //保持会话有效时长，单位:小时
         $keeyloginhours = 24;
         if ($this->request->isPost()) {
+            AdminLog::setTitle(__('Login'));
+
             $username = $this->request->post('username');
             $password = $this->request->post('password', '', null);
             $keeplogin = $this->request->post('keeplogin');
@@ -132,6 +134,13 @@ class Index extends Backend
     public function logout()
     {
         if ($this->request->isPost()) {
+            $user_id = $this->auth->id;
+            $username = $this->auth->username;
+            AdminLog::event('before_insert', function ($row) use ($user_id, $username) {
+                $row->admin_id = $user_id;
+                $row->username = $username;
+            });
+            AdminLog::setTitle(__('Logout'));
             $this->auth->logout();
             Hook::listen("admin_logout_after", $this->request);
             $this->success(__('Logout successful'), 'index/login');

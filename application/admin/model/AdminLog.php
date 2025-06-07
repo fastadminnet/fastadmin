@@ -20,8 +20,8 @@ class AdminLog extends Model
     protected static $content = '';
     //忽略的链接正则列表
     protected static $ignoreRegex = [
-        '/^(.*)\/(selectpage|index)$/i',
-        '/^(.*)\/addon\/get_table_list$/i',
+        '/^(.*)\/(selectpage|index|get_table_list|get_fields_list)$/i',
+        '/^(.*)\/auth\/group\/roletree$/i',
     ];
 
     public static function setTitle($title)
