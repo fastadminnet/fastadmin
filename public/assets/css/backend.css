@@ -376,6 +376,7 @@ html.ios-fix body .tab-pane {
   width: 100%;
   margin-bottom: 0;
   padding: 10px;
+  z-index: 99;
 }
 table.table-template {
   overflow: hidden;
