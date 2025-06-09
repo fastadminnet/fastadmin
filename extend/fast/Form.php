@@ -579,7 +579,9 @@ EOD;
     {
         $defaults = [
             'data-date-format' => "YYYY-MM-DD HH:mm:ss",
+            // 兼容旧的用法
             'data-use-current' => "true",
+            'data-date-use-current' => "true",
         ];
         $value = is_numeric($value) ? date("Y-m-d H:i:s", $value) : $value;
         $options = array_merge($defaults, $options);
