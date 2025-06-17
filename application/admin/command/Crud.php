@@ -711,6 +711,7 @@ class Crud extends Command
             $getAttrArr = [];
             $getEnumArr = [];
             $appendAttrList = [];
+            $typeDefineList = [];
             $controllerAssignList = [];
             $headingHtml = '{:build_heading()}';
             $controllerImport = '';
@@ -743,10 +744,17 @@ class Crud extends Command
                 if ($v['COLUMN_COMMENT'] != '') {
                     $langList[] = $this->getLangItem($field, $v['COLUMN_COMMENT']);
                 }
-                $inputType = '';
+
+                $inputType = $this->getFieldType($v);
+
+                // 强制类型转换
+                if ($inputType === 'number' && $v['DATA_TYPE'] == 'bigint') {
+                    $typeDefineList[] = <<<EOD
+        '{$field}' => 'string'
+EOD;
+                }
                 //保留字段不能修改和添加
                 if ($v['COLUMN_KEY'] != 'PRI' && !in_array($field, $this->reservedField) && !in_array($field, $this->ignoreFields)) {
-                    $inputType = $this->getFieldType($v);
 
                     // 如果是number类型时增加一个步长
                     $step = $inputType == 'number' && $v['NUMERIC_SCALE'] > 0 ? "0." . str_repeat(0, $v['NUMERIC_SCALE'] - 1) . "1" : 0;
@@ -1135,6 +1143,7 @@ class Crud extends Command
                 'recyclebinHtml'          => $recyclebinHtml,
                 'visibleFieldList'        => $fields ? "\$row->visible(['" . implode("','", array_filter(in_array($priKey, explode(',', $fields)) ? explode(',', $fields) : explode(',', $priKey . ',' . $fields))) . "']);" : '',
                 'appendAttrList'          => implode(",\n", $appendAttrList),
+                'typeDefineList'          => implode(",\n", $typeDefineList),
                 'getEnumList'             => implode("\n\n", $getEnumArr),
                 'getAttrList'             => implode("\n\n", $getAttrArr),
                 'setAttrList'             => implode("\n\n", $setAttrArr),
@@ -1273,6 +1282,7 @@ EOD;
             return;
         }
         $attrField = ucfirst($this->getCamelizeName($field));
+        $return = '';
         if ($inputType == 'datetime') {
             $return = <<<EOD
 return \$value === '' ? null : (\$value && !is_numeric(\$value) ? strtotime(\$value) : \$value);

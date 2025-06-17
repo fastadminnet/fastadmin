@@ -333,7 +333,6 @@ class Install extends Command
         foreach ($checkDirs as $k => $v) {
             if (!is_dir(ROOT_PATH . $v)) {
                 throw new Exception(__('Please go to the official website to download the full package or resource package and try to install'));
-                break;
             }
         }
         return true;

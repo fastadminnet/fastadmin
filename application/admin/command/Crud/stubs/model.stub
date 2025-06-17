@@ -27,6 +27,11 @@ class {%modelName%} extends Model
     protected $append = [
 {%appendAttrList%}
     ];
+
+    // 类型转换
+    protected $type = [
+{%typeDefineList%}
+    ];
     
 {%modelInit%}
     

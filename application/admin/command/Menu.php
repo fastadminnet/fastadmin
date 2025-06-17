@@ -256,6 +256,7 @@ class Menu extends Command
         \think\Lang::load(dirname(__DIR__) . DS . 'lang/zh-cn.php');
 
         //先导入菜单的数据
+        $name = '';
         $pid = 0;
         foreach ($controllerArr as $k => $v) {
             $key = $k + 1;

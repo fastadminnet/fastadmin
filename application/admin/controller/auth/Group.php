@@ -175,7 +175,6 @@ class Group extends Backend
                 }
             }
             $this->error();
-            return;
         }
         $this->view->assign("row", $row);
         return $this->view->fetch();
