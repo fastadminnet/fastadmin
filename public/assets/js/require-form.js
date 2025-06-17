@@ -682,7 +682,7 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                 Fast.api.ajax({
                     type: type,
                     url: url,
-                    data: form.find('input, select, textarea, keygen') // 找到所有可序列化的元素
+                    data: form.find(':input') // 找到所有可序列化的元素
                         .not('.fieldlist[data-ignoreorigin="true"] [fieldlist-item] *') // 排除掉 fieldlist 中的元素
                         .serialize() + (Object.keys(params).length > 0 ? '&' + $.param(params) : ''),
                     dataType: 'json',
