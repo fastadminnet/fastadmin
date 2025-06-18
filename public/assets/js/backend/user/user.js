@@ -20,14 +20,19 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 pk: 'id',
-                sortName: 'user.id',
+                sortName: 'id',
                 fixedColumns: true,
                 fixedRightNumber: 1,
                 columns: [
                     [
                         {checkbox: true},
                         {field: 'id', title: __('Id'), sortable: true},
-                        {field: 'group.name', title: __('Group')},
+                        {
+                            field: 'group_id', title: __('Group'), formatter: function (value, row, index) {
+                                value = Fast.api.escape(row.group_name || '');
+                                return '<a href="javascript:;" class="searchit" data-toggle="tooltip" title="' + __('Click to search %s', value) + '" data-field="group_id" data-value="' + parseInt(row.group_id) + '">' + value + '</a>';
+                            }
+                        },
                         {field: 'username', title: __('Username'), operate: 'LIKE'},
                         {field: 'nickname', title: __('Nickname'), operate: 'LIKE'},
                         {field: 'email', title: __('Email'), operate: 'LIKE'},

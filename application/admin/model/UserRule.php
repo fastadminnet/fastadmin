@@ -54,10 +54,10 @@ class UserRule extends Model
         Tree::instance()->init($ruleList);
         $ruleList = Tree::instance()->getTreeList(Tree::instance()->getTreeArray(0), 'name');
         $hasChildrens = [];
-        foreach ($ruleList as $k => $v)
-        {
-            if ($v['haschild'])
+        foreach ($ruleList as $k => $v) {
+            if ($v['haschild']) {
                 $hasChildrens[] = $v['id'];
+            }
         }
         foreach ($ruleList as $k => $v) {
             $state = array('selected' => in_array($v['id'], $selected) && !in_array($v['id'], $hasChildrens));
