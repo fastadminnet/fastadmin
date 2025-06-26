@@ -577,7 +577,10 @@ class Backend extends Controller
                     $result = array_intersect_key(($item instanceof Model ? $item->toArray() : (array)$item), array_flip($fields));
                 }
                 $result['pid'] = isset($item['pid']) ? $item['pid'] : (isset($item['parent_id']) ? $item['parent_id'] : 0);
-                $result = array_map("htmlentities", $result);
+                // 修改为安全的htmlentities调用，兼容php8+版本
+                $result = array_map(function($value) {
+                    return $value === null ? '' : htmlentities((string)$value);
+                }, $result);
                 $list[] = $result;
             }
             if ($istree && !$primaryvalue) {
