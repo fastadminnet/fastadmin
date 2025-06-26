@@ -204,6 +204,7 @@ class Builder
                 if ($subdomain) {
                     $route = substr($route, 4);
                 }
+                $route = str_replace('.', '/', $route);
                 $docsList[$section][$name] = [
                     'id'                => $counter,
                     'method'            => is_array($docs['ApiMethod'][0]) ? $docs['ApiMethod'][0]['data'] : $docs['ApiMethod'][0],
