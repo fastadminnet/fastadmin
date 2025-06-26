@@ -493,20 +493,20 @@ class Crud extends Command
                     //关联模式
                     'relationFields'        => isset($relationFields[$index]) ? explode(',', $relationFields[$index]) : [],
                     //关联模式
-                    'relationMode'          => isset($relationMode[$index]) ? $relationMode[$index] : 'belongsto',
+                    'relationMode'          => $relationMode[$index] ?? 'belongsto',
                     //关联模型控制器
-                    'relationController'    => isset($relationController[$index]) ? $relationController[$index] : '',
+                    'relationController'    => $relationController[$index] ?? '',
                     //关联表外键
-                    'relationForeignKey'    => isset($relationForeignKey[$index]) ? $relationForeignKey[$index] : '',
+                    'relationForeignKey'    => $relationForeignKey[$index] ?? '',
                     //关联表主键
-                    'relationPrimaryKey'    => isset($relationPrimaryKey[$index]) ? $relationPrimaryKey[$index] : '',
+                    'relationPrimaryKey'    => $relationPrimaryKey[$index] ?? '',
                 ];
             }
         }
 
         //根据表名匹配对应的Fontawesome图标
-        $iconPath = ROOT_PATH . str_replace('/', DS, '/public/assets/libs/font-awesome/less/variables.less');
-        $iconName = is_file($iconPath) && stripos(file_get_contents($iconPath), '@fa-var-' . $table . ':') ? 'fa fa-' . $table : 'fa fa-circle-o';
+        $iconPath = ROOT_PATH . str_replace('/', DS, '/public/assets/libs/font-awesome/css/font-awesome.css');
+        $iconName = is_file($iconPath) && stripos(file_get_contents($iconPath), '.fa-' . $table . ' {') ? 'fa fa-' . $table : 'fa fa-circle-o';
 
         //控制器
         list($controllerNamespace, $controllerName, $controllerFile, $controllerArr) = $this->getControllerData($moduleName, $controller, $table);
