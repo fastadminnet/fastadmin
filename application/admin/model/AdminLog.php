@@ -67,6 +67,10 @@ class AdminLog extends Model
         $content = $content ?: self::$content;
         if (!$content) {
             $content = request()->param('') ?: file_get_contents("php://input");
+            $contentLength = request()->server('CONTENT_LENGTH');
+            if (is_string($content) && $contentLength && strlen($content) < $contentLength) {
+                $content = '[Request Data Truncated]';
+            }
             $content = self::getPureContent($content);
         }
         $title = $title ?: self::$title;
