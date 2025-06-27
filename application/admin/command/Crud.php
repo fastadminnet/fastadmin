@@ -763,6 +763,13 @@ EOD;
                     $cssClassArr = ['form-control'];
                     $fieldName = "row[{$field}]";
                     $defaultValue = $v['COLUMN_DEFAULT'];
+
+                    $defaultValue = $defaultValue === 'NULL' ? '' : (string)$defaultValue;
+                    if (preg_match("/^'.*'$/", $defaultValue) && strlen($defaultValue) >= 2) {
+                        // 去掉首尾单引号
+                        $defaultValue = substr($defaultValue, 1, -1);
+                    }
+
                     $editValue = "{\$row.{$field}|htmlentities}";
                     // 如果默认值非null,则是一个必选项
                     if ($v['IS_NULLABLE'] == 'NO') {
