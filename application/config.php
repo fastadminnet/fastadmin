@@ -277,6 +277,10 @@ return [
         'user_api_captcha'      => false,
         //会员登录默认类型,支持mobile和account
         'user_login_type'       => 'account',
+        //会员登录有效期时长(秒)
+        'user_login_keeptime'   => 2592000,
+        //会员允许输出的字段
+        'user_allow_fields'     => ['id', 'username', 'nickname', 'mobile', 'avatar', 'score'],
         //用户注册协议
         'user_register_agreement' => true,
         //会员主页URL规则，{uid}表示用户的ID

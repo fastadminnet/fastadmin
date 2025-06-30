@@ -26,7 +26,7 @@ class Auth
     //默认配置
     protected $config = [];
     protected $options = [];
-    protected $allowFields = ['id', 'username', 'nickname', 'mobile', 'avatar', 'score'];
+    protected $allowFields = [];
 
     public function __construct($options = [])
     {
@@ -34,6 +34,9 @@ class Auth
             $this->config = array_merge($this->config, $config);
         }
         $this->options = array_merge($this->config, $options);
+
+        $this->keeptime = config('fastadmin.user_login_keeptime') ?? 259200;
+        $this->allowFields = config('fastadmin.user_allow_fields') ?? ['id', 'username', 'nickname', 'mobile', 'avatar', 'score'];
     }
 
     /**
@@ -183,7 +186,7 @@ class Auth
             $this->_user = User::get($user->id);
 
             //设置Token
-            $this->_token = Random::uuid();
+            $this->_token = Random::uuid($user->id);
             Token::set($this->_token, $user->id, $this->keeptime);
 
             //设置登录状态
@@ -324,7 +327,7 @@ class Auth
 
                 $this->_user = $user;
 
-                $this->_token = Random::uuid();
+                $this->_token = Random::uuid($user->id);
                 Token::set($this->_token, $user->id, $this->keeptime);
 
                 $this->_logined = true;
@@ -360,7 +363,7 @@ class Auth
         foreach ($ruleList as $k => $v) {
             $rules[] = $v['name'];
         }
-        $url = ($module ? $module : request()->module()) . '/' . (is_null($path) ? $this->getRequestUri() : $path);
+        $url = ($module ?: request()->module()) . '/' . (is_null($path) ? $this->getRequestUri() : $path);
         $url = strtolower(str_replace('.', '/', $url));
         return in_array($url, $rules);
     }
