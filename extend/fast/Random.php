@@ -95,25 +95,24 @@ class Random
      */
     public static function username(): string
     {
-        return 'user_'.bin2hex(random_bytes(8)) . substr(uniqid(), -8);
+        return 'user_' . bin2hex(random_bytes(8)) . substr(uniqid(), -8);
     }
 
     /**
      * 获取全球唯一标识
+     * @param string $tag 标识
      * @return string
      */
-    public static function uuid(): string
+    public static function uuid($tag = ''): string
     {
         return sprintf(
-            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            '%04x%04x-%04x-%04x-%04x-%12s',
             mt_rand(0, 0xffff),
             mt_rand(0, 0xffff),
             mt_rand(0, 0xffff),
             mt_rand(0, 0x0fff) | 0x4000,
             mt_rand(0, 0x3fff) | 0x8000,
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff)
+            substr(bin2hex(random_bytes(8)), 0, 6) . substr(md5(uniqid($tag ?: mt_rand(), true)), 0, 6)
         );
     }
 }
