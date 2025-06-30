@@ -21,7 +21,7 @@ class AdminLog extends Model
     //忽略的链接正则列表
     protected static $ignoreRegex = [
         '/^(.*)\/(selectpage|index|get_table_list|get_fields_list)$/i',
-        '/^(.*)\/auth\/group\/roletree$/i',
+        '/^auth\/group\/roletree$/i',
     ];
 
     public static function setTitle($title)
