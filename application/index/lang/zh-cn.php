@@ -118,6 +118,7 @@ return [
     'Upload canceled'                                        => '上传已取消',
     'No file upload or server upload limit exceeded'         => '未上传文件或超出服务器上传限制',
     'Uploaded file format is limited'                        => '上传文件格式受限制',
+    'Invalid MIME type format'                               => '无效的MIME类型格式',
     'Uploaded file is not a valid image'                     => '上传文件不是有效的图片文件',
     'Are you sure you want to cancel this upload?'           => '确定取消上传？',
     'Remove file'                                            => '移除文件',

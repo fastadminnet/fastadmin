@@ -111,6 +111,10 @@ class Upload
         if (stripos($this->fileInfo['type'], '/') === false) {
             throw new UploadException(__('Uploaded file format is limited'));
         }
+        //验证Mimetype类型
+        if (!preg_match('/^[a-zA-Z0-9\-\+\.]+\/[a-zA-Z0-9\-\+\.]+$/', $this->fileInfo['type'])) {
+            throw new UploadException(__('Invalid MIME type format'));
+        }
         //验证文件后缀
         if (in_array($this->fileInfo['suffix'], $mimetypeArr) || in_array('.' . $this->fileInfo['suffix'], $mimetypeArr)
             || in_array($typeArr[0] . "/*", $mimetypeArr) || (in_array($this->fileInfo['type'], $mimetypeArr) && stripos($this->fileInfo['type'], '/') !== false)) {
@@ -186,12 +190,21 @@ class Upload
             $suffix = $this->fileInfo['suffix'] ?? '';
         }
         $suffix = $suffix && preg_match("/^[a-zA-Z0-9]+$/", $suffix) ? $suffix : 'file';
-        $filename = $filename ? $filename : ($this->fileInfo['name'] ?? 'unknown');
+        $filename = $filename ?: ($this->fileInfo['name'] ?? 'unknown');
         $filename = xss_clean(strip_tags(htmlspecialchars($filename)));
-        $fileprefix = substr($filename, 0, strripos($filename, '.'));
-        $md5 = $md5 ? $md5 : (isset($this->fileInfo['tmp_name']) ? md5_file($this->fileInfo['tmp_name']) : '');
-        $category = $category ? $category : request()->post('category');
-        $category = $category ? xss_clean($category) : 'all';
+        $fileprefix = mb_substr($filename, 0, mb_strrpos($filename, '.'), 'UTF-8');
+
+        //文件名长度
+        $maxFilenameLength = $this->config['maxfilenamelength'] ?? 100;
+        if (mb_strlen($filename, 'UTF-8') > $maxFilenameLength) {
+            $maxPrefixLength = $maxFilenameLength - mb_strlen($suffix, 'UTF-8') - 1;
+            $fileprefix = mb_substr($filename, 0, $maxPrefixLength, 'UTF-8');
+            $filename = $fileprefix . '.' . $suffix;
+        }
+
+        $md5 = $md5 ?: (isset($this->fileInfo['tmp_name']) ? md5_file($this->fileInfo['tmp_name']) : '');
+        $category = $category ?: request()->post('category');
+        $category = array_key_exists($category, config('site.attachmentcategory') ?? []) ? $category : '';
         $replaceArr = [
             '{year}'       => date("Y"),
             '{mon}'        => date("m"),
@@ -201,14 +214,14 @@ class Upload
             '{sec}'        => date("s"),
             '{random}'     => Random::alnum(16),
             '{random32}'   => Random::alnum(32),
-            '{category}'   => $category ? $category : '',
-            '{filename}'   => substr($filename, 0, 100),
-            '{fileprefix}' => substr($fileprefix, 0, 100),
+            '{category}'   => $category,
+            '{filename}'   => $filename,
+            '{fileprefix}' => $fileprefix,
             '{suffix}'     => $suffix,
-            '{.suffix}'    => $suffix ? '.' . $suffix : '',
+            '{.suffix}'    => '.' . $suffix,
             '{filemd5}'    => $md5,
         ];
-        $savekey = $savekey ? $savekey : $this->config['savekey'];
+        $savekey = $savekey ?: $this->config['savekey'];
         $savekey = str_replace(array_keys($replaceArr), array_values($replaceArr), $savekey);
 
         return $savekey;
@@ -367,21 +380,25 @@ class Upload
         $this->checkMimetype();
         $this->checkImage();
 
-        $savekey = $savekey ? $savekey : $this->getSavekey();
+        $savekey = $savekey ?: $this->getSavekey();
         $savekey = '/' . ltrim($savekey, '/');
         $uploadDir = substr($savekey, 0, strripos($savekey, '/') + 1);
-        $fileName = substr($savekey, strripos($savekey, '/') + 1);
+        $saveName = substr($savekey, strripos($savekey, '/') + 1);
 
         $destDir = ROOT_PATH . 'public' . str_replace('/', DS, $uploadDir);
 
         $sha1 = $this->file->hash();
+
+        $filename = $this->getSavekey('{filename}');
+        $suffix = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        $mimetype = mb_substr($this->fileInfo['type'], 0, 100);
 
         //如果是合并文件
         if ($this->merging) {
             if (!$this->file->check()) {
                 throw new UploadException($this->file->getError());
             }
-            $destFile = $destDir . $fileName;
+            $destFile = $destDir . $saveName;
             $sourceFile = $this->file->getRealPath() ?: $this->file->getPathname();
             $info = $this->file->getInfo();
             $this->file = null;
@@ -390,9 +407,9 @@ class Upload
             }
             rename($sourceFile, $destFile);
             $file = new File($destFile);
-            $file->setSaveName($fileName)->setUploadInfo($info);
+            $file->setSaveName($saveName)->setUploadInfo($info);
         } else {
-            $file = $this->file->move($destDir, $fileName);
+            $file = $this->file->move($destDir, $saveName);
             if (!$file) {
                 // 上传失败获取错误信息
                 throw new UploadException($this->file->getError());
@@ -402,17 +419,18 @@ class Upload
         $category = request()->post('category');
         $category = array_key_exists($category, config('site.attachmentcategory') ?? []) ? $category : '';
         $auth = Auth::instance();
+
         $params = array(
             'admin_id'    => (int)session('admin.id'),
             'user_id'     => (int)$auth->id,
-            'filename'    => mb_substr(htmlspecialchars(strip_tags($this->fileInfo['name'])), 0, 100),
+            'filename'    => $filename,
             'category'    => $category,
-            'filesize'    => $this->fileInfo['size'],
-            'imagewidth'  => $this->fileInfo['imagewidth'],
-            'imageheight' => $this->fileInfo['imageheight'],
-            'imagetype'   => $this->fileInfo['suffix'],
+            'filesize'    => (int)$this->fileInfo['size'],
+            'imagewidth'  => (int)$this->fileInfo['imagewidth'],
+            'imageheight' => (int)$this->fileInfo['imageheight'],
+            'imagetype'   => $suffix,
             'imageframes' => 0,
-            'mimetype'    => $this->fileInfo['type'],
+            'mimetype'    => $mimetype,
             'url'         => $uploadDir . $file->getSaveName(),
             'uploadtime'  => time(),
             'storage'     => 'local',
