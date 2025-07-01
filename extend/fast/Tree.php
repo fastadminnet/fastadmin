@@ -323,7 +323,7 @@ class Tree
                 $value = array(
                     '@childlist' => $childlist,
                     '@url'       => $childdata || !isset($value['@url']) ? "javascript:;" : $value['@url'],
-                    '@addtabs'   => $childdata || !isset($value['@url']) ? "" : (stripos($value['@url'], "?") !== false ? "&" : "?") . "ref=addtabs",
+                    '@addtabs'   => $childdata || !isset($value['@url']) || stripos($value['@url'], '/') !== 0 || preg_match('/([?&])ref=/', $value['@url']) ? "" : (stripos($value['@url'], "?") !== false ? "&" : "?") . "ref=addtabs",
                     '@caret'     => ($childdata && (!isset($value['@badge']) || !$value['@badge']) ? '<i class="fa fa-angle-left"></i>' : ''),
                     '@badge'     => $value['@badge'] ?? '',
                     '@class'     => ($selected ? ' active' : '') . ($disabled ? ' disabled' : '') . ($childdata ? ' treeview' . (config('fastadmin.show_submenu') ? ' treeview-open' : '') : ''),
