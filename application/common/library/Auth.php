@@ -134,22 +134,28 @@ class Auth
      * @param array  $extend   扩展参数
      * @return boolean
      */
-    public function register($username, $password, $email = '', $mobile = '', $extend = [])
+    public function register($username = '', $password = '', $email = '', $mobile = '', $extend = [])
     {
         //账号注册时需要开启事务,避免出现垃圾数据
         Db::startTrans();
         try {
-            // 检测用户名、邮箱、手机号是否存在
-            if ($username && User::checkExists('username', $username)) {
+            $username = $username ?: Random::username();
+            $password = $password ?: Random::alnum(16);
+            $nickname = $extend['nickname'] ?? '用户' . mb_substr($mobile ?: strtoupper(Random::alnum(4)), -4);
+
+            // 检测用户名
+            if (User::checkExists('username', $username)) {
                 $this->setError('Username already exist');
                 Db::rollback();
                 return false;
             }
+            // 检测邮箱
             if ($email && User::checkExists('email', $email)) {
                 $this->setError('Email already exist');
                 Db::rollback();
                 return false;
             }
+            // 检测手机号
             if ($mobile && User::checkExists('mobile', $mobile)) {
                 $this->setError('Mobile already exist');
                 Db::rollback();
@@ -169,7 +175,7 @@ class Auth
                 'avatar'   => '',
             ];
             $params = array_merge($data, [
-                'nickname'  => preg_match("/^1[3-9]{1}\d{9}$/", $username) ? substr_replace($username, '****', 3, 4) : $username,
+                'nickname'  => $nickname,
                 'salt'      => Random::alnum(),
                 'jointime'  => $time,
                 'joinip'    => $ip,

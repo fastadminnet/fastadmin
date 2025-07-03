@@ -28,6 +28,7 @@ return [
     'Username can not be empty'                  => '用户名不能为空',
     'Username must be 3 to 30 characters'        => '用户名必须3-30个字符',
     'Username must be 6 to 30 characters'        => '用户名必须6-30个字符',
+    'Username can not be mobile'                 => '用户名不能使用手机号',
     'Account must be 3 to 50 characters'         => '账户必须3-50个字符',
     'Password can not be empty'                  => '密码不能为空',
     'Password must be 6 to 30 characters'        => '密码必须6-30个字符',

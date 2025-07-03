@@ -90,7 +90,7 @@ class User extends Api
             //如果已经有账号则直接登录
             $ret = $this->auth->direct($user->id);
         } else {
-            $ret = $this->auth->register($mobile, Random::alnum(), '', $mobile, []);
+            $ret = $this->auth->register('', Random::alnum(16), '', $mobile, []);
             $this->auth->getUser()->save(['verification' => ['email' => 0, 'mobile' => 1]]);
         }
         if ($ret) {
@@ -131,6 +131,9 @@ class User extends Api
         }
         if ($mobile && !Validate::regex($mobile, "^1\d{10}$")) {
             $this->error(__('Mobile is incorrect'));
+        }
+        if (Validate::regex($username, '/^1\d{10}$/')) {
+            $this->error(__('Username can not be mobile'));
         }
         $ret = Sms::check($mobile, $code, 'register');
         if (!$ret) {

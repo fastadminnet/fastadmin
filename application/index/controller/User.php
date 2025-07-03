@@ -96,6 +96,9 @@ class User extends Frontend
                 'email'            => 'Email is incorrect',
                 'mobile'           => 'Mobile is incorrect',
             ];
+            if (Validate::regex($username, '/^1\d{10}$/')) {
+                $this->error(__('Username can not be mobile'));
+            }
             $data = [
                 'username'  => $username,
                 'password'  => $password,
