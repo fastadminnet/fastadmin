@@ -53,7 +53,7 @@
                         <div class="profile-avatar-container">
                             <img class="profile-user-img img-responsive img-circle" src="{$admin.avatar|cdnurl|htmlentities}" alt="">
                             <div class="profile-avatar-text img-circle">{:__('Click to edit')}</div>
-                            <button type="button" id="faupload-avatar" class="faupload" data-input-id="c-avatar"><i class="fa fa-upload"></i> {:__('Upload')}</button>
+                            <button type="button" id="faupload-avatar" class="faupload" data-mimetype="png,jpg,jpeg,gif" data-input-id="c-avatar"><i class="fa fa-upload"></i> {:__('Upload')}</button>
                         </div>
 
                         <h3 class="profile-username text-center">{$admin.nickname|htmlentities}</h3>
