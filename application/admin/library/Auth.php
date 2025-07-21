@@ -348,10 +348,7 @@ class Auth extends \fast\Auth
             $obj = Tree::instance()->init($childrenList, 'pid')->getTreeArray($v['pid']);
             $objList = array_merge($objList, Tree::instance()->getTreeList($obj));
         }
-        $childrenGroupIds = [];
-        foreach ($objList as $k => $v) {
-            $childrenGroupIds[] = $v['id'];
-        }
+        $childrenGroupIds = array_column($objList, 'id');
         if (!$withself) {
             $childrenGroupIds = array_diff($childrenGroupIds, $groupIds);
         }
