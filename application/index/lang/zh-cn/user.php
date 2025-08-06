@@ -8,6 +8,7 @@ return [
     'Mobile'                                     => '手机号',
     'Email'                                      => '邮箱',
     'Captcha'                                    => '验证码',
+    'Get code'                                   => '获取验证码',
     'Lv'                                         => 'Lv',
     'Score'                                      => '积分',
     'Day'                                        => '天',
