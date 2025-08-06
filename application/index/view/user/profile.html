@@ -123,7 +123,7 @@
                     <div class="input-group">
                         <input type="text" name="captcha" id="email-captcha" class="form-control" data-rule="required;length({$Think.config.captcha.length});digits;remote({:url('api/validate/check_ems_correct')}, event=changeemail, email:#email)" />
                         <span class="input-group-btn" style="padding:0;border:none;">
-                            <a href="javascript:;" class="btn btn-info btn-captcha" data-url="{:url('api/ems/send')}" data-type="email" data-event="changeemail">获取验证码</a>
+                            <a href="javascript:;" class="btn btn-info btn-captcha" data-url="{:url('api/ems/send')}" data-type="email" data-event="changeemail">{:__('Get code')}</a>
                         </span>
                     </div>
                     <span class="msg-box"></span>
@@ -156,7 +156,7 @@
                     <div class="input-group">
                         <input type="text" name="captcha" id="mobile-captcha" class="form-control" data-rule="required;length({$Think.config.captcha.length});digits;remote({:url('api/validate/check_sms_correct')}, event=changemobile, mobile:#mobile)" />
                         <span class="input-group-btn" style="padding:0;border:none;">
-                            <a href="javascript:;" class="btn btn-info btn-captcha" data-url="{:url('api/sms/send')}" data-type="mobile" data-event="changemobile">获取验证码</a>
+                            <a href="javascript:;" class="btn btn-info btn-captcha" data-url="{:url('api/sms/send')}" data-type="mobile" data-event="changemobile">{:__('Get code')}</a>
                         </span>
                     </div>
                     <span class="msg-box"></span>
