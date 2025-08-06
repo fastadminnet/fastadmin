@@ -179,14 +179,14 @@ class User extends Api
         $bio = $this->request->post('bio');
         $avatar = $this->request->post('avatar', '', 'trim,strip_tags,htmlspecialchars');
         if ($username) {
-            $exists = \app\common\model\User::where('username', $username)->where('id', '<>', $this->auth->id)->find();
+            $exists = \app\common\model\User::where('username', $username)->where('id', '<>', $user->id)->find();
             if ($exists) {
                 $this->error(__('Username already exists'));
             }
             $user->username = $username;
         }
         if ($nickname) {
-            $exists = \app\common\model\User::where('nickname', $nickname)->where('id', '<>', $this->auth->id)->find();
+            $exists = \app\common\model\User::where('nickname', $nickname)->where('id', '<>', $user->id)->find();
             if ($exists) {
                 $this->error(__('Nickname already exists'));
             }
