@@ -10,7 +10,7 @@
     <div class="form-group">
         <label for="c-username" class="control-label col-xs-12 col-sm-2">{:__('Username')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-username" data-rule="required" class="form-control" name="row[username]" type="text" value="{$row.username|htmlentities}">
+            <input id="c-username" data-rule="{:__('Username')}:required;username" class="form-control" name="row[username]" type="text" value="{$row.username|htmlentities}">
         </div>
     </div>
     <div class="form-group">
