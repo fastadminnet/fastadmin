@@ -134,9 +134,13 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                     $(form).on("reset", function () {
                         setTimeout(function () {
                             $(".selectpage", form).each(function () {
-                                var selectpage = $(this).data("selectPageObject");
-                                selectpage.elem.hidden.val($(this).val());
-                                $(this).selectPageRefresh();
+                                if($(this).val()){
+                                    var selectpage = $(this).data("selectPageObject");
+                                    selectpage.elem.hidden.val($(this).val());
+                                    $(this).selectPageRefresh();
+                                }else{
+                                    $(this).selectPageClear();
+                                }
                             });
                         }, 1);
                     });
