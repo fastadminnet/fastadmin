@@ -134,13 +134,14 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                     $(form).on("reset", function () {
                         setTimeout(function () {
                             $(".selectpage", form).each(function () {
-                                if($(this).val()){
-                                    var selectpage = $(this).data("selectPageObject");
+                                var selectpage = $(this).data("selectPageObject");
+                                if ($(this).val()) {
                                     selectpage.elem.hidden.val($(this).val());
                                     $(this).selectPageRefresh();
-                                }else{
+                                } else {
                                     $(this).selectPageClear();
                                 }
+                                selectpage.hideResults(selectpage);
                             });
                         }, 1);
                     });
