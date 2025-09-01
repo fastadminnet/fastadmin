@@ -1251,7 +1251,7 @@ EOD;
         $output->info("Build Successed");
     }
 
-    protected function getEnum(&$getEnum, &$controllerAssignList, $field, $itemArr = '', $inputType = '')
+    protected function getEnum(&$getEnum, &$controllerAssignList, $field, $itemArr = [], $inputType = '')
     {
         if (!in_array($inputType, ['datetime', 'select', 'multiple', 'checkbox', 'radio'])) {
             return;
