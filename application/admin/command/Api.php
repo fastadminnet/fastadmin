@@ -18,6 +18,7 @@ class Api extends Command
         $this
             ->setName('api')
             ->addOption('url', 'u', Option::VALUE_OPTIONAL, 'default api url', '')
+            ->addOption('cdnurl', 'd', Option::VALUE_OPTIONAL, 'default cdn url', '')
             ->addOption('module', 'm', Option::VALUE_OPTIONAL, 'module name(admin/index/api)', 'api')
             ->addOption('output', 'o', Option::VALUE_OPTIONAL, 'output index file name', 'api.html')
             ->addOption('template', 'e', Option::VALUE_OPTIONAL, '', 'index.html')
@@ -36,6 +37,7 @@ class Api extends Command
 
         $force = $input->getOption('force');
         $url = $input->getOption('url');
+        $cdnurl = $input->getOption('cdnurl');
         $language = $input->getOption('language');
         $template = $input->getOption('template');
         if (!preg_match("/^([a-z0-9]+)\.html\$/i", $template)) {
@@ -116,15 +118,19 @@ class Api extends Command
 
         $classes = array_unique(array_filter($classes));
 
+        $cdnurl = $cdnurl ? : Config::get('site.cdnurl');
+
         $config = [
             'sitename'    => config('site.name'),
             'title'       => $title,
             'author'      => config('site.name'),
             'description' => '',
             'apiurl'      => $url,
+            'cdnurl'      => $cdnurl,
             'language'    => $language,
         ];
 
+        Config::set('view_replace_str.__CDN__', $cdnurl);
         $builder = new Builder($classes);
         $content = $builder->render($template_file, ['config' => $config, 'lang' => $lang]);
 
