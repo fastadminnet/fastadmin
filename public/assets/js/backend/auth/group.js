@@ -47,7 +47,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'jstree'], function (
                         {field: 'state', checkbox: true,},
                         {field: 'id', title: 'ID'},
                         {field: 'pid', title: __('Parent')},
-                        {field: 'name', title: __('Name'), align: 'left', formatter:function (value, row, index) {
+                        {
+                            field: 'name', title: __('Name'), align: 'left', formatter: function (value, row, index) {
                                 return value.toString().replace(/(&|&amp;)nbsp;/g, '&nbsp;');
                             }
                         },
@@ -79,14 +80,17 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'jstree'], function (
         },
         api: {
             bindevent: function () {
+                var treeview = $("#treeview");
+
+                // 表单提交前设定规则集合
                 Form.api.bindevent($("form[role=form]"), null, null, function () {
-                    if ($("#treeview").length > 0) {
-                        var r = $("#treeview").jstree("get_all_checked");
+                    if (treeview.length > 0) {
+                        var r = treeview.jstree("get_all_checked");
                         $("input[name='row[rules]']").val(r.join(','));
                     }
                     return true;
                 });
-                //渲染权限节点树
+
                 //变更级别后需要重建节点树
                 $(document).on("change", "select[name='row[pid]']", function () {
                     var pid = $(this).data("pid");
@@ -96,37 +100,21 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'jstree'], function (
                         Backend.api.toastr.error(__('Can not change the parent to self'));
                         return false;
                     }
-                    $.ajax({
-                        url: "auth/group/roletree",
-                        type: 'post',
-                        dataType: 'json',
-                        data: {id: id, pid: $(this).val()},
-                        success: function (ret) {
-                            if (ret.hasOwnProperty("code")) {
-                                var data = ret.hasOwnProperty("data") && ret.data != "" ? ret.data : "";
-                                if (ret.code === 1) {
-                                    //销毁已有的节点树
-                                    $("#treeview").jstree("destroy");
-                                    Controller.api.rendertree(data);
-                                } else {
-                                    Backend.api.toastr.error(ret.msg);
-                                }
-                            }
-                        }, error: function (e) {
-                            Backend.api.toastr.error(e.message);
-                        }
-                    });
+                    treeview.jstree(true).refresh(false);
                 });
+
                 //全选和展开
                 $(document).on("click", "#checkall", function () {
-                    $("#treeview").jstree($(this).prop("checked") ? "check_all" : "uncheck_all");
+                    treeview.jstree($(this).prop("checked") ? "check_all" : "uncheck_all");
                 });
                 $(document).on("click", "#expandall", function () {
-                    $("#treeview").jstree($(this).prop("checked") ? "open_all" : "close_all");
+                    treeview.jstree($(this).prop("checked") ? "open_all" : "close_all");
                 });
-                $("select[name='row[pid]']").trigger("change");
+
+                //首次渲染
+                Controller.api.rendertree();
             },
-            rendertree: function (content) {
+            rendertree: function () {
                 $("#treeview")
                     .on('redraw.jstree', function (e) {
                         $(".layer-footer").attr("domrefresh", Math.random());
@@ -150,7 +138,32 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'jstree'], function (
                         "plugins": ["checkbox", "types"],
                         "core": {
                             'check_callback': true,
-                            "data": content
+                            'strings': {
+                                'Loading ...': __('Loading')
+                            },
+                            "data": function (obj, callback) {
+                                var pidObj = $("select[name='row[pid]']");
+                                $.ajax({
+                                    url: "auth/group/roletree",
+                                    type: 'post',
+                                    dataType: 'json',
+                                    data: {id: pidObj.data('id'), pid: pidObj.val()},
+                                    success: function (ret) {
+                                        if (ret.hasOwnProperty("code")) {
+                                            var data = ret.hasOwnProperty("data") && ret.data != "" ? ret.data : "";
+                                            if (ret.code === 1) {
+                                                callback(data);
+                                            } else {
+                                                Backend.api.toastr.error(ret.msg);
+                                                callback([]);
+                                            }
+                                        }
+                                    }, error: function (e) {
+                                        Backend.api.toastr.error(e.message);
+                                        callback([]);
+                                    }
+                                });
+                            }
                         }
                     });
             }

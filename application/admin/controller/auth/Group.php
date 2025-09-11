@@ -258,7 +258,10 @@ class Group extends Backend
         }
         if (($pid || $parentGroupModel) && (!$id || $currentGroupModel)) {
             $id = $id ? $id : null;
-            $ruleList = collection(model('AuthRule')->order('weigh', 'desc')->order('id', 'asc')->select())->toArray();
+            $ruleList = Db::name("auth_rule")
+                ->field('id,pid,name,title,icon,ismenu,status,weigh')
+                ->order('weigh DESC,id ASC')
+                ->select();
             //读取父类角色所有节点列表
             $parentRuleList = [];
             if (in_array('*', explode(',', $parentGroupModel->rules))) {
