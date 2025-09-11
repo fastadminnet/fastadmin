@@ -2,12 +2,10 @@
 
 namespace app\admin\controller\auth;
 
-use app\admin\model\AuthRule;
 use app\common\controller\Backend;
 use fast\Tree;
 use think\Cache;
-use think\db\Query;
-use think\exception\HttpResponseException;
+use think\Db;
 
 /**
  * 规则管理
@@ -32,24 +30,45 @@ class Rule extends Backend
             $this->error(__('Access is allowed only to the super management group'));
         }
         $this->model = model('AuthRule');
-        // 必须将结果集转换为数组
-        $ruleList = \think\Db::name("auth_rule")->field('type,condition,remark,menutype,extend,pinyin,py,createtime,updatetime', true)->order('weigh DESC,id ASC')->select();
-        foreach ($ruleList as $k => &$v) {
-            $v['title'] = __($v['title']);
-        }
-        unset($v);
-        Tree::instance()->init($ruleList)->icon = ['&nbsp;&nbsp;&nbsp;&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;'];
-        $this->rulelist = Tree::instance()->getTreeList(Tree::instance()->getTreeArray(0), 'title');
-        $ruledata = [0 => __('None')];
-        foreach ($this->rulelist as $k => &$v) {
-            if (!$v['ismenu']) {
-                continue;
+        $actionName = $this->request->action();
+
+        $isAddEdit = in_array($actionName, ['add', 'edit']);
+
+        // 优化加载
+        if ($isAddEdit || ($actionName == 'index' && $this->request->isAjax())) {
+
+            // 必须将结果集转换为数组
+            $ruleList = Db::name("auth_rule")
+                ->where(function ($query) use ($isAddEdit) {
+                    if ($isAddEdit) {
+                        $query->where('ismenu', 1);
+                    }
+                })->field('id,pid,name,title,icon,ismenu,status,weigh')
+                ->order('weigh DESC,id ASC')
+                ->select();
+
+            array_walk($ruleList, function (&$v) {
+                $v['title'] = __($v['title']);
+            });
+
+            // 读取规则菜单
+            $this->rulelist = Tree::instance()->init($ruleList)->getTreeArrayList(0);
+
+            // 只有编辑页才需要渲染
+            if ($isAddEdit) {
+                $ruledata = [0 => __('None')];
+                foreach ($this->rulelist as $k => &$v) {
+                    if (!$v['ismenu']) {
+                        continue;
+                    }
+                    $ruledata[$v['id']] = str_repeat('&nbsp;', $v['level'] * 4) . $v['title'];
+                }
+                unset($v);
+
+                $this->view->assign('ruledata', $ruledata);
             }
-            $ruledata[$v['id']] = $v['title'];
-            unset($v['spacer']);
         }
-        unset($v);
-        $this->view->assign('ruledata', $ruledata);
+
         $this->view->assign("menutypeList", $this->model->getMenutypeList());
     }
 
@@ -111,7 +130,8 @@ class Rule extends Backend
                     $this->error(__('Can not change the parent to self'));
                 }
                 if ($params['pid'] != $row['pid']) {
-                    $childrenIds = Tree::instance()->init(collection(AuthRule::select())->toArray())->getChildrenIds($row['id']);
+                    $tree = Tree::instance()->init(Db::name('auth_rule')->select());
+                    $childrenIds = $tree->getChildrenIds($row['id']);
                     if (in_array($params['pid'], $childrenIds)) {
                         $this->error(__('Can not change the parent to child'));
                     }
@@ -141,11 +161,12 @@ class Rule extends Backend
         if (!$this->request->isPost()) {
             $this->error(__("Invalid parameters"));
         }
-        $ids = $ids ? $ids : $this->request->post("ids");
+        $ids = $ids ?: $this->request->post("ids");
         if ($ids) {
             $delIds = [];
+            $tree = Tree::instance()->init(Db::name('auth_rule')->select());
             foreach (explode(',', $ids) as $k => $v) {
-                $delIds = array_merge($delIds, Tree::instance()->getChildrenIds($v, true));
+                $delIds = array_merge($delIds, $tree->getChildrenIds($v, true));
             }
             $delIds = array_unique($delIds);
             $count = $this->model->where('id', 'in', $delIds)->delete();
