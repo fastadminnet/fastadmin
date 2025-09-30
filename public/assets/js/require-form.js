@@ -106,7 +106,7 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                         $('.selectpicker', form).selectpicker();
                         $(form).on("reset", function () {
                             setTimeout(function () {
-                                $('.selectpicker').selectpicker('refresh').trigger("change");
+                                $('.selectpicker', form).selectpicker('refresh').trigger("change");
                             }, 1);
                         });
                     });
@@ -135,8 +135,13 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                         setTimeout(function () {
                             $(".selectpage", form).each(function () {
                                 var selectpage = $(this).data("selectPageObject");
-                                selectpage.elem.hidden.val($(this).val());
-                                $(this).selectPageRefresh();
+                                if ($(this).val()) {
+                                    selectpage.elem.hidden.val($(this).val());
+                                    $(this).selectPageRefresh();
+                                } else {
+                                    $(this).selectPageClear();
+                                }
+                                selectpage.hideResults(selectpage);
                             });
                         }, 1);
                     });
@@ -159,7 +164,7 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                     require(['citypicker'], function () {
                         $(form).on("reset", function () {
                             setTimeout(function () {
-                                $("[data-toggle='city-picker']").citypicker('refresh');
+                                $("[data-toggle='city-picker']", form).citypicker('refresh');
                             }, 1);
                         });
                     });
@@ -513,10 +518,10 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
             tagsinput: function (form) {
                 if ($("[data-role='tagsinput']", form).length > 0) {
                     require(['tagsinput', 'autocomplete'], function () {
-                        $("[data-role='tagsinput']").tagsinput();
+                        $("[data-role='tagsinput']", form).tagsinput();
                         form.on("reset", function () {
                             setTimeout(function () {
-                                $("[data-role='tagsinput']").tagsinput('reset');
+                                $("[data-role='tagsinput']", form).tagsinput('reset');
                             }, 0);
                         });
                     });

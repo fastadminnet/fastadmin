@@ -55,15 +55,15 @@ class Tree
     /**
      * 初始化方法
      * @param array  $arr     2维数组，例如：
-     *      array(
-     *      1 => array('id'=>'1','pid'=>0,'name'=>'一级栏目一'),
-     *      2 => array('id'=>'2','pid'=>0,'name'=>'一级栏目二'),
-     *      3 => array('id'=>'3','pid'=>1,'name'=>'二级栏目一'),
-     *      4 => array('id'=>'4','pid'=>1,'name'=>'二级栏目二'),
-     *      5 => array('id'=>'5','pid'=>2,'name'=>'二级栏目三'),
-     *      6 => array('id'=>'6','pid'=>3,'name'=>'三级栏目一'),
-     *      7 => array('id'=>'7','pid'=>3,'name'=>'三级栏目二')
-     *      )
+     *                        array(
+     *                        1 => array('id'=>'1','pid'=>0,'name'=>'一级栏目一'),
+     *                        2 => array('id'=>'2','pid'=>0,'name'=>'一级栏目二'),
+     *                        3 => array('id'=>'3','pid'=>1,'name'=>'二级栏目一'),
+     *                        4 => array('id'=>'4','pid'=>1,'name'=>'二级栏目二'),
+     *                        5 => array('id'=>'5','pid'=>2,'name'=>'二级栏目三'),
+     *                        6 => array('id'=>'6','pid'=>3,'name'=>'三级栏目一'),
+     *                        7 => array('id'=>'7','pid'=>3,'name'=>'三级栏目二')
+     *                        )
      * @param string $pidname 父字段名称
      * @param string $nbsp    空格占位符
      * @return Tree
@@ -434,5 +434,56 @@ class Tree
             }
         }
         return $arr;
+    }
+
+    public function getTreeArrayList($pid = 0)
+    {
+        $map = [];
+        $data = [];
+
+        $items = $this->arr;
+
+        foreach ($items as &$item) {
+            $item['children'] = []; // 初始化子节点
+            $map[$item['id']] = &$item;
+        }
+        unset($item);
+
+        foreach ($items as &$item) {
+            if ($item[$this->pidname] == $pid) {
+                $data[] = &$item;
+            } else {
+                if (isset($map[$item[$this->pidname]])) {
+                    $map[$item[$this->pidname]]['children'][] = &$item;
+                }
+            }
+        }
+        unset($item);
+
+        return $this->getFlattenTree($data);
+    }
+
+    /**
+     * 将多维树形结构数据扁平化处理
+     *
+     * 该函数递归遍历树形结构，将嵌套的节点展开为一维数组，
+     * 并为每个节点添加层级标识
+     *
+     * @param array $data   树形结构数据，每个节点可能包含children子节点
+     * @param int   $level  当前节点的层级深度，默认为0（根节点）
+     * @param array &$result 引用传递的结果数组，用于存储扁平化后的所有节点
+     *
+     * @return array 扁平化后的节点数组，每个节点包含原始数据和level层级信息
+     */
+    public function getFlattenTree($data, $level = 0, &$result = [])
+    {
+        foreach ($data as $node) {
+            $node['level'] = $level;
+            $result[] = $node;
+            if (!empty($node['children'])) {
+                $this->getFlattenTree($node['children'], $level + 1, $result);
+            }
+        }
+        return $result;
     }
 }

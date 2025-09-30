@@ -725,7 +725,7 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                         if (top + 154 > $(window).height()) {
                             top = top - 154;
                         }
-                        if ($(window).width() < 480) {
+                        if (left < 0 || $(window).width() < 480) {
                             top = left = undefined;
                         }
                         Layer.confirm(

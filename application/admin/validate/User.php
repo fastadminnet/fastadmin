@@ -13,7 +13,7 @@ class User extends Validate
         'username' => 'require|regex:\w{3,30}|unique:user',
         'nickname' => 'require|unique:user',
         'password' => 'regex:\S{6,30}',
-        'email'    => 'require|email|unique:user',
+        'email'    => 'email|unique:user',
         'mobile'   => 'unique:user'
     ];
 
