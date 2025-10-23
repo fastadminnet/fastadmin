@@ -1571,6 +1571,7 @@ EOD;
                 $valArr = explode('=', $v);
                 if (count($valArr) == 2) {
                     list($key, $value) = $valArr;
+                    $key = trim($key);
                     $itemArr[$key] = $field . ' ' . $key;
                 }
             }
