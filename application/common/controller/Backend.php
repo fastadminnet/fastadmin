@@ -152,14 +152,18 @@ class Backend extends Controller
                 $url = $url ? $url : $this->request->url();
                 if (in_array($this->request->pathinfo(), ['/', 'index/index'])) {
                     $this->redirect('index/login', [], 302, ['referer' => $url]);
-                    exit;
                 }
                 $this->error(__('Please login first'), url('index/login', ['url' => $url]));
             }
             // 判断是否需要验证权限
             if (!$this->auth->match($this->noNeedRight)) {
                 // 判断控制器和方法是否有对应权限
-                if (!$this->auth->check($path)) {
+                $subpath = str_replace('.', '/', $this->request->path());
+                // 判断当前路径和子路径是否都无权限
+                $hasPathPermission = $this->auth->check($path);
+                $hasSubpathPermission = ($path === $subpath) ? $hasPathPermission : $this->auth->check($subpath);
+
+                if (!$hasPathPermission && !$hasSubpathPermission) {
                     Hook::listen('admin_nopermission', $this);
                     $this->error(__('You have no permission'), '');
                 }
@@ -583,7 +587,7 @@ class Backend extends Controller
                 }
                 $result['pid'] = isset($item['pid']) ? $item['pid'] : (isset($item['parent_id']) ? $item['parent_id'] : 0);
                 // 修改为安全的htmlentities调用，兼容php8+版本
-                $result = array_map(function($value) {
+                $result = array_map(function ($value) {
                     return $value === null ? '' : htmlentities((string)$value);
                 }, $result);
                 $list[] = $result;
