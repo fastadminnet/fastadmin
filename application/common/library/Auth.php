@@ -286,7 +286,7 @@ class Auth
                 $newpassword = $this->getEncryptPassword($newpassword, $salt);
                 $this->_user->save(['loginfailure' => 0, 'password' => $newpassword, 'salt' => $salt]);
 
-                Token::delete($this->_token);
+                Token::clear($this->_user->id);
                 //修改密码成功的事件
                 Hook::listen("user_changepwd_successed", $this->_user);
                 Db::commit();
