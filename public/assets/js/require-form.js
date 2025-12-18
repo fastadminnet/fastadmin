@@ -470,6 +470,28 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                     if ($(this).hasClass("disabled")) {
                         return false;
                     }
+                    var input = $(this).prev("input");
+                    var yes = $(this).data("yes");
+                    var no = $(this).data("no");
+                    var unknownSpan = $(this).find(".switcher-unknown-val");
+                    if (unknownSpan.length > 0) {
+                        Layer.alert(__('Please select switch status'), {
+                            icon: 0,
+                            title: __('Warning'),
+                            btn: [__('Switch status on'), __('Switch status off')],
+                            btn1: function (index) {
+                                unknownSpan.replaceWith('<i class="fa fa-toggle-on text-success fa-2x"></i>')
+                                input.val(yes).trigger("change");
+                                Layer.close(index);
+                            },
+                            btn2: function (index) {
+                                unknownSpan.replaceWith('<i class="fa fa-toggle-on text-success fa-flip-horizontal text-gray fa-2x"></i>');
+                                input.val(no).trigger("change");
+                                Layer.close(index);
+                            }
+                        });
+                        return false;
+                    }
                     var switcher = $.proxy(function () {
                         var input = $(this).prev("input");
                         input = $(this).data("input-id") ? $("#" + $(this).data("input-id")) : input;
