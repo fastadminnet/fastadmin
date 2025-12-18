@@ -181,6 +181,10 @@ return [
     'This page will be re-directed in %s seconds'           => '页面将在 %s 秒后自动跳转',
     'Click to uncheck all'                                  => '点击取消全部',
     'Multiple selection mode: %s checked'                   => '跨页选择模式，已选 %s 项',
+    'Please select switch status'                           => '请选择开关状态',
+    'switch status on'                                      => '设定为开启',
+    'switch status off'                                     => '设定为关闭',
+    'Status unknown, please manually change the status'     => '状态未知，请手动修改开关状态',
     //菜单
     'Dashboard'                                             => '控制台',
     'General'                                               => '常规管理',

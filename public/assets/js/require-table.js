@@ -570,10 +570,36 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                     table.bootstrapTable($(this).prop("checked") ? 'checkBy' : 'uncheckBy', {field: options.pk, values: [ids]});
                 });
                 table.on("click", "[data-id].btn-change", function (e) {
+                    var that = this;
                     e.preventDefault();
                     var changer = $.proxy(function () {
                         Table.api.multi($(this).data("action") ? $(this).data("action") : '', [$(this).data("id")], table, this);
                     }, this);
+
+                    var unknownSpan = $(this).find(".switcher-unknown-val");
+                    if (unknownSpan.length > 0) {
+                        var field = $(this).data("field");
+                        var yes = $(this).data("yes");
+                        var no = $(this).data("no");
+                        Layer.alert(__('Please select switch status'), {
+                            icon: 0,
+                            title: __('Warning'),
+                            btn: [__('Switch status on'), __('Switch status off')],
+                            btn1: function (index) {
+                                unknownSpan.replaceWith('<i class="fa fa-toggle-on text-success fa-2x"></i>')
+                                $(that).data("params", field + "=" + yes);
+                                changer();
+                                Layer.close(index);
+                            },
+                            btn2: function (index) {
+                                unknownSpan.replaceWith('<i class="fa fa-toggle-on text-success fa-flip-horizontal text-gray fa-2x"></i>');
+                                $(that).data("params", field + "=" + no);
+                                changer();
+                                Layer.close(index);
+                            }
+                        });
+                        return false;
+                    }
                     if (typeof $(this).data("confirm") !== 'undefined') {
                         Layer.confirm($(this).data("confirm"), function (index) {
                             changer();
@@ -864,8 +890,12 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                     if (typeof this.disable !== "undefined") {
                         disable = typeof this.disable === "function" ? this.disable.call(this, value, row, index) : this.disable;
                     }
-                    return "<a href='javascript:;' data-toggle='tooltip' data-value='" + value + "' title='" + __('Click to toggle') + "' class='btn-change " + (disable ? 'btn disabled no-padding' : '') + "' data-index='" + index + "' data-id='"
-                        + row[pk] + "' " + (url ? "data-url='" + url + "'" : "") + (confirm ? "data-confirm='" + confirm + "'" : "") + " data-params='" + this.field + "=" + (value == yes ? no : yes) + "'><i class='fa fa-toggle-on text-success text-" + color + " " + (value == yes ? '' : 'fa-flip-horizontal text-gray') + " fa-2x'></i></a>";
+                    var isUnknown = yes == value || no == value ? false : true;
+                    var html = isUnknown
+                        ? '<span class="switcher-unknown-val" data-toggle="tooltip" title="' + __('Status unknown, please manually change the status') + '"><i class="fa fa-question-circle text-warning"></i></span>'
+                        : '<i class="fa fa-toggle-on text-success text-' + color + ' ' + (value == yes ? '' : 'fa-flip-horizontal text-gray') + ' fa-2x"></i>';
+                    return "<a href='javascript:;' " + (isUnknown ? "" : "data-toggle='tooltip' title='" + __('Click to toggle') + "'") + " data-value='" + value + "' data-field='" + this.field + "' data-yes='" + yes + "' data-no='" + no + "' class='btn-change " + (disable ? 'btn disabled no-padding' : '') + "' data-index='" + index + "' data-id='"
+                        + row[pk] + "' " + (url ? "data-url='" + url + "'" : "") + (confirm ? "data-confirm='" + confirm + "'" : "") + " data-params='" + this.field + "=" + (isUnknown ? value : (value == yes ? no : yes)) + "'>" + html + "</a>";
                 },
                 url: function (value, row, index) {
                     value = value == null || value.length === 0 ? '' : value.toString();

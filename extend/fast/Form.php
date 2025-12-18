@@ -520,14 +520,14 @@ class FormBuilder
             $yes = $options['yes'];
             $no = $options['no'];
         }
-        $selected = $no == $value ? "fa-flip-horizontal text-gray" : "";
+        $grayclass = $yes == $value ? "": "fa-flip-horizontal text-gray";
         $disabled = (isset($options['disabled']) && $options['disabled']) || in_array('disabled', $options) ? "disabled" : '';
-        $color = isset($options['color']) ? $options['color'] : 'success';
+        $color = $options['color'] ?? 'success';
         unset($options['yes'], $options['no'], $options['color'], $options['disabled']);
         $attr = $this->attributes($options);
         $html = <<<EOD
 {$btn}
-<a href="javascript:;" data-toggle="switcher" class="btn-switcher {$disabled}" data-input-id="c-{$domname}" data-yes="{$yes}" data-no="{$no}" {$attr}><i class="fa fa-toggle-on text-{$color} {$selected} fa-2x"></i></a>
+<a href="javascript:;" data-toggle="switcher" class="btn-switcher {$disabled}" data-input-id="c-{$domname}" data-yes="{$yes}" data-no="{$no}" {$attr}><i class="fa fa-toggle-on text-{$color} {$grayclass} fa-2x"></i></a>
 EOD;
         return $html;
     }

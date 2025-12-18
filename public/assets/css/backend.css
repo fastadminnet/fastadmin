@@ -1659,4 +1659,16 @@ table.table-nowrap thead > tr > th {
   color: #fff;
   outline: none;
 }
+.btn-switcher {
+  margin-top: 5px;
+  display: inline-block;
+  min-height: 30px;
+}
+.switcher-unknown-val {
+  width: 30px;
+  border-radius: 10px;
+  background: #f2f281;
+  display: inline-block;
+  text-align: center;
+}
 /*# sourceMappingURL=backend.css.map */
