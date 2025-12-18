@@ -95,4 +95,20 @@ class Attachment extends Model
         $data['unclassed'] = __('Unclassed');
         return $data;
     }
+
+    /**
+     * 返回上传文件的相关信息
+     */
+    public function getBaseData()
+    {
+        $data = [
+            'url'      => $this->url,
+            'fullurl'  => cdnurl($this->url, true),
+            'category' => $this->category,
+            'filename' => $this->filename,
+            'filesize' => $this->filesize,
+            'mimetype' => $this->mimetype,
+        ];
+        return $data;
+    }
 }
