@@ -99,7 +99,8 @@ class Rule extends Backend
                 if (!$params['ismenu'] && !$params['pid']) {
                     $this->error(__('The non-menu rule must have parent'));
                 }
-                $result = $this->model->validate()->save($params);
+                $validate = \think\Loader::validate('AuthRule', 'validate', false, 'admin');
+                $result = $this->model->validate($validate)->save($params);
                 if ($result === false) {
                     $this->error($this->model->getError());
                 }
@@ -137,11 +138,11 @@ class Rule extends Backend
                     }
                 }
                 //这里需要针对name做唯一验证
-                $ruleValidate = \think\Loader::validate('AuthRule');
+                $ruleValidate = \think\Loader::validate('AuthRule', 'validate', false, 'admin');
                 $ruleValidate->rule([
-                    'name' => 'require|unique:AuthRule,name,' . $row->id,
+                    'name' => 'require|regex:format|unique:AuthRule,name,' . $row->id,
                 ]);
-                $result = $row->validate()->save($params);
+                $result = $row->validate($ruleValidate)->save($params);
                 if ($result === false) {
                     $this->error($row->getError());
                 }

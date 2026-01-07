@@ -16,7 +16,7 @@ class AuthRule extends Validate
      * 验证规则
      */
     protected $rule = [
-        'name'  => 'require|unique:AuthRule',
+        'name'  => 'require|regex:format|unique:AuthRule',
         'title' => 'require',
     ];
 
@@ -24,7 +24,7 @@ class AuthRule extends Validate
      * 提示消息
      */
     protected $message = [
-        'name.format' => 'URL规则只能是小写字母、数字、下划线和/组成'
+        'name.regex' => 'URL规则只能是小写字母、数字、下划线和/组成'
     ];
 
     /**
@@ -45,7 +45,7 @@ class AuthRule extends Validate
             'name'  => __('Name'),
             'title' => __('Title'),
         ];
-        $this->message['name.format'] = __('Name only supports letters, numbers, underscore and slash');
+        $this->message['name.regex'] = __('Name only supports letters, numbers, underscore and slash');
         parent::__construct($rules, $message, $field);
     }
 
