@@ -926,29 +926,25 @@ form.form-horizontal .control-label {
   display: block;
   clear: both;
 }
-#treeview .jstree-leaf:not(:first-child) {
+#treeview [data-vertical="true"] .jstree-leaf:not(:first-child) {
   float: left;
   background: none;
   margin-left: 0;
   min-width: 80px;
   clear: none;
 }
-#treeview .jstree-leaf {
+#treeview [data-vertical="true"] .jstree-leaf {
   float: left;
+  background: none;
   margin-left: 0;
   padding-left: 24px;
   min-width: 80px;
   clear: none;
-  color: #777;
+  color: #999;
 }
-#treeview .jstree-leaf > .jstree-icon,
-#treeview .jstree-leaf .jstree-themeicon {
+#treeview [data-vertical="true"] .jstree-leaf > .jstree-icon,
+#treeview [data-vertical="true"] .jstree-leaf .jstree-themeicon {
   display: none;
-}
-#treeview .jstree-last {
-  background-image: url("../img/32px.png");
-  background-position: -292px -4px;
-  background-repeat: repeat-y;
 }
 #treeview .jstree-children:before,
 #treeview .jstree-children:after {

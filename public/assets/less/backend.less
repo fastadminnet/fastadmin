@@ -842,31 +842,34 @@ form.form-horizontal .control-label {
         clear: both;
     }
 
-    .jstree-leaf:not(:first-child) {
-        float: left;
-        background: none;
-        margin-left: 0;
-        min-width: 80px;
-        clear: none;
-    }
+    [data-vertical="true"] {
 
-    .jstree-leaf {
-        float: left;
-        margin-left: 0;
-        padding-left: 24px;
-        min-width: 80px;
-        clear: none;
-        color: #777;
-    }
+            .jstree-leaf:not(:first-child) {
+                float: left;
+                background: none;
+                margin-left: 0;
+                min-width: 80px;
+                clear: none;
+            }
 
-    .jstree-leaf > .jstree-icon, .jstree-leaf .jstree-themeicon {
-        display: none;
-    }
+            .jstree-leaf {
+                float: left;
+                background: none;
+                margin-left: 0;
+                padding-left: 24px;
+                min-width: 80px;
+                clear: none;
+                color: #999;
+            }
 
-    .jstree-last {
-        background-image: url("../img/32px.png");
-        background-position: -292px -4px;
-        background-repeat: repeat-y;
+            .jstree-leaf > .jstree-icon, .jstree-leaf .jstree-themeicon {
+                display: none;
+            }
+
+            .jstree-last {
+
+            }
+
     }
 
     .jstree-children {

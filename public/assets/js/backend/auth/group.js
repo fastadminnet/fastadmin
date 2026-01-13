@@ -119,6 +119,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'jstree'], function (
                     .on('redraw.jstree', function (e) {
                         $(".layer-footer").attr("domrefresh", Math.random());
                     })
+                    .on('before_open.jstree.jstree', function (e, node) {
+                        if (node.node.children.length > 0 && node.node.children.length === node.node.children_d.length) {
+                            node.node.li_attr['data-vertical'] = true;
+                            $("#" + node.node.id).attr("data-vertical", true);
+                        }
+                    })
                     .jstree({
                         "themes": {"stripes": true},
                         "checkbox": {
