@@ -9,7 +9,7 @@ use think\addons\Service;
 use think\Cache;
 use think\Config;
 use think\Db;
-use think\Exception;
+use Exception;
 
 /**
  * 插件管理
@@ -38,7 +38,8 @@ class Addon extends Backend
         $addons = get_addon_list();
         foreach ($addons as $k => &$v) {
             $config = get_addon_config($v['name']);
-            $v['config'] = $config ? 1 : 0;
+            $showConfig = $v['config'] ?? true;
+            $v['config'] = $showConfig && $config ? 1 : 0;
             $v['url'] = str_replace($this->request->server('SCRIPT_NAME'), '', $v['url']);
         }
         $this->assignconfig(['addons' => $addons, 'api_url' => config('fastadmin.api_url'), 'faversion' => config('fastadmin.version'), 'domain' => request()->host(true)]);
@@ -444,7 +445,7 @@ class Addon extends Backend
             $json = [];
             try {
                 $json = Service::addons($params);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
 
             }
             $rows = $json['rows'] ?? [];
