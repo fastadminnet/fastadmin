@@ -1,0 +1,9 @@
+
+            <input {%attrStr%} name="{%fieldName%}" type="hidden" value="{%fieldValue%}">
+            <a href="javascript:;" data-toggle="switcher" class="btn-switcher" data-input-id="c-{%field%}" data-yes="{%fieldYes%}" data-no="{%fieldNo%}" >
+                {if in_array($row.{%field%}, ['{%fieldYes%}', '{%fieldNo%}'])}
+                    <i class="fa fa-toggle-on text-success {neq name="$row.{%field%}" value="{%fieldYes%}"}fa-flip-horizontal text-gray{/neq} fa-2x"></i>
+                {else/}
+                    <span class="switcher-unknown-val" data-toggle="tooltip" title="{:__('Status unknown, please manually change the status')}"><i class="fa fa-question-circle text-warning"></i></span>
+                {/if}
+            </a>

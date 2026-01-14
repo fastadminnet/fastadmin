@@ -884,7 +884,7 @@ EOD;
                         }
                         $stateNoClass = 'fa-flip-horizontal text-gray';
                         $formAddElement = $this->getReplacedStub('html/' . $inputType, ['field' => $field, 'fieldName' => $fieldName, 'fieldYes' => $yes, 'fieldNo' => $no, 'attrStr' => Form::attributes($attrArr), 'fieldValue' => $defaultValue, 'fieldSwitchClass' => $defaultValue == $yes ? '' : $stateNoClass]);
-                        $formEditElement = $this->getReplacedStub('html/' . $inputType, ['field' => $field, 'fieldName' => $fieldName, 'fieldYes' => $yes, 'fieldNo' => $no, 'attrStr' => Form::attributes($attrArr), 'fieldValue' => "{\$row.{$field}}", 'fieldSwitchClass' => "{neq name=\"\$row.{$field}\" value=\"{$yes}\"}fa-flip-horizontal text-gray{/neq}"]);
+                        $formEditElement = $this->getReplacedStub('html/' . $inputType . '-edit', ['field' => $field, 'fieldName' => $fieldName, 'fieldYes' => $yes, 'fieldNo' => $no, 'attrStr' => Form::attributes($attrArr), 'fieldValue' => "{\$row.{$field}}", 'fieldSwitchClass' => "{neq name=\"\$row.{$field}\" value=\"{$yes}\"}fa-flip-horizontal text-gray{/neq}"]);
                     } elseif ($inputType == 'citypicker') {
                         $attrArr['class'] = implode(' ', $cssClassArr);
                         $attrArr['data-toggle'] = "city-picker";
