@@ -166,12 +166,13 @@ class Auth
             $time = time();
 
             $data = [
+                'group_id' => config('fastadmin.user_default_group') ?: 0,
                 'username' => $username,
                 'password' => $password,
                 'email'    => $email,
                 'mobile'   => $mobile,
                 'level'    => 1,
-                'score'    => 0,
+                'score'    => config('fastadmin.user_initial_score') ?: 0,
                 'avatar'   => '',
             ];
             $params = array_merge($data, [

@@ -289,6 +289,10 @@ return [
         'user_letter_avatar'    => true,
         //会员默认头像，仅当user_letter_avatar为false时有效
         'user_default_avatar'   => '/assets/img/avatar.png',
+        //会员默认组别
+        'user_default_group'    => 0,
+        //会员初始积分
+        'user_initial_score'   => 0,
         //是否启用会员等级规则,支持none/auto/up,none表示不影响等级,auto表示自动升降级,up表示只升不降
         'user_level_rule'       => '',
         //会员等级积分字典，键名表示等级，值表示所需的积分
@@ -311,6 +315,8 @@ return [
         'multipletab'           => true,
         //是否默认展示子菜单
         'show_submenu'          => false,
+        //是否开启批量删除会员
+        'multi_delete_user'     => false,
         //后台皮肤,为空时表示使用skin-black-blue
         'adminskin'             => '',
         //后台是否启用面包屑

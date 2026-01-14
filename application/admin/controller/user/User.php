@@ -54,6 +54,7 @@ class User extends Backend
 
             return json($result);
         }
+        $this->assignconfig('multi_delete_user', config('fastadmin.multi_delete_user'));
         return $this->view->fetch();
     }
 
@@ -93,14 +94,38 @@ class User extends Backend
         if (!$this->request->isPost()) {
             $this->error(__("Invalid parameters"));
         }
-        $ids = $ids ? $ids : $this->request->post("ids");
-        $row = $this->model->get($ids);
-        $this->modelValidate = true;
-        if (!$row) {
-            $this->error(__('No Results were found'));
+        $ids = $ids ?: $this->request->post("ids");
+        $ids = array_filter(explode(',', $ids));
+        if (!(config('fastadmin.multi_delete_user') ?: false)) {
+            if (count($ids) > 1) {
+                $this->error(__('Multi delete is not allowed'));
+            }
+            $row = $this->model->get($ids);
+            $this->modelValidate = true;
+            if (!$row) {
+                $this->error(__('No Results were found'));
+            }
+            $result = Auth::instance()->delete($row['id']);
+            $count = $result ? 1 : 0;
+            if ($count) {
+                $this->success();
+            }
+        } else {
+            //允许批量删除
+            $list = $this->model->where('id', 'in', $ids)->select();
+            $count = 0;
+            foreach ($list as $item) {
+                $result = Auth::instance()->delete($item['id']);
+                if ($result) {
+                    $count++;
+                }
+            }
         }
-        Auth::instance()->delete($row['id']);
-        $this->success();
+        if ($count) {
+            $this->success(__('%s rows deleted succeeded, %s rows deleted failed', $count, count($ids) - $count));
+        } else {
+            $this->error(__('No rows were deleted'));
+        }
     }
 
 }

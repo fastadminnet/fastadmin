@@ -45,7 +45,7 @@ class User extends Model
     public function getAvatarAttr($value, $data)
     {
         if (!$value) {
-            $value = config('fastadmin.user_letter_avatar') ? letter_avatar($data['nickname']) : (config('fastadmin.user_default_avatar') ?: '/assets/img/avatar.png');
+            $value = config('fastadmin.user_letter_avatar') && $data && ($data['nickname'] ?? '') ? letter_avatar($data['nickname']) : (config('fastadmin.user_default_avatar') ?: '/assets/img/avatar.png');
         }
         return cdnurl($value, true);
     }
