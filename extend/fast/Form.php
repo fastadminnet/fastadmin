@@ -520,14 +520,22 @@ class FormBuilder
             $yes = $options['yes'];
             $no = $options['no'];
         }
-        $grayclass = $yes == $value ? "": "fa-flip-horizontal text-gray";
         $disabled = (isset($options['disabled']) && $options['disabled']) || in_array('disabled', $options) ? "disabled" : '';
         $color = $options['color'] ?? 'success';
         unset($options['yes'], $options['no'], $options['color'], $options['disabled']);
         $attr = $this->attributes($options);
+        if (in_array($value, [(string)$yes, (string)$no])) {
+            $grayclass = $yes == $value ? "" : "fa-flip-horizontal text-gray";
+            $innerElement = "<i class=\"fa fa-toggle-on text-{$color} {$grayclass} fa-2x\"></i>";
+        } else {
+            $title = __('Status unknown, please manually change the status');
+            $innerElement = <<<EOD
+                <span class="switcher-unknown-val" data-toggle="tooltip" title="{$title}"><i class="fa fa-question-circle text-warning"></i></span>
+EOD;
+        }
         $html = <<<EOD
 {$btn}
-<a href="javascript:;" data-toggle="switcher" class="btn-switcher {$disabled}" data-input-id="c-{$domname}" data-yes="{$yes}" data-no="{$no}" {$attr}><i class="fa fa-toggle-on text-{$color} {$grayclass} fa-2x"></i></a>
+<a href="javascript:;" data-toggle="switcher" class="btn-switcher {$disabled}" data-input-id="c-{$domname}" data-yes="{$yes}" data-no="{$no}" {$attr}>{$innerElement}</a>
 EOD;
         return $html;
     }
