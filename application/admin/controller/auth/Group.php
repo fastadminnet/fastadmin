@@ -309,7 +309,7 @@ class Group extends Backend
                         continue;
                     }
                     $state = array('selected' => in_array($v['id'], $currentRuleIds) && !in_array($v['id'], $hasChildrens));
-                    $nodeList[] = array('id' => $v['id'], 'parent' => $v['pid'] ? $v['pid'] : '#', 'text' => __($v['title']), 'type' => 'menu', 'state' => $state);
+                    $nodeList[] = array('id' => $v['id'], 'parent' => $v['pid'] ? $v['pid'] : '#', 'text' => __($v['title']), 'type' => in_array($v['id'], $hasChildrens) ? 'menu' : 'file', 'state' => $state);
                 }
                 $this->success('', null, $nodeList);
             } else {
