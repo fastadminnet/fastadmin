@@ -2,6 +2,9 @@ define(['fast', 'template', 'moment'], function (Fast, Template, Moment) {
     var Frontend = {
         api: Fast.api,
         init: function () {
+            //配置Toastr的参数
+            Toastr.options.positionClass = "toast-top-right";
+            
             var si = {};
             //发送验证码
             $(document).on("click", ".btn-captcha", function (e) {
