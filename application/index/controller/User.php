@@ -400,6 +400,7 @@ class User extends Frontend
     public function agreement()
     {
         $this->view->assign('title', __('User agreement'));
+        $this->view->assign('content', xss_clean(config('site.agreement')));
         return $this->view->fetch();
     }
 }

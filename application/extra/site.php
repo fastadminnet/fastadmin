@@ -12,6 +12,7 @@ return [
         'frontend' => 'zh-cn',
     ],
     'fixedpage' => 'dashboard',
+    'agreement' => '协议内容',
     'categorytype' => [
         'default' => 'Default',
         'page' => 'Page',
