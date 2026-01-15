@@ -161,7 +161,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'template'], function
         api: {
             formatter: {
                 title: function (value, row, index) {
-                    var caret = row.haschild == 1 || row.ismenu == 1 ? '<i class="fa fa-caret-right"></i>' : '';
+                    var caret = row.haschild == 1 ? '<i class="fa fa-caret-right"></i>' : '';
 
                     value = !row.ismenu || row.status == 'hidden' ? "<span class='text-muted'>" + value + "</span>" : value;
                     return '<a href="javascript:;" data-id="' + row.id + '" data-pid="' + row.pid + '" class="'

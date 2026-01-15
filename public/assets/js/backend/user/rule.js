@@ -106,7 +106,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             formatter: {
                 title: function (value, row, index) {
                     value = value.toString().replace(/(&|&amp;)nbsp;/g, '&nbsp;');
-                    var caret = row.haschild == 1 || row.ismenu == 1 ? '<i class="fa fa-caret-right"></i>' : '';
+                    var caret = row.haschild == 1 ? '<i class="fa fa-caret-right"></i>' : '';
                     value = value.indexOf("&nbsp;") > -1 ? value.replace(/(.*)&nbsp;/, "$1" + caret) : caret + value;
 
                     value = !row.ismenu || row.status == 'hidden' ? "<span class='text-muted'>" + value + "</span>" : value;
