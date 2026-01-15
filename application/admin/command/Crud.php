@@ -1005,7 +1005,7 @@ EOD;
                 }
 
                 //过滤text类型字段
-                if ($v['DATA_TYPE'] != 'text' && $inputType != 'fieldlist') {
+                if (!preg_match("/text$/i", $v['DATA_TYPE']) && $inputType != 'fieldlist') {
                     //主键
                     if ($v['COLUMN_KEY'] == 'PRI' && !$priDefined) {
                         $priDefined = true;
@@ -1070,7 +1070,7 @@ EOD;
                     }
 
                     //过滤text类型字段
-                    if ($v['DATA_TYPE'] != 'text') {
+                    if (!preg_match("/text$/i", $v['DATA_TYPE'])) {
                         //构造JS列信息
                         $javascriptList[] = $this->getJsColumn($relationField, $v['DATA_TYPE'], '', [], $v);
                     }
@@ -1646,11 +1646,11 @@ EOD;
             $inputType = "datetimerange";
         }
         // 指定后缀结尾JSON配置
-        if ($this->isMatchSuffix($fieldsName, $this->jsonSuffix) && ($v['DATA_TYPE'] == 'varchar' || $v['DATA_TYPE'] == 'text')) {
+        if ($this->isMatchSuffix($fieldsName, $this->jsonSuffix) && ($v['DATA_TYPE'] == 'varchar' || preg_match("/text$/i", $v['DATA_TYPE']))) {
             $inputType = "fieldlist";
         }
         // 指定后缀结尾标签配置
-        if ($this->isMatchSuffix($fieldsName, $this->tagSuffix) && ($v['DATA_TYPE'] == 'varchar' || $v['DATA_TYPE'] == 'text')) {
+        if ($this->isMatchSuffix($fieldsName, $this->tagSuffix) && ($v['DATA_TYPE'] == 'varchar' || preg_match("/text$/i", $v['DATA_TYPE']))) {
             $inputType = "tagsinput";
         }
         return $inputType;
@@ -1734,7 +1734,22 @@ EOD;
     {
         $lang = mb_ucfirst($field);
         $formatter = '';
-        foreach ($this->fieldFormatterSuffix as $k => $v) {
+        $fieldFormatterSuffix = $this->fieldFormatterSuffix;
+        foreach (['switch', 'image', 'file', 'tag', 'intDate'] as $index => $item) {
+            $property = $item . (in_array($item, ['image', 'file']) ? 'Field' : 'Suffix');
+            if (!isset($this->$property) || !$this->isMatchSuffix($field, $this->$property)) {
+                continue;
+            }
+            if ($item == 'intDate') {
+                $fieldFormatterSuffix[$field] = ['type' => ['int', 'bigint', 'timestamp'], 'name' => 'datetime'];
+            } else if (in_array($item, ['image', 'file'])) {
+                $fieldFormatterSuffix[$field] = $this->fieldFormatterSuffix[$item . (preg_match("/s$/i", $field) ? 's' : '')];
+            } else {
+                $fieldFormatterSuffix[$field] = $this->fieldFormatterSuffix[$item];
+            }
+            break;
+        }
+        foreach ($fieldFormatterSuffix as $k => $v) {
             if (preg_match("/{$k}$/i", $field)) {
                 if (is_array($v)) {
                     if (in_array($datatype, $v['type'])) {
@@ -1765,7 +1780,13 @@ EOD;
         }
 
         // 文件、图片、权重等字段默认不加入搜索栏，字符串类型默认LIKE
-        $noSearchFiles = ['file$', 'files$', 'image$', 'images$', '^weigh$'];
+        $noSearchFiles = ['file$', 'files$', 'image$', 'images$', '^' . $this->sortField . '$'];
+        $noSearchFiles = array_merge($noSearchFiles, array_map(function ($item) {
+            return $item . '$';
+        }, $this->imageField), array_map(function ($item) {
+            return $item . '$';
+        }, $this->fileField));
+
         if (preg_match("/" . implode('|', $noSearchFiles) . "/i", $field)) {
             $html .= ", operate: false";
         } elseif (in_array($datatype, ['varchar'])) {
