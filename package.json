@@ -17,7 +17,7 @@
     "eonasdan-bootstrap-datetimepicker": "^4.17.49",
     "fastadmin-addtabs": "^1.0.8",
     "fastadmin-arttemplate": "^3.1.4",
-    "fastadmin-bootstraptable": "^1.11.12",
+    "fastadmin-bootstraptable": "^1.11.13",
     "fastadmin-citypicker": "^1.3.6",
     "fastadmin-cxselect": "^1.4.0",
     "fastadmin-dragsort": "^1.0.5",
@@ -53,7 +53,8 @@
       "xmldom": "^0.7.0"
     },
     "tableexport.jquery.plugin": {
-      "xlsx": "npm:@e965/xlsx@^0.20.3"
+      "xlsx": "npm:@e965/xlsx@^0.20.3",
+      "jspdf": "npm:noop@1.0.0"
     },
     "eonasdan-bootstrap-datetimepicker": {
       "moment-timezone": "^0.5.35"
