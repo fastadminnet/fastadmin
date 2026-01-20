@@ -244,7 +244,13 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                 if (options.dblClickToEdit) {
                     //当双击单元格时
                     table.on('dbl-click-row.bs.table', function (e, row, element, field) {
-                        $(Table.config.editonebtn, element).trigger("click");
+                        var editone = $(Table.config.editonebtn, element);
+                        if (editone.length > 0) {
+                            editone.trigger("click");
+                        } else if (options.extend.edit_url) {
+                            // 判断是否允许双击编辑
+                            Table.api.events.operate['click .btn-editone'].call(element, e, undefined, row, element.index());
+                        }
                     });
                 }
                 //渲染内容前
@@ -855,13 +861,14 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                     }
                     value = row[this.field] || value;
                     value = value == null || value.length === 0 ? '' : value.toString();
+                    this.searchList = $.fn.bootstrapTable.utils.combineSearchList(this.searchList);
                     var keys = typeof this.searchList === 'object' ? Object.keys(this.searchList) : [];
-                    var index = keys.indexOf(value);
+                    var keyIndex = keys.indexOf(value);
                     var color = value && typeof custom[value] !== 'undefined' ? custom[value] : null;
                     var display = index > -1 ? this.searchList[value] : null;
                     var icon = typeof this.icon !== 'undefined' ? this.icon : null;
                     if (!color) {
-                        color = index > -1 && typeof colorArr[index] !== 'undefined' ? colorArr[index] : 'primary';
+                        color = keyIndex > -1 && typeof colorArr[keyIndex] !== 'undefined' ? colorArr[keyIndex] : 'primary';
                     }
                     if (!display) {
                         display = __(value.charAt(0).toUpperCase() + value.slice(1));
@@ -938,25 +945,9 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                         value = Fast.api.escape(customValue);
                         field = this.customField;
                     }
-                    if (typeof that.searchList === 'object' && typeof that.searchList.then === 'function') {
-                        $.when(that.searchList).done(function (ret) {
-                            if (ret.data && ret.data.searchlist && $.isArray(ret.data.searchlist)) {
-                                that.searchList = ret.data.searchlist;
-                            } else if (ret.constructor === Array || ret.constructor === Object) {
-                                that.searchList = ret;
-                            }
-                        })
-                    }
-                    if (typeof that.searchList === 'object' && typeof that.custom === 'undefined') {
-                        var i = 0;
-                        var searchValues = Object.values(colorArr);
-                        $.each(that.searchList, function (key, val) {
-                            if (typeof colorArr[key] == 'undefined') {
-                                colorArr[key] = searchValues[i];
-                                i = typeof searchValues[i + 1] === 'undefined' ? 0 : i + 1;
-                            }
-                        });
-                    }
+
+                    //优化searchList
+                    that.searchList = $.fn.bootstrapTable.utils.combineSearchList(that.searchList);
 
                     //渲染Flag
                     var html = [];
@@ -967,7 +958,7 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                         if (value === '')
                             return true;
                         color = value && typeof colorArr[value] !== 'undefined' ? colorArr[value] : 'primary';
-                        display = typeof that.searchList !== 'undefined' && typeof that.searchList[value] !== 'undefined' ? that.searchList[value] : __(value.charAt(0).toUpperCase() + value.slice(1));
+                        display = typeof that.searchList[value] !== 'undefined' ? that.searchList[value] : __(value.charAt(0).toUpperCase() + value.slice(1));
                         value = Fast.api.escape(value);
                         display = Fast.api.escape(display);
                         label = '<span class="label label-' + color + '">' + display + '</span>';

@@ -295,7 +295,7 @@ define(['jquery', 'bootstrap', 'upload', 'validator', 'validator-lang'], functio
                                         }
                                     }
                                     var result = urlArr.join(",");
-                                    inputObj.val(result).trigger("change").trigger("validate");
+                                    inputObj.val(result).trigger("change", [data]).trigger("validate");
                                 } else if (input_id) {
                                     var url = Config.upload.fullmode ? Fast.api.cdnurl(data.url, true) : data.url;
                                     $("#" + input_id).val(url).trigger("change").trigger("validate");

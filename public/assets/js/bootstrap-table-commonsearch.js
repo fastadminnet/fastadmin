@@ -53,6 +53,7 @@
         if (that.options.searchFormTemplate) {
             return Template(that.options.searchFormTemplate, {columns: pColumns, table: that});
         }
+        var columnClass = typeof that.options.commonSearchColumnClass === 'undefined' ? 'col-xs-12 col-sm-6 col-md-4 col-lg-3' : that.options.commonSearchColumnClass;
         var htmlForm = [];
         htmlForm.push(sprintf('<form class="form-horizontal form-commonsearch" novalidate method="post" action="%s" >', that.options.actionForm));
         htmlForm.push('<fieldset>');
@@ -70,7 +71,7 @@
                 vObjCol.operate = renderDefault && operate ? operate : (typeof vObjCol.operate === 'undefined' ? '=' : vObjCol.operate);
                 ColumnsForSearch.push(vObjCol);
 
-                htmlForm.push('<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">');
+                htmlForm.push(sprintf('<div class="form-group %s %s">', columnClass, (typeof vObjCol.searchVisible === 'undefined' || vObjCol.searchVisible) ? '' : 'hidden'));
                 htmlForm.push(sprintf('<label for="%s" class="control-label col-xs-4">%s</label>', vObjCol.field, vObjCol.title));
                 htmlForm.push('<div class="col-xs-8">');
 
@@ -86,23 +87,7 @@
                     if (typeof vObjCol.searchList === 'function') {
                         htmlForm.push(vObjCol.searchList.call(this, vObjCol));
                     } else {
-                        var optionList = [sprintf('<option value="">%s</option>', that.options.formatCommonChoose())];
-                        if (typeof vObjCol.searchList === 'object' && typeof vObjCol.searchList.then === 'function') {
-                            (function (vObjCol, that) {
-                                $.when(vObjCol.searchList).done(function (ret) {
-                                    var searchList = [];
-                                    if (ret.data && ret.data.searchlist && $.isArray(ret.data.searchlist)) {
-                                        searchList = ret.data.searchlist;
-                                    } else if (ret.constructor === Array || ret.constructor === Object) {
-                                        searchList = ret;
-                                    }
-                                    var optionList = createOptionList(searchList, vObjCol, that);
-                                    $("form.form-commonsearch select[name='" + vObjCol.field + "']", that.$container).html(optionList.join('')).trigger("change");
-                                });
-                            })(vObjCol, that);
-                        } else {
-                            optionList = createOptionList(vObjCol.searchList, vObjCol, that);
-                        }
+                        var optionList = createOptionList(vObjCol.searchList, vObjCol, that);
                         htmlForm.push(sprintf('<select class="%s" name="%s" %s %s>%s</select>', addClass, vObjCol.field, style, extend, optionList.join('')));
                     }
                 } else {
@@ -125,7 +110,7 @@
                 htmlForm.push('</div>');
             }
         }
-        htmlForm.push('<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">');
+        htmlForm.push('<div class="form-group ' + columnClass + '">');
         htmlForm.push(createFormBtn(that).join(''));
         htmlForm.push('</div>');
         htmlForm.push('</div>');
@@ -147,16 +132,10 @@
     };
 
     var createOptionList = function (searchList, vObjCol, that) {
-        var isArray = searchList.constructor === Array;
         var optionList = [];
         optionList.push(sprintf('<option value="">%s</option>', that.options.formatCommonChoose()));
+        searchList = $.fn.bootstrapTable.utils.combineSearchList(searchList);
         $.each(searchList, function (key, value) {
-            if (value.constructor === Object) {
-                key = value.id;
-                value = value.name;
-            } else {
-                key = isArray ? value : key;
-            }
             optionList.push(sprintf("<option value='" + Fast.api.escape(key) + "' %s>" + Fast.api.escape(value) + "</option>", key == vObjCol.defaultValue ? 'selected' : ''));
         });
         return optionList;
@@ -306,6 +285,43 @@
         _load = BootstrapTable.prototype.load,
         _initSearch = BootstrapTable.prototype.initSearch;
 
+    // 定义通用searchList处理方法
+    $.fn.bootstrapTable.utils.combineSearchList = function (list) {
+        var searchList = {};
+
+        if (typeof list !== 'undefined') {
+            var isFunction = list.constructor === Function;
+            var isAjax = typeof list === 'object' && typeof list.then === 'function';
+            if (isFunction) {
+                list = list();
+            } else if (isAjax) {
+                $.when(list).done(function (ret) {
+                    // 兼容旧版本在data中返回searchlist
+                    if (typeof ret.data.searchlist !== 'undefined') {
+                        list = ret.data.searchlist;
+                    } else {
+                        list = ret;
+                    }
+                });
+            }
+            // 兼容旧版本searchList返回字符串直接渲染自定义搜索栏
+            if (typeof list === 'string') {
+                return searchList;
+            }
+            var isArray = list.constructor === Array;
+            var i = 0;
+            $.each(list, function (key, val) {
+                if (typeof val !== 'undefined' && val.constructor === Object) {
+                    key = val.id;
+                    val = val.name;
+                } else {
+                    key = isArray ? val : key;
+                }
+                searchList[key] = val;
+            });
+        }
+        return searchList;
+    };
     BootstrapTable.prototype.initHeader = function () {
         _initHeader.apply(this, Array.prototype.slice.apply(arguments));
         this.$header.find('th[data-field]').each(function (i) {
