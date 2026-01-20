@@ -124,7 +124,7 @@ class Date
      */
     public static function human($remote, $local = null)
     {
-        $time_diff = (is_null($local) ? time() : $local) - $remote;
+        $time_diff = (is_null($local) ? time() : $local) - (int)$remote;
         $tense = $time_diff < 0 ? 'after' : 'ago';
         $time_diff = abs($time_diff);
         $chunks = [
@@ -196,11 +196,11 @@ class Date
             case 'quarter':
                 $quarter = ceil(date('n', $baseTime) / 3) + $offset;
                 $month = $quarter * 3;
-                $offset_year = ceil($month/12) - 1;
+                $offset_year = ceil($month / 12) - 1;
                 $year = $year + $offset_year;
                 $month = $month - ($offset_year * 12);
                 $time = $position ?
-                    mktime(0, 0, 0, $month-2, 1, $year) :
+                    mktime(0, 0, 0, $month - 2, 1, $year) :
                     mktime(23, 59, 59, $month, self::days_in_month($month, $year), $year);
                 break;
             case 'year':

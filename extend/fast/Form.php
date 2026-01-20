@@ -205,6 +205,7 @@ class FormBuilder
             $value = $this->getValueAttribute($name, $value);
             $options['class'] = isset($options['class']) ? $options['class'] . (stripos($options['class'], 'form-control') !== false ? '' : ' form-control') : 'form-control';
         }
+        $value = $this->escape($value);
 
         $merge = compact('type', 'value', 'id');
         $options = array_merge($options, $merge);
@@ -586,9 +587,9 @@ EOD;
     public function datetimepicker($name, $value, $options = [])
     {
         $defaults = [
-            'data-date-format' => "YYYY-MM-DD HH:mm:ss",
+            'data-date-format'      => "YYYY-MM-DD HH:mm:ss",
             // 兼容旧的用法
-            'data-use-current' => "true",
+            'data-use-current'      => "true",
             'data-date-use-current' => "true",
         ];
         $value = is_numeric($value) ? date("Y-m-d H:i:s", $value) : $value;
@@ -680,6 +681,7 @@ EOD;
             return "<ins>{$value}</ins>";
         }, $title));
         $value = is_array($value) ? json_encode($value) : $value;
+        $value = $this->escape($value);
         $html = <<<EOD
 <dl class="fieldlist" data-name="{$name}" {$template} {$attributes}>
     <dd>
@@ -710,7 +712,8 @@ EOD;
             $level = $index + 1;
             $class = "cxselect-{$level}";
             $classes[] = $class;
-            $selectValue = isset($values[$value]) ? $values[$value] : (isset($values[$index]) ? $values[$index] : '');
+            $selectValue = $values[$value] ?? ($values[$index] ?? '');
+            $selectValue = $this->escape($selectValue);
 
             $cxselect[] = <<<EOD
 <select class="{$class} form-control" name="{$value}" data-value="{$selectValue}" data-url="{$url}?level={$level}&name={$value}" {$attributes}></select>
