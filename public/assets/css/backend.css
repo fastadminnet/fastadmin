@@ -1347,26 +1347,26 @@ table.table-nowrap thead > tr > th {
   .fixed-table-toolbar .toolbar .btn {
     min-height: 33px;
   }
-  .fixed-table-toolbar .toolbar a.btn-refresh,
-  .fixed-table-toolbar .toolbar a.btn-del,
-  .fixed-table-toolbar .toolbar a.btn-add,
-  .fixed-table-toolbar .toolbar a.btn-edit,
-  .fixed-table-toolbar .toolbar a.btn-import,
+  .fixed-table-toolbar .toolbar > a.btn-refresh,
+  .fixed-table-toolbar .toolbar > a.btn-del,
+  .fixed-table-toolbar .toolbar > a.btn-add,
+  .fixed-table-toolbar .toolbar > a.btn-edit,
+  .fixed-table-toolbar .toolbar > a.btn-import,
   .fixed-table-toolbar .toolbar a.btn-more,
-  .fixed-table-toolbar .toolbar a.btn-recyclebin,
-  .fixed-table-toolbar .toolbar .btn-mini-xs,
-  .fixed-table-toolbar .toolbar .btn-multi {
+  .fixed-table-toolbar .toolbar > a.btn-recyclebin,
+  .fixed-table-toolbar .toolbar > .btn-mini-xs,
+  .fixed-table-toolbar .toolbar > .btn-multi:not([data-action=destroy]) {
     font-size: 0;
   }
-  .fixed-table-toolbar .toolbar a.btn-refresh .fa,
-  .fixed-table-toolbar .toolbar a.btn-del .fa,
-  .fixed-table-toolbar .toolbar a.btn-add .fa,
-  .fixed-table-toolbar .toolbar a.btn-edit .fa,
-  .fixed-table-toolbar .toolbar a.btn-import .fa,
-  .fixed-table-toolbar .toolbar a.btn-more .fa,
-  .fixed-table-toolbar .toolbar a.btn-recyclebin .fa,
-  .fixed-table-toolbar .toolbar .btn-mini-xs .fa,
-  .fixed-table-toolbar .toolbar .btn-multi .fa {
+  .fixed-table-toolbar .toolbar > a.btn-refresh > .fa,
+  .fixed-table-toolbar .toolbar > a.btn-del > .fa,
+  .fixed-table-toolbar .toolbar > a.btn-add > .fa,
+  .fixed-table-toolbar .toolbar > a.btn-edit > .fa,
+  .fixed-table-toolbar .toolbar > a.btn-import > .fa,
+  .fixed-table-toolbar .toolbar a.btn-more > .fa,
+  .fixed-table-toolbar .toolbar > a.btn-recyclebin > .fa,
+  .fixed-table-toolbar .toolbar > .btn-mini-xs > .fa,
+  .fixed-table-toolbar .toolbar > .btn-multi:not([data-action=destroy]) > .fa {
     font-size: initial;
   }
   .fixed-table-toolbar .search {
@@ -1644,9 +1644,7 @@ table.table-nowrap thead > tr > th {
 }
 .btn-commonsearch.searching,
 .btn-commonsearch.searching:focus {
-  background: #444c69;
-  color: #fff;
-  border-color: #444c69;
+  color: #4e73df;
 }
 .btn-commonsearch.searching:hover,
 .btn-commonsearch.searching:active,
@@ -1654,6 +1652,16 @@ table.table-nowrap thead > tr > th {
   background: #3a415a;
   color: #fff;
   outline: none;
+}
+.btn-commonsearch.searching:after {
+  content: " ";
+  position: absolute;
+  right: 4px;
+  bottom: 8px;
+  background: #4e73df;
+  border-radius: 50%;
+  height: 4px;
+  width: 4px;
 }
 .btn-switcher {
   margin-top: 5px;

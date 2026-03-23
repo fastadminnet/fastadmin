@@ -844,31 +844,31 @@ form.form-horizontal .control-label {
 
     [data-vertical="true"] {
 
-            .jstree-leaf:not(:first-child) {
-                float: left;
-                background: none;
-                margin-left: 0;
-                min-width: 80px;
-                clear: none;
-            }
+        .jstree-leaf:not(:first-child) {
+            float: left;
+            background: none;
+            margin-left: 0;
+            min-width: 80px;
+            clear: none;
+        }
 
-            .jstree-leaf {
-                float: left;
-                background: none;
-                margin-left: 0;
-                padding-left: 24px;
-                min-width: 80px;
-                clear: none;
-                color: #999;
-            }
+        .jstree-leaf {
+            float: left;
+            background: none;
+            margin-left: 0;
+            padding-left: 24px;
+            min-width: 80px;
+            clear: none;
+            color: #999;
+        }
 
-            .jstree-leaf > .jstree-icon, .jstree-leaf .jstree-themeicon {
-                display: none;
-            }
+        .jstree-leaf > .jstree-icon, .jstree-leaf .jstree-themeicon {
+            display: none;
+        }
 
-            .jstree-last {
+        .jstree-last {
 
-            }
+        }
 
     }
 
@@ -1359,13 +1359,14 @@ table.table-nowrap {
                 min-height: @input-min-height;
             }
 
-            a.btn-refresh, a.btn-del, a.btn-add, a.btn-edit, a.btn-import, a.btn-more, a.btn-recyclebin, .btn-mini-xs, .btn-multi {
+            > a.btn-refresh, > a.btn-del, > a.btn-add, > a.btn-edit, > a.btn-import, a.btn-more, > a.btn-recyclebin, > .btn-mini-xs, > .btn-multi:not([data-action=destroy]) {
                 font-size: 0;
 
-                .fa {
+                > .fa {
                     font-size: initial;
                 }
             }
+
         }
 
         .search {
@@ -1701,15 +1702,27 @@ table.table-nowrap {
 
     &.searching {
         &, &:focus {
-            background: @component-active-bg;
-            color: @component-active-color;
-            border-color: @component-active-bg;
+            //background: @component-active-bg;
+            //color: @component-active-color;
+            //border-color: @component-active-bg;
+            color: #4e73df;
         }
 
         &:hover, &:active, &:active:hover {
             background: darken(@component-active-bg, 5%);
             color: @component-active-color;
             outline: none;
+        }
+
+        &:after {
+            content: " ";
+            position: absolute;
+            right: 4px;
+            bottom: 8px;
+            background: #4e73df;
+            border-radius: 50%;
+            height: 4px;
+            width: 4px;
         }
     }
 }
