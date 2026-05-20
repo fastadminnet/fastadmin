@@ -476,7 +476,7 @@ class Backend extends Controller
         try {
             $result = $selectPage->execute($this->request->request());
         } catch (\think\Exception $e) {
-            $this->error($e->getMessage());
+            $this->error(__($e->getMessage()));
         }
 
         return json($result);
