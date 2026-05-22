@@ -77,21 +77,38 @@ class SelectPage
     }
 
     /**
+     * 数据限制的ID集合
+     * @var array
+     */
+    protected $dataLimitIds = [];
+
+    /**
      * 设置数据限制
-     * @param bool|string $dataLimit auth/personal/false
-     * @param string      $field     限制字段
-     * @param array       $adminIds  允许的管理员ID列表
+     * @param bool|string $dataLimit      auth/personal/false
+     * @param string      $dataLimitField 限制字段
+     * @param array       $dataLimitIds   允许的ID列表
      * @return $this
      */
-    public function setDataLimit($dataLimit, $field = 'admin_id', array $adminIds = [])
+    public function setDataLimit($dataLimit, $dataLimitField = 'admin_id', array $dataLimitIds = [])
     {
         $this->dataLimit = $dataLimit;
-        $this->dataLimitField = $field;
+        $this->dataLimitField = $dataLimitField;
+        $this->dataLimitIds = $dataLimitIds;
 
-        if (is_array($adminIds) && !empty($adminIds)) {
-            $this->model->where($this->dataLimitField, 'in', $adminIds);
+        return $this;
+    }
+
+    /**
+     * 应用数据限制条件（每次构建新查询链前调用）
+     * ThinkPHP 的 count()/select() 执行后会清空 model options，
+     * 所以需要在每次查询前重新注入 dataLimit 条件。
+     * @return $this
+     */
+    protected function applyDataLimit()
+    {
+        if ($this->dataLimit) {
+            $this->model->where($this->dataLimitField, 'in', $this->dataLimitIds);
         }
-
         return $this;
     }
 
@@ -122,14 +139,8 @@ class SelectPage
         }
 
         // 验证字段
-        $showFields = $this->normalizeField($showField);
-        $keyFields = $keyField ? $this->normalizeField($keyField) : [];
-        foreach ($showFields as $f) {
-            $this->validateField($f);
-        }
-        foreach ($keyFields as $f) {
-            $this->validateField($f);
-        }
+        $this->validateField($showField);
+        $this->validateField($keyField);
 
         // 验证搜索字段
         foreach ($searchField as $f) {
@@ -154,7 +165,9 @@ class SelectPage
         );
 
         // 执行总数统计
-        $total = $this->model->where($where)->count();
+        $total = $this->applyDataLimit()
+            ->model->where($where)
+            ->count();
 
         if ($total <= 0) {
             return ['list' => [], 'total' => 0];
@@ -167,8 +180,9 @@ class SelectPage
             $this->model->order($order);
         }
 
-        // 执行查询
-        $dataList = $this->model->where($where)
+        // 执行查询（count()会清空options，需重新应用dataLimit）
+        $dataList = $this->applyDataLimit()
+            ->model->where($where)
             ->page($page, $pageSize)
             ->select();
 

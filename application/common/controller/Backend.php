@@ -468,9 +468,9 @@ class Backend extends Controller
         $selectPage = new SelectPage($this->model, $this->selectpageFields);
 
         // 数据限制
-        $adminIds = $this->getDataLimitAdminIds();
-        if (is_array($adminIds)) {
-            $selectPage->setDataLimit($this->dataLimit, $this->dataLimitField, $adminIds);
+        $dataLimitIds = $this->getDataLimitAdminIds();
+        if (is_array($dataLimitIds)) {
+            $selectPage->setDataLimit($this->dataLimit, $this->dataLimitField, $dataLimitIds);
         }
 
         try {
