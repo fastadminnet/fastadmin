@@ -440,7 +440,7 @@ class SelectPage
             return $this->selectpageFields;
         }
         if ($this->selectpageFields && $this->selectpageFields !== '*') {
-            return explode(',', $this->selectpageFields);
+            return array_map('trim', explode(',', $this->selectpageFields));
         }
         return [];
     }
