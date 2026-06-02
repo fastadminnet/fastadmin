@@ -1,0 +1,16 @@
+<div id="content-container" class="container">
+    <div class="user-section login-section">
+        <div class="login-main text-center">
+            <div class="image">
+                <img src="__CDN__/assets/img/info.svg" alt="" width="100" />
+            </div>
+            <h3 class="my-4" style="font-size:16px;">{:__('Are you sure you want to sign out?')}</h3 class="my-4" style="font-size:16px;">
+            <form name="form" id="login-form" class="form-vertical" method="POST" action="#">
+                {:token()}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">{:__('Confirm sign out')}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

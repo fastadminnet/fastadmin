@@ -1,648 +1,922 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <title>{$config.title}</title>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <title>{$config.title}</title>
+    <style>
+        /* CSS变量 */
+        :root {
+            --color-primary: #248aff;
+            --color-success: #5cb85c;
+            --color-info: #5bc0de;
+            --color-danger: #d9534f;
+            --color-warning: #f0ad4e;
+            --color-text: #333;
+            --color-text-muted: #777;
+            --color-border: #ddd;
+            --color-bg: #f5f5f5;
+            --color-bg-panel: #fcfcfc;
+            --navbar-height: 60px;
+            --sidebar-width: 220px;
+        }
 
-        <!-- Bootstrap Core CSS -->
-        <link href="{$config.cdnurl|default=''}/assets/libs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+        /* 基础样式 */
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding-top: var(--navbar-height);
+            font-family: "Roboto", "SF Pro SC", "SF Pro Display", "SF Pro Icons", "PingFang SC", BlinkMacSystemFont, -apple-system, "Segoe UI", "Microsoft Yahei", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--color-text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
 
-        <!-- Plugin CSS -->
-        <link href="{$config.cdnurl|default=''}/assets/libs/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--navbar-height);
+            background: #f8f8f8;
+            border-bottom: 1px solid var(--color-border);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+        }
+        .navbar-brand {
+            font-size: 18px;
+            color: var(--color-text);
+            text-decoration: none;
+        }
+        .navbar-brand:hover { color: var(--color-primary); }
+        .navbar-form {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .navbar-form label {
+            font-size: 13px;
+            color: var(--color-text-muted);
+        }
+        .navbar-form input {
+            padding: 6px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            font-size: 13px;
+            width: 150px;
+        }
+        .navbar-form input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+        .navbar-form .btn-save {
+            padding: 6px 12px;
+            background: var(--color-success);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .navbar-form .btn-save:hover { background: #4cae4c; }
+        .icon-save {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
 
-        <style type="text/css">
-            body {
-                padding-top: 70px; margin-bottom: 15px;
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-                font-family: "Roboto", "SF Pro SC", "SF Pro Display", "SF Pro Icons", "PingFang SC", BlinkMacSystemFont, -apple-system, "Segoe UI", "Microsoft Yahei", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-                font-weight: 400;
-            }
-            h2        { font-size: 1.2em; }
-            hr        { margin-top: 10px; }
-            .tab-pane { padding-top: 10px; }
-            .mt0      { margin-top: 0px; }
-            .footer   { font-size: 12px; color: #666; }
-            .docs-list .label    { display: inline-block; min-width: 65px; padding: 0.3em 0.6em 0.3em; }
-            .string   { color: green; }
-            .number   { color: darkorange; }
-            .boolean  { color: blue; }
-            .null     { color: magenta; }
-            .key      { color: red; }
-            .popover  { max-width: 400px; max-height: 400px; overflow-y: auto;}
-            .list-group.panel > .list-group-item {
-            }
-            .list-group-item:last-child {
-                border-radius:0;
-            }
-            h4.panel-title a {
-                font-weight:normal;
-                font-size:14px;
-            }
-            h4.panel-title a .text-muted {
-                font-size:12px;
-                font-weight:normal;
-                font-family: 'Verdana';
-            }
-            #sidebar {
-                width: 220px;
-                position: fixed;
-                margin-left: -240px;
-                overflow-y:auto;
-            }
-            #sidebar > .list-group {
-                margin-bottom:0;
-            }
-            #sidebar > .list-group > a{
-                text-indent:0;
-            }
-            #sidebar .child > a .tag{
-                position: absolute;
-                right: 10px;
-                top: 11px;
-            }
-            #sidebar .child > a .pull-right{
-                margin-left:3px;
-            }
-            #sidebar .child {
-                border:1px solid #ddd;
-                border-bottom:none;
-            }
-            #sidebar .child:last-child {
-                border-bottom:1px solid #ddd;
-            }
-            #sidebar .child > a {
-                border:0;
-                min-height: 40px;
-            }
-            #sidebar .list-group a.current {
-                background:#f5f5f5;
-            }
-            @media (max-width: 1620px){
-                #sidebar {
-                    margin:0;
-                }
-                #accordion {
-                    padding-left:235px;
-                }
-            }
-            @media (max-width: 768px){
-                #sidebar {
-                    display: none;
-                }
-                #accordion {
-                    padding-left:0px;
-                }
-            }
-            .label-primary {
-                background-color: #248aff;
-            }
-            .docs-list .panel .panel-body .table {
-                margin-bottom: 0;
-            }
+        /* 主容器 */
+        .main-container {
+            padding: 15px;
+            max-width: 100%;
+        }
 
-        </style>
-    </head>
-    <body>
-        <!-- Fixed navbar -->
-        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="./" target="_blank">{$config.title}</a>
+        /* 侧边栏 */
+        .sidebar {
+            width: var(--sidebar-width);
+            position: fixed;
+            left: 15px;
+            top: calc(var(--navbar-height) + 15px);
+            bottom: 15px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+        }
+        .sidebar-group { border-bottom: 1px solid var(--color-border); }
+        .sidebar-group:last-child { border-bottom: none; }
+        .sidebar-header {
+            padding: 12px 15px;
+            background: var(--color-bg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 500;
+        }
+        .sidebar-header:hover { background: #eee; }
+        .sidebar-header.active { background: #e8e8e8; }
+        .sidebar-caret {
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid var(--color-text-muted);
+            border-bottom: 2px solid var(--color-text-muted);
+            transform: rotate(-45deg);
+            transition: transform 0.2s;
+        }
+        .sidebar-header.expanded .sidebar-caret { transform: rotate(45deg); }
+        .sidebar-items {
+            display: none;
+            padding: 0;
+        }
+        .sidebar-items.show { display: block; }
+        .sidebar-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .sidebar-item:last-child { border-bottom: none; }
+        .sidebar-item:hover { background: var(--color-bg); }
+        .sidebar-item.active { background: #e0e0e0; }
+        .sidebar-item .labels { display: flex; gap: 4px; }
+        .sidebar-item .label {
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #fff;
+        }
+
+        /* API列表区域 */
+        .api-list {
+            margin-left: calc(var(--sidebar-width) + 30px);
+        }
+        .api-group-title {
+            font-size: 1.2em;
+            margin: 0 0 10px 0;
+            padding-bottom: 5px;
+        }
+        .api-group-title:not(:first-child) {
+            margin-top: 20px;
+            border-top: 1px solid var(--color-border);
+            padding-top: 15px;
+        }
+
+        /* API面板 */
+        .api-panel {
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            margin-bottom: 15px;
+            background: #fff;
+        }
+        .api-header {
+            padding: 12px 15px;
+            background: var(--color-bg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid transparent;
+        }
+        .api-header:hover { background: #eee; }
+        .api-header.expanded { border-bottom-color: var(--color-border); }
+        .api-header .label {
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            color: #fff;
+            font-weight: normal;
+        }
+        .api-header .label-get { background: var(--color-info); }
+        .api-header .label-post { background: var(--color-success); }
+        .api-header .label-put { background: var(--color-warning); }
+        .api-header .label-delete { background: var(--color-danger); }
+        .api-header .label-patch { background: var(--color-primary); }
+        .api-header .api-title { font-weight: normal; font-size: 14px; }
+        .api-header .api-route { color: var(--color-text-muted); font-size: 12px; font-family: Verdana, sans-serif; }
+        .api-body { display: none; padding: 15px; }
+        .api-body.show { display: block; }
+
+        /* 标签页 */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--color-border);
+            margin-bottom: 15px;
+        }
+        .tab-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+        }
+        .tab-item:hover { color: var(--color-primary); }
+        .tab-item.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* 信息面板 */
+        .info-panel {
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .info-panel-header {
+            padding: 10px 15px;
+            background: var(--color-bg);
+            font-weight: 600;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .info-panel-body { padding: 15px; }
+        .info-panel-body .table { margin-bottom: 0; }
+
+        /* 概要说明 */
+        .api-summary {
+            background: var(--color-bg);
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        /* 表格 */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        .table th, .table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--color-border);
+            text-align: left;
+        }
+        .table th { background: var(--color-bg); font-weight: 600; }
+        .table tbody tr:hover { background: #f9f9f9; }
+        .table tbody tr:last-child td { border-bottom: none; }
+
+        /* 表单 */
+        .form-group { margin-bottom: 15px; }
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+        .form-submit { display: flex; gap: 10px; margin-top: 20px; }
+
+        /* 按钮 */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .btn-success { background: var(--color-success); color: #fff; }
+        .btn-success:hover { background: #4cae4c; }
+        .btn-info { background: var(--color-info); color: #fff; }
+        .btn-info:hover { background: #46b8da; }
+        .btn-danger { background: var(--color-danger); color: #fff; }
+        .btn-danger:hover { background: #c9302c; }
+        .btn-xs { padding: 4px 8px; font-size: 12px; }
+
+        /* 标签 */
+        .label {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: normal;
+            color: #fff;
+        }
+        .label-primary { background: var(--color-primary); }
+        .label-success { background: var(--color-success); }
+        .label-danger { background: var(--color-danger); }
+        .label-warning { background: var(--color-warning); }
+        .label-info { background: var(--color-info); }
+
+        /* 附加参数行 */
+        .append-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .append-row .form-input { flex: 1; }
+        .append-row-label { font-weight: 500; margin-bottom: 5px; display: block; }
+        .append-row-inputs { display: flex; gap: 10px; }
+        .append-row-inputs .input-name { width: 120px; }
+        .append-row-inputs .input-value { flex: 1; }
+
+        /* 响应区域 */
+        .response-area {
+            background: #f8f8f8;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+        .response-area pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        /* 示例输出 */
+        .sample-output pre {
+            background: #f8f8f8;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 0;
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* JSON语法高亮 */
+        .string { color: green; }
+        .number { color: darkorange; }
+        .boolean { color: blue; }
+        .null { color: magenta; }
+        .key { color: red; }
+
+        /* 页脚 */
+        .footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid var(--color-border);
+            font-size: 12px;
+            color: var(--color-text-muted);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        /* 响应式布局 */
+        @media (min-width: 1260px) {
+            .main-container {
+                max-width:1260px;
+                margin: 0 auto;
+            }
+            .sidebar {
+                left:calc(100%/2 - 630px + 15px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <header class="navbar">
+        <a class="navbar-brand" href="./" target="_blank">{$config.title}</a>
+        <form class="navbar-form">
+            <label>Token:</label>
+            <input type="text" id="token" placeholder="token" title="{$lang.Tokentips}">
+            <label>Apiurl:</label>
+            <input type="text" id="apiUrl" placeholder="https://api.example.com" value="{$config.apiurl}" title="{$lang.Apiurltips}">
+            <button type="button" class="btn btn-save" id="save_data" title="{$lang.Savetips}">
+                <svg class="icon-save" viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+            </button>
+        </form>
+    </header>
+
+    <div class="main-container">
+        <!-- 侧边栏 -->
+        <nav class="sidebar" id="sidebar">
+            {foreach name="docsList" id="docs"}
+            <div class="sidebar-group">
+                <div class="sidebar-header" data-group="{$key|md5|substr=0,8}">
+                    {$key}
+                    <span class="sidebar-caret"></span>
                 </div>
-                <div class="navbar-collapse collapse">
-                    <form class="navbar-form navbar-right">
-                        <div class="form-group">
-                            Token:
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control input-sm" data-toggle="tooltip" title="{$lang.Tokentips}" placeholder="token" id="token" />
-                        </div>
-                        <div class="form-group">
-                            Apiurl:
-                        </div>
-                        <div class="form-group">
-                            <input id="apiUrl" type="text" class="form-control input-sm" data-toggle="tooltip" title="{$lang.Apiurltips}" placeholder="https://api.example.com" value="{$config.apiurl}" />
-                        </div>
-                        <div class="form-group">
-                            <button type="button" class="btn btn-success btn-sm" data-toggle="tooltip" title="{$lang.Savetips}" id="save_data">
-                                <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
-                            </button>
-                        </div>
-                    </form>
-                </div><!--/.nav-collapse -->
-            </div>
-        </div>
-
-        <div class="container">
-            <!-- menu -->
-            <div id="sidebar">
-                <div class="list-group panel">
-                    {foreach name="docsList" id="docs"}
-                    <a href="#{$key|md5|substr=0,8}" class="list-group-item" data-toggle="collapse" data-parent="#sidebar">{$key}  <i class="fa fa-caret-down"></i></a>
-                    <div class="child collapse" id="{$key|md5|substr=0,8}">
-                        {foreach name="docs" id="api" }
-                        <a href="javascript:;" data-id="{$api.id}" class="list-group-item">{$api.title}
-                            <span class="tag">
-                                {if $api.needRight}
-                                    <span class="label label-danger pull-right">鉴</span>
-                                {/if}
-                                {if $api.needLogin}
-                                    <span class="label label-success pull-right noneedlogin">登</span>
-                                {/if}
-                            </span>
-                        </a>
-                        {/foreach}
+                <div class="sidebar-items" id="group-{$key|md5|substr=0,8}">
+                    {foreach name="docs" id="api"}
+                    <div class="sidebar-item" data-id="{$api.id}">
+                        {$api.title}
+                        <span class="labels">
+                            {if $api.needRight}
+                            <span class="label label-danger">鉴</span>
+                            {/if}
+                            {if $api.needLogin}
+                            <span class="label label-success">登</span>
+                            {/if}
+                        </span>
                     </div>
                     {/foreach}
                 </div>
             </div>
-            <div class="panel-group docs-list" id="accordion">
-                {foreach name="docsList" id="docs"}
-                <h2>{$key}</h2>
-                <hr>
-                {foreach name="docs" id="api" }
-                <div class="panel panel-default">
-                    <div class="panel-heading" id="heading-{$api.id}">
-                        <h4 class="panel-title">
-                            <span class="label {$api.methodLabel}">{$api.method|strtoupper}</span>
-                            <a data-toggle="collapse" data-parent="#accordion{$api.id}" href="#collapseOne{$api.id}"> {$api.title} <span class="text-muted">{$api.route}</span></a>
-                        </h4>
+            {/foreach}
+        </nav>
+
+        <!-- API列表 -->
+        <div class="api-list" id="apiList">
+            {foreach name="docsList" id="docs"}
+            <h2 class="api-group-title">{$key}</h2>
+            {foreach name="docs" id="api"}
+            <section class="api-panel" id="panel-{$api.id}">
+                <div class="api-header" id="heading-{$api.id}" data-id="{$api.id}">
+                    <span class="label label-{$api.method|strtolower}">{$api.method|strtoupper}</span>
+                    <span class="api-title">{$api.title}</span>
+                    <span class="api-route">{$api.route}</span>
+                </div>
+                <div class="api-body" id="body-{$api.id}">
+                    <!-- 标签页 -->
+                    <div class="tabs" data-tabs="{$api.id}">
+                        <div class="tab-item active" data-tab="info{$api.id}">{$lang.Info}</div>
+                        <div class="tab-item" data-tab="sandbox{$api.id}">{$lang.Sandbox}</div>
+                        <div class="tab-item" data-tab="sample{$api.id}">{$lang.Sampleoutput}</div>
                     </div>
-                    <div id="collapseOne{$api.id}" class="panel-collapse collapse">
-                        <div class="panel-body">
 
-                            <!-- Nav tabs -->
-                            <ul class="nav nav-tabs" id="doctab{$api.id}">
-                                <li class="active"><a href="#info{$api.id}" data-toggle="tab">{$lang.Info}</a></li>
-                                <li><a href="#sandbox{$api.id}" data-toggle="tab">{$lang.Sandbox}</a></li>
-                                <li><a href="#sample{$api.id}" data-toggle="tab">{$lang.Sampleoutput}</a></li>
-                            </ul>
+                    <!-- Info标签 -->
+                    <div class="tab-content active" id="info{$api.id}">
+                        <div class="api-summary">{$api.summary}</div>
 
-                            <!-- Tab panes -->
-                            <div class="tab-content">
+                        <div class="info-panel">
+                            <div class="info-panel-header"><strong>{$lang.Authorization}</strong></div>
+                            <div class="info-panel-body">
+                                <table class="table">
+                                    <tr><td>{$lang.NeedLogin}</td><td>{$api.needLogin?'是':'否'}</td></tr>
+                                    <tr><td>{$lang.NeedRight}</td><td>{$api.needRight?'是':'否'}</td></tr>
+                                </table>
+                            </div>
+                        </div>
 
-                                <div class="tab-pane active" id="info{$api.id}">
-                                    <div class="well">
-                                        {$api.summary}
-                                    </div>
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading"><strong>{$lang.Authorization}</strong></div>
-                                        <div class="panel-body">
-                                            <table class="table table-hover">
-                                                <tbody>
-                                                <tr>
-                                                    <td>{$lang.NeedLogin}</td>
-                                                    <td>{$api.needLogin?'是':'否'}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>{$lang.NeedRight}</td>
-                                                    <td>{$api.needRight?'是':'否'}</td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading"><strong>{$lang.Headers}</strong></div>
-                                        <div class="panel-body">
-                                            {if $api.headersList}
-                                            <table class="table table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>{$lang.Name}</th>
-                                                        <th>{$lang.Type}</th>
-                                                        <th>{$lang.Required}</th>
-                                                        <th>{$lang.Description}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {foreach name="api['headersList']" id="header"}
-                                                    <tr>
-                                                        <td>{$header.name}</td>
-                                                        <td>{$header.type}</td>
-                                                        <td>{$header.required?'是':'否'}</td>
-                                                        <td>{$header.description}</td>
-                                                    </tr>
-                                                    {/foreach}
-                                                </tbody>
-                                            </table>
-                                            {else /}
-                                            无
-                                            {/if}
-                                        </div>
-                                    </div>
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading"><strong>{$lang.Parameters}</strong></div>
-                                        <div class="panel-body">
-                                            {if $api.paramsList}
-                                            <table class="table table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>{$lang.Name}</th>
-                                                        <th>{$lang.Type}</th>
-                                                        <th>{$lang.Required}</th>
-                                                        <th>{$lang.Description}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {foreach name="api['paramsList']" id="param"}
-                                                    <tr>
-                                                        <td>{$param.name}</td>
-                                                        <td>{$param.type}</td>
-                                                        <td>{:$param.required?'是':'否'}</td>
-                                                        <td>{$param.description}</td>
-                                                    </tr>
-                                                    {/foreach}
-                                                </tbody>
-                                            </table>
-                                            {else /}
-                                            无
-                                            {/if}
-                                        </div>
-                                    </div>
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading"><strong>{$lang.Body}</strong></div>
-                                        <div class="panel-body">
-                                            {$api.body|default='无'}
-                                        </div>
-                                    </div>
-                                </div><!-- #info -->
+                        {if $api.headersList}
+                        <div class="info-panel">
+                            <div class="info-panel-header"><strong>{$lang.Headers}</strong></div>
+                            <div class="info-panel-body">
+                                <table class="table">
+                                    <thead><tr><th>{$lang.Name}</th><th>{$lang.Type}</th><th>{$lang.Required}</th><th>{$lang.Description}</th></tr></thead>
+                                    <tbody>
+                                    {foreach name="api['headersList']" id="header"}
+                                    <tr><td>{$header.name}</td><td>{$header.type}</td><td>{$header.required?'是':'否'}</td><td>{$header.description}</td></tr>
+                                    {/foreach}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {/if}
 
-                                <div class="tab-pane" id="sandbox{$api.id}">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            {if $api.headersList}
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading"><strong>{$lang.Headers}</strong></div>
-                                                <div class="panel-body">
-                                                    <div class="headers">
-                                                        {foreach name="api['headersList']" id="param"}
-                                                        <div class="form-group">
-                                                            <label class="control-label" for="{$param.name}">{$param.name}</label>
-                                                            <input type="{$param.inputtype|default='text'}" class="form-control input-sm" id="{$param.name}" {if $param.required}required{/if} placeholder="{$param.description} - Ex: {$param.sample}" name="{$param.name}">
-                                                        </div>
-                                                        {/foreach}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {/if}
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading"><strong>{$lang.Parameters}</strong>
-                                                <div class="pull-right">
-                                                    <a href="javascript:" class="btn btn-xs btn-info btn-append">追加</a>
-                                                </div>
-                                                </div>
-                                                <div class="panel-body">
-                                                    <form enctype="application/x-www-form-urlencoded" role="form" action="{$api.route}" method="{$api.method}" name="form{$api.id}" id="form{$api.id}">
-                                                        {if $api.paramsList}
-                                                        {foreach name="api['paramsList']" id="param"}
-                                                        <div class="form-group">
-                                                            <label class="control-label" for="{$param.name}">{$param.name}</label>
-                                                            <input type="{$param.inputtype|default='text'}" class="form-control input-sm" id="{$param.name}" {if $param.required}required{/if} placeholder="{$param.description}{if $param.sample} - 例: {$param.sample}{/if}" name="{$param.name}">
-                                                        </div>
-                                                        {/foreach}
-                                                        {else /}
-                                                        <div class="form-group">
-                                                            无
-                                                        </div>
-                                                        {/if}
-                                                        <div class="form-group form-group-submit">
-                                                            <button type="submit" class="btn btn-success send" rel="{$api.id}">{$lang.Send}</button>
-                                                            <button type="reset" class="btn btn-info" rel="{$api.id}">{$lang.Reset}</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading"><strong>{$lang.Response}</strong></div>
-                                                <div class="panel-body">
-                                                    <div class="row">
-                                                        <div class="col-md-12" style="overflow-x:auto">
-                                                            <pre id="response_headers{$api.id}"></pre>
-                                                            <pre id="response{$api.id}"></pre>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading"><strong>{$lang.ReturnParameters}</strong></div>
-                                                <div class="panel-body">
-                                                    {if $api.returnParamsList}
-                                                    <table class="table table-hover">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>{$lang.Name}</th>
-                                                                <th>{$lang.Type}</th>
-                                                                <th>{$lang.Description}</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {foreach name="api['returnParamsList']" id="param"}
-                                                            <tr>
-                                                                <td>{$param.name}</td>
-                                                                <td>{$param.type}</td>
-                                                                <td>{$param.description}</td>
-                                                            </tr>
-                                                            {/foreach}
-                                                        </tbody>
-                                                    </table>
-                                                    {else /}
-                                                    无
-                                                    {/if}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div><!-- #sandbox -->
+                        {if $api.paramsList}
+                        <div class="info-panel">
+                            <div class="info-panel-header"><strong>{$lang.Parameters}</strong></div>
+                            <div class="info-panel-body">
+                                <table class="table">
+                                    <thead><tr><th>{$lang.Name}</th><th>{$lang.Type}</th><th>{$lang.Required}</th><th>{$lang.Description}</th></tr></thead>
+                                    <tbody>
+                                    {foreach name="api['paramsList']" id="param"}
+                                    <tr><td>{$param.name}</td><td>{$param.type}</td><td>{$param.required?'是':'否'}</td><td>{$param.description}</td></tr>
+                                    {/foreach}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {/if}
 
-                                <div class="tab-pane" id="sample{$api.id}">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <pre id="sample_response{$api.id}">{$api.return|default='无'}</pre>
-                                        </div>
-                                    </div>
-                                </div><!-- #sample -->
-
-                            </div><!-- .tab-content -->
+                        <div class="info-panel">
+                            <div class="info-panel-header"><strong>{$lang.Body}</strong></div>
+                            <div class="info-panel-body">{$api.body|default='无'}</div>
                         </div>
                     </div>
+
+                    <!-- Sandbox标签 -->
+                    <div class="tab-content" id="sandbox{$api.id}">
+                        {if $api.headersList}
+                        <div class="info-panel">
+                            <div class="info-panel-header"><strong>{$lang.Headers}</strong></div>
+                            <div class="info-panel-body headers" data-api="{$api.id}">
+                                {foreach name="api['headersList']" id="param"}
+                                <div class="form-group">
+                                    <label class="form-label">{$param.name}</label>
+                                    <input type="{$param.inputtype|default='text'}" class="form-input" name="{$param.name}" placeholder="{$param.description} - 例: {$param.sample}" {if $param.required}required{/if}>
+                                </div>
+                                {/foreach}
+                            </div>
+                        </div>
+                        {/if}
+
+                        <div class="info-panel">
+                            <div class="info-panel-header">
+                                <strong>{$lang.Parameters}</strong>
+                                <span style="float:right"><button type="button" class="btn btn-xs btn-info btn-append">追加</button></span>
+                            </div>
+                            <div class="info-panel-body">
+                                <form id="form{$api.id}" action="{$api.route}" method="{$api.method}">
+                                    {if $api.paramsList}
+                                    {foreach name="api['paramsList']" id="param"}
+                                    <div class="form-group">
+                                        <label class="form-label">{$param.name}</label>
+                                        <input type="{$param.inputtype|default='text'}" class="form-input" name="{$param.name}" placeholder="{$param.description}{if $param.sample} - 例: {$param.sample}{/if}" {if $param.required}required{/if}>
+                                    </div>
+                                    {/foreach}
+                                    {else}
+                                    <div class="form-group">无</div>
+                                    {/if}
+                                    <div class="form-group form-group-submit">
+                                        <button type="submit" class="btn btn-success send" rel="{$api.id}">{$lang.Send}</button>
+                                        <button type="reset" class="btn btn-info" rel="{$api.id}">{$lang.Reset}</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="info-panel">
+                            <div class="info-panel-header"><strong>{$lang.Response}</strong></div>
+                            <div class="info-panel-body">
+                                <div class="response-area">
+                                    <pre id="response_headers{$api.id}"></pre>
+                                    <pre id="response{$api.id}"></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        {if $api.returnParamsList}
+                        <div class="info-panel">
+                            <div class="info-panel-header"><strong>{$lang.ReturnParameters}</strong></div>
+                            <div class="info-panel-body">
+                                <table class="table">
+                                    <thead><tr><th>{$lang.Name}</th><th>{$lang.Type}</th><th>{$lang.Description}</th></tr></thead>
+                                    <tbody>
+                                    {foreach name="api['returnParamsList']" id="param"}
+                                    <tr><td>{$param.name}</td><td>{$param.type}</td><td>{$param.description}</td></tr>
+                                    {/foreach}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {else}
+                        <div class="info-panel">
+                            <div class="info-panel-header"><strong>{$lang.ReturnParameters}</strong></div>
+                            <div class="info-panel-body">无</div>
+                        </div>
+                        {/if}
+                    </div>
+
+                    <!-- Sample标签 -->
+                    <div class="tab-content sample-output" id="sample{$api.id}">
+                        <pre id="sample_response{$api.id}">{$api.return|default='无'}</pre>
+                    </div>
                 </div>
-                {/foreach}
-                {/foreach}
+            </section>
+            {/foreach}
+            {/foreach}
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <a href="./" target="_blank">{$config.sitename}</a>
+        </footer>
+    </div>
+
+    <!-- 附加参数模板 -->
+    <template id="appendTpl">
+        <div class="append-row form-group">
+            <label class="append-row-label">自定义</label>
+            <div class="append-row-inputs">
+                <input type="text" class="form-input input-name" placeholder="名称">
+                <input type="text" class="form-input input-value" placeholder="值">
+                <button type="button" class="btn btn-xs btn-danger btn-remove">删除</button>
             </div>
+        </div>
+    </template>
 
-            <hr>
+    <script>
+    (function() {
 
-            <div class="row mt0 footer">
-                <div class="col-md-6" align="left">
+        if(location.pathname.split('/').pop().toLowerCase() === 'api.html') {
+            document.documentElement.innerHTML = '不允许使用的文件名';
+            return;
+        }
+        // ====================== 本地使用限制 ======================
+        function checkLocalOnly() {
+            const hostname = window.location.hostname;
+            const protocol = window.location.protocol;
 
-                </div>
-                <div class="col-md-6" align="right">
-                    Generated on {:date('Y-m-d H:i:s')} <a href="./" target="_blank">{$config.sitename}</a>
-                </div>
-            </div>
-
-        </div> <!-- /container -->
-
-        <!-- jQuery -->
-        <script src="{$config.cdnurl|default=''}/assets/libs/jquery/dist/jquery.min.js"></script>
-
-        <!-- Bootstrap Core JavaScript -->
-        <script src="{$config.cdnurl|default=''}/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
-
-        <script type="text/javascript">
-            function syntaxHighlight(json) {
-                if (typeof json != 'string') {
-                    json = JSON.stringify(json, undefined, 2);
-                }
-                json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-                    var cls = 'number';
-                    if (/^"/.test(match)) {
-                        if (/:$/.test(match)) {
-                            cls = 'key';
-                        } else {
-                            cls = 'string';
+            if (protocol !== 'file:') {
+                document.documentElement.innerHTML = `
+                    <style>
+                        body {
+                            margin: 0;
+                            height: 100vh;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background: #1a1a1a;
+                            font-family: system-ui;
+                            color: #ff4444;
                         }
-                    } else if (/true|false/.test(match)) {
-                        cls = 'boolean';
-                    } else if (/null/.test(match)) {
-                        cls = 'null';
+                    </style>
+                    <div style="text-align:center">
+                        <h1>⚠️ 禁止使用</h1>
+                        <p>此文档仅允许在<strong>本地</strong>运行，请勿部署至生产环境</p>
+                        <p style="color:#888;font-size:14px">请直接双击文档访问</p>
+                    </div>
+                `;
+
+                console.error('%c[禁止] 此脚本仅允许本地使用', 'color:red;font-size:16px');
+                throw new Error('Local use only');
+            }
+        }
+
+        checkLocalOnly();
+        // JSON语法高亮
+        function syntaxHighlight(json) {
+            if (typeof json !== 'string') {
+                json = JSON.stringify(json, null, 2);
+            }
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+                var cls = 'number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'key';
+                    } else {
+                        cls = 'string';
                     }
-                    return '<span class="' + cls + '">' + match + '</span>';
-                });
+                } else if (/true|false/.test(match)) {
+                    cls = 'boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+
+        function prepareStr(str) {
+            try {
+                return syntaxHighlight(JSON.stringify(JSON.parse(str.replace(/'/g, '"')), null, 2));
+            } catch (e) {
+                return str;
+            }
+        }
+
+        // localStorage检测
+        var storage = (function() {
+            var uid = new Date();
+            var storageObj;
+            var result;
+            try {
+                (storageObj = window.localStorage).setItem(uid, uid);
+                result = storageObj.getItem(uid) === uid.toString();
+                storageObj.removeItem(uid);
+                return result && storageObj;
+            } catch (e) {
+                return null;
+            }
+        })();
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载保存的数据
+            if (storage) {
+                var savedToken = storage.getItem('token');
+                var savedApiUrl = storage.getItem('apiUrl');
+                if (savedToken) document.getElementById('token').value = savedToken;
+                if (savedApiUrl) document.getElementById('apiUrl').value = savedApiUrl;
             }
 
-            function prepareStr(str) {
-                try {
-                    return syntaxHighlight(JSON.stringify(JSON.parse(str.replace(/'/g, '"')), null, 2));
-                } catch (e) {
-                    return str;
+            // 处理示例输出高亮
+            document.querySelectorAll('pre[id^="sample_response"], pre[id^="sample_post_body"]').forEach(function(pre) {
+                if (pre.textContent !== 'NA' && pre.textContent !== '无') {
+                    var str = prepareStr(pre.textContent);
+                    pre.innerHTML = str;
                 }
-            }
-            var storage = (function () {
-                var uid = new Date;
-                var storage;
-                var result;
-                try {
-                    (storage = window.localStorage).setItem(uid, uid);
-                    result = storage.getItem(uid) == uid;
-                    storage.removeItem(uid);
-                    return result && storage;
-                } catch (exception) {
-                }
-            }());
+            });
 
-            $.fn.serializeObject = function ()
-            {
-                var o = {};
-                var a = this.serializeArray();
-                $.each(a, function () {
-                    if (!this.value) {
-                        return;
-                    }
-                    if (o[this.name] !== undefined) {
-                        if (!o[this.name].push) {
-                            o[this.name] = [o[this.name]];
-                        }
-                        o[this.name].push(this.value || '');
+        });
+
+        // 侧边栏折叠
+        document.querySelectorAll('.sidebar-header').forEach(function(header) {
+            header.addEventListener('click', function() {
+                var groupId = this.dataset.group;
+                var items = document.getElementById('group-' + groupId);
+                var isExpanded = this.classList.contains('expanded');
+
+                this.classList.toggle('expanded');
+                this.classList.toggle('active');
+                items.classList.toggle('show');
+            });
+        });
+
+        // 侧边栏项点击
+        document.querySelectorAll('.sidebar-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                var apiId = this.dataset.id;
+                var panel = document.getElementById('panel-' + apiId);
+                var header = document.getElementById('heading-' + apiId);
+                var body = document.getElementById('body-' + apiId);
+
+                // 移除其他active状态
+                document.querySelectorAll('.sidebar-item').forEach(function(i) {
+                    i.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                // 展开面板
+                if (!body.classList.contains('show')) {
+                    header.classList.add('expanded');
+                    body.classList.add('show');
+                }
+
+                // 滚动到面板
+                var scrollTop = header.offsetTop - 70;
+                window.scrollTo({ top: scrollTop, behavior: 'smooth' });
+            });
+        });
+
+        // API面板折叠
+        document.querySelectorAll('.api-header').forEach(function(header) {
+            header.addEventListener('click', function() {
+                var body = this.nextElementSibling;
+                this.classList.toggle('expanded');
+                body.classList.toggle('show');
+            });
+        });
+
+        // 标签页切换
+        document.querySelectorAll('.tab-item').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                var tabId = this.dataset.tab;
+                var tabsContainer = this.parentElement;
+                var apiId = tabsContainer.dataset.tabs;
+
+                // 移除同组内其他active
+                tabsContainer.querySelectorAll('.tab-item').forEach(function(t) {
+                    t.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                // 切换内容
+                document.querySelectorAll('[id^="info' + apiId + '"], [id^="sandbox' + apiId + '"], [id^="sample' + apiId + '"]').forEach(function(content) {
+                    if (content.id === tabId) {
+                        content.classList.add('active');
                     } else {
-                        o[this.name] = this.value || '';
+                        content.classList.remove('active');
                     }
-                });
-                return o;
-            };
-
-            $(document).ready(function () {
-
-                if (storage) {
-                    storage.getItem('token') && $('#token').val(storage.getItem('token'));
-                    storage.getItem('apiUrl') && $('#apiUrl').val(storage.getItem('apiUrl'));
-                }
-
-                $('[data-toggle="tooltip"]').tooltip({
-                    placement: 'bottom'
-                });
-
-                $(window).on("resize", function(){
-                    $("#sidebar").css("max-height", $(window).height()-80);
-                });
-
-                $(window).trigger("resize");
-
-                $(document).on("click", "#sidebar .list-group > .list-group-item", function(){
-                    $("#sidebar .list-group > .list-group-item").removeClass("current");
-                    $(this).addClass("current");
-                });
-                $(document).on("click", "#sidebar .child a", function(){
-                    var heading = $("#heading-"+$(this).data("id"));
-                    if(!heading.next().hasClass("in")){
-                        $("a", heading).trigger("click");
-                    }
-                    $("html,body").animate({scrollTop:heading.offset().top-70});
-                });
-
-                $('code[id^=response]').hide();
-
-                $.each($('pre[id^=sample_response],pre[id^=sample_post_body]'), function () {
-                    if ($(this).html() == 'NA') {
-                        return;
-                    }
-                    var str = prepareStr($(this).html());
-                    $(this).html(str);
-                });
-
-                $("[data-toggle=popover]").popover({placement: 'right'});
-
-                $('[data-toggle=popover]').on('shown.bs.popover', function () {
-                    var $sample = $(this).parent().find(".popover-content"),
-                            str = $(this).data('content');
-                    if (typeof str == "undefined" || str === "") {
-                        return;
-                    }
-                    var str = prepareStr(str);
-                    $sample.html('<pre>' + str + '</pre>');
-                });
-
-                $(document).on('click', '#save_data', function (e) {
-                    if (storage) {
-                        storage.setItem('token', $('#token').val());
-                        storage.setItem('apiUrl', $('#apiUrl').val());
-                    } else {
-                        alert('Your browser does not support local storage');
-                    }
-                });
-                $(document).on('click', '.btn-append', function (e) {
-                    $($("#appendtpl").html()).insertBefore($(this).closest(".panel").find(".form-group-submit"));
-                    return false;
-                });
-                $(document).on('click', '.btn-remove', function (e) {
-                    $(this).closest(".form-group").remove();
-                    return false;
-                });
-                $(document).on('keyup', '.input-custom-name', function (e) {
-                    $(this).closest(".row").find(".input-custom-value").attr("name", $(this).val());
-                    return false;
-                });
-
-                $(document).on('click', '.send', function (e) {
-                    e.preventDefault();
-                    var form = $(this).closest('form');
-                    //added /g to get all the matched params instead of only first
-                    var matchedParamsInRoute = $(form).attr('action').match(/[^{]+(?=\})/g);
-                    var theId = $(this).attr('rel');
-                    //keep a copy of action attribute in order to modify the copy
-                    //instead of the initial attribute
-                    var url = $(form).attr('action');
-                    var method = $(form).prop('method').toLowerCase() || 'get';
-
-                    var formData = new FormData();
-
-                    $(form).find('input').each(function (i, input) {
-                        if ($(input).attr('type').toLowerCase() == 'file') {
-                            formData.append($(input).attr('name'), $(input)[0].files[0]);
-                            method = 'post';
-                        } else {
-                            formData.append($(input).attr('name'), $(input).val())
-                        }
-                    });
-
-                    var index, key, value;
-
-                    if (matchedParamsInRoute) {
-                        var params = {};
-                        formData.forEach(function(value, key){
-                            params[key] = value;
-                        });
-                        for (index = 0; index < matchedParamsInRoute.length; ++index) {
-                            try {
-                                key = matchedParamsInRoute[index];
-                                value = params[key];
-                                if (typeof value == "undefined")
-                                    value = "";
-                                url = url.replace("\{" + key + "\}", value);
-                                formData.delete(key);
-                            } catch (err) {
-                                console.log(err);
-                            }
-                        }
-                    }
-
-                    var headers = {};
-
-                    var token = $('#token').val();
-                    if (token.length > 0) {
-                        headers['token'] = token;
-                    }
-
-                    $("#sandbox" + theId + " .headers input[type=text]").each(function () {
-                        val = $(this).val();
-                        if (val.length > 0) {
-                            headers[$(this).prop('name')] = val;
-                        }
-                    });
-
-                    $.ajax({
-                        url: $('#apiUrl').val() + url,
-                        data: method == 'get' ? $(form).serialize() : formData,
-                        type: method,
-                        dataType: 'json',
-                        contentType: false,
-                        processData: false,
-                        headers: headers,
-                        xhrFields: {
-                            withCredentials: true
-                        },
-                        success: function (data, textStatus, xhr) {
-                            if (typeof data === 'object') {
-                                var str = JSON.stringify(data, null, 2);
-                                $('#response' + theId).html(syntaxHighlight(str));
-                            } else {
-                                $('#response' + theId).html(data || '');
-                            }
-                            $('#response_headers' + theId).html('HTTP ' + xhr.status + ' ' + xhr.statusText + '<br/><br/>' + xhr.getAllResponseHeaders());
-                            $('#response' + theId).show();
-                        },
-                        error: function (xhr, textStatus, error) {
-                            try {
-                                var str = JSON.stringify($.parseJSON(xhr.responseText), null, 2);
-                            } catch (e) {
-                                var str = xhr.responseText;
-                            }
-                            $('#response_headers' + theId).html('HTTP ' + xhr.status + ' ' + xhr.statusText + '<br/><br/>' + xhr.getAllResponseHeaders());
-                            $('#response' + theId).html(syntaxHighlight(str));
-                            $('#response' + theId).show();
-                        }
-                    });
-                    return false;
                 });
             });
-        </script>
-        <script type="text/html" id="appendtpl">
-            <div class="form-group">
-                <label class="control-label">自定义</label>
-                <div class="row">
-                    <div class="col-xs-4">
-                        <input type="text" class="form-control input-sm input-custom-name" placeholder="名称">
-                    </div>
-                    <div class="col-xs-6">
-                        <input type="text" class="form-control input-sm input-custom-value" placeholder="值">
-                    </div>
-                    <div class="col-xs-2 text-center">
-                        <a href="javascript:" class="btn btn-sm btn-danger btn-remove">删除</a>
-                    </div>
-                </div>
-            </div>
-        </script>
-    </body>
+        });
+
+        // 保存按钮
+        document.getElementById('save_data').addEventListener('click', function() {
+            if (storage) {
+                storage.setItem('token', document.getElementById('token').value);
+                storage.setItem('apiUrl', document.getElementById('apiUrl').value);
+            } else {
+                alert('浏览器不支持localStorage');
+            }
+        });
+
+        // 追加参数
+        document.querySelectorAll('.btn-append').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var panel = this.closest('.info-panel');
+                var submitGroup = panel.querySelector('.form-group-submit');
+                var template = document.getElementById('appendTpl');
+                var clone = template.content.cloneNode(true);
+                submitGroup.parentElement.insertBefore(clone, submitGroup);
+            });
+        });
+
+        // 删除附加参数
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-remove')) {
+                e.preventDefault();
+                e.target.closest('.append-row').remove();
+            }
+        });
+
+        // 自定义参数名称输入
+        document.addEventListener('keyup', function(e) {
+            if (e.target.classList.contains('input-name')) {
+                var row = e.target.closest('.append-row');
+                var valueInput = row.querySelector('.input-value');
+                valueInput.name = e.target.value;
+            }
+        });
+
+        // 发送请求
+        document.querySelectorAll('.send').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var form = this.closest('form');
+                var theId = this.getAttribute('rel');
+                var url = form.getAttribute('action');
+                var method = (form.getAttribute('method') || 'get').toLowerCase();
+
+                // 收集表单数据
+                var formData = new FormData();
+                form.querySelectorAll('input').forEach(function(input) {
+                    if (input.type.toLowerCase() === 'file') {
+                        if (input.files[0]) {
+                            formData.append(input.name, input.files[0]);
+                            method = 'post';
+                        }
+                    } else if (input.name) {
+                        formData.append(input.name, input.value);
+                    }
+                });
+
+                // 处理路由参数
+                var matchedParamsInRoute = url.match(/[^{]+(?=\})/g);
+                if (matchedParamsInRoute) {
+                    var params = {};
+                    formData.forEach(function(v, k) { params[k] = v; });
+                    matchedParamsInRoute.forEach(function(key) {
+                        var value = params[key] || '';
+                        url = url.replace('{' + key + '}', value);
+                        formData.delete(key);
+                    });
+                }
+
+                // 收集headers
+                var headers = {};
+                var token = document.getElementById('token').value;
+                if (token.length > 0) {
+                    headers['token'] = token;
+                }
+
+                var sandboxBody = document.getElementById('body-' + theId);
+                sandboxBody.querySelectorAll('.headers input[name]').forEach(function(input) {
+                    if (input.value.length > 0) {
+                        headers[input.name] = input.value;
+                    }
+                });
+
+                // 构建请求URL
+                var apiUrl = document.getElementById('apiUrl').value;
+                var fullUrl = apiUrl + url;
+
+                // 发送fetch请求
+                var options = {
+                    method: method,
+                    headers: headers,
+                    credentials: 'include'
+                };
+
+                if (method !== 'get') {
+                    options.body = formData;
+                } else {
+                    // GET请求参数拼接到URL
+                    var paramsStr = [];
+                    formData.forEach(function(v, k) {
+                        paramsStr.push(k + '=' + encodeURIComponent(v));
+                    });
+                    if (paramsStr.length > 0) {
+                        fullUrl += '?' + paramsStr.join('&');
+                    }
+                }
+
+                fetch(fullUrl, options).then(function(response) {
+                    var headersPre = document.getElementById('response_headers' + theId);
+                    headersPre.innerHTML = 'HTTP ' + response.status + ' ' + response.statusText + '<br><br>' +
+                        Array.from(response.headers.entries()).map(function(h) { return h[0] + ': ' + h[1]; }).join('<br>');
+                    return response.text();
+                }).then(function(text) {
+                    var responsePre = document.getElementById('response' + theId);
+                    try {
+                        var json = JSON.parse(text);
+                        responsePre.innerHTML = syntaxHighlight(JSON.stringify(json, null, 2));
+                    } catch (e) {
+                        responsePre.textContent = text;
+                    }
+                }).catch(function(err) {
+                    var responsePre = document.getElementById('response' + theId);
+                    responsePre.textContent = 'Error: ' + err.message;
+                });
+            });
+        });
+    })();
+    </script>
+</body>
 </html>

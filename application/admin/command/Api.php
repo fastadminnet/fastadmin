@@ -19,8 +19,8 @@ class Api extends Command
             ->setName('api')
             ->addOption('url', 'u', Option::VALUE_OPTIONAL, 'default api url', '')
             ->addOption('cdnurl', 'd', Option::VALUE_OPTIONAL, 'default cdn url', '')
-            ->addOption('module', 'm', Option::VALUE_OPTIONAL, 'module name(admin/index/api)', 'api')
-            ->addOption('output', 'o', Option::VALUE_OPTIONAL, 'output index file name', 'api.html')
+            ->addOption('module', 'm', Option::VALUE_OPTIONAL, 'module name(index/api)', 'api')
+            ->addOption('output', 'o', Option::VALUE_OPTIONAL, 'output index file name', '')
             ->addOption('template', 'e', Option::VALUE_OPTIONAL, '', 'index.html')
             ->addOption('force', 'f', Option::VALUE_OPTIONAL, 'force override general file', false)
             ->addOption('title', 't', Option::VALUE_OPTIONAL, 'document title', $site['name'] ?? '')
@@ -43,22 +43,30 @@ class Api extends Command
         if (!preg_match("/^([a-z0-9]+)\.html\$/i", $template)) {
             throw new Exception('template file not correct');
         }
-        $language = $language ? $language : 'zh-cn';
+        $language = $language ?: 'zh-cn';
         $langFile = $apiDir . 'lang' . DS . $language . '.php';
         if (!is_file($langFile)) {
             throw new Exception('language file not found');
         }
         $lang = include_once $langFile;
+
         // 目标目录
-        $output_dir = ROOT_PATH . 'public' . DS;
-        $output_file = $output_dir . $input->getOption('output');
-        if (is_file($output_file) && !$force) {
+        $outputDir = ROOT_PATH . 'runtime' . DS . 'docs' . DS;
+        if (!is_dir($outputDir)) {
+            mkdir($outputDir, 0755, true);
+        }
+        $outputFilename = $input->getOption('output') ?: 'apidoc_' . date('Ymd_') . strtolower(\fast\Random::alnum(6)) . '.html';
+        if ($outputFilename === 'api.html') {
+            throw new Exception('api.html cannot be used as the output file name');
+        }
+        $outputFile = $outputDir . $outputFilename;
+        if (is_file($outputFile) && !$force) {
             throw new Exception("api index file already exists!\nIf you need to rebuild again, use the parameter --force=true ");
         }
         // 模板文件
-        $template_dir = $apiDir . 'template' . DS;
-        $template_file = $template_dir . $template;
-        if (!is_file($template_file)) {
+        $templateDir = $apiDir . 'template' . DS;
+        $templateFile = $templateDir . $template;
+        if (!is_file($templateFile)) {
             throw new Exception('template file not found');
         }
         // 额外的类
@@ -70,7 +78,6 @@ class Api extends Command
         // 插件
         $addon = $input->getOption('addon');
 
-        $moduleDir = $addonDir = '';
         if ($addon) {
             $addonInfo = get_addon_info($addon);
             if (!$addonInfo) {
@@ -83,9 +90,12 @@ class Api extends Command
         if (!is_dir($moduleDir)) {
             throw new Exception('module not found');
         }
+        if (in_array($module, ['admin', 'common'])) {
+            throw new Exception('module not allowed');
+        }
 
-        if (version_compare(PHP_VERSION, '7.0.0', '<')) {
-            throw new Exception("Requires PHP version 7.0 or newer");
+        if (version_compare(PHP_VERSION, '7.4.0', '<')) {
+            throw new Exception("Requires PHP version 7.4 or newer");
         }
 
         //控制器名
@@ -118,7 +128,7 @@ class Api extends Command
 
         $classes = array_unique(array_filter($classes));
 
-        $cdnurl = $cdnurl ? : Config::get('site.cdnurl');
+        $cdnurl = $cdnurl ?: Config::get('site.cdnurl');
 
         $config = [
             'sitename'    => config('site.name'),
@@ -132,12 +142,13 @@ class Api extends Command
 
         Config::set('view_replace_str.__CDN__', $cdnurl);
         $builder = new Builder($classes);
-        $content = $builder->render($template_file, ['config' => $config, 'lang' => $lang]);
+        $content = $builder->render($templateFile, ['config' => $config, 'lang' => $lang]);
 
-        if (!file_put_contents($output_file, $content)) {
-            throw new Exception('Cannot save the content to ' . $output_file);
+        if (!file_put_contents($outputFile, $content)) {
+            throw new Exception('Cannot save the content to ' . $outputFile);
         }
         $output->info("Build Successed!");
+        $output->info("Docs Location:" . $outputFile);
     }
 
     /**
