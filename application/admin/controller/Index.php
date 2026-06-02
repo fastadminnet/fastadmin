@@ -128,14 +128,12 @@ class Index extends Backend
     public function logout()
     {
         if ($this->request->isPost()) {
+            $this->token();
             $this->auth->logout();
             Hook::listen("admin_logout_after", $this->request);
             $this->success(__('Logout successful'), 'index/login');
         }
-        $html = "<form id='logout_submit' name='logout_submit' action='' method='post'>" . token() . "<input type='submit' value='ok' style='display:none;'></form>";
-        $html .= "<script>document.forms['logout_submit'].submit();</script>";
-
-        return $html;
+        return $this->view->fetch();
     }
 
 }
