@@ -107,7 +107,7 @@ define(['fast', 'template', 'moment'], function (Fast, Template, Moment) {
                     type: 'GET', dataType: 'html', url: $(that).attr("href"),
                     success: function (data, status, xhr) {
                         Fast.api.ajax({url: $(that).attr("href"), loading:false, data: {__token__: xhr.getResponseHeader('__token__')}}, function (data, ret) {
-                            Layer.msg(ret.msg, {icon: 1}, function () {
+                            Layer.msg(ret.msg, {icon: 1, time: 1500}, function () {
                                 location.reload();
                             });
                             return false;

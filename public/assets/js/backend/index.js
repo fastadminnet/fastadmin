@@ -333,7 +333,7 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'adminlte', 'form'], functi
 
             // 切换菜单栏
             $(document).on("click", ".sidebar-toggle", function () {
-                setTimeout(function(){
+                setTimeout(function () {
                     var value = $("body").hasClass("sidebar-collapse") ? 1 : 0;
                     setTimeout(function () {
                         $(window).trigger("resize");
@@ -386,8 +386,8 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'adminlte', 'form'], functi
                 $.ajax({
                     type: 'GET', dataType: 'html', url: $(that).attr("href"),
                     success: function (data, status, xhr) {
-                        Fast.api.ajax({url: $(that).attr("href"), loading:false, data: {__token__: xhr.getResponseHeader('__token__')}}, function (data, ret) {
-                            Layer.msg(ret.msg, {icon: 1}, function () {
+                        Fast.api.ajax({url: $(that).attr("href"), loading: false, data: {__token__: xhr.getResponseHeader('__token__')}}, function (data, ret) {
+                            Layer.msg(ret.msg, {icon: 1, time: 1500}, function () {
                                 location.reload();
                             });
                             return false;
