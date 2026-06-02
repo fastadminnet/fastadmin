@@ -55,7 +55,7 @@ class Api extends Command
         if (!is_dir($outputDir)) {
             mkdir($outputDir, 0755, true);
         }
-        $outputFilename = $input->getOption('output') ?: 'apidoc_' . date('Ymd_') . strtolower(\fast\Random::alnum(6)) . '.html';
+        $outputFilename = $input->getOption('output') ?: 'doc_' . date('Ymd_') . strtolower(\fast\Random::alnum(6)) . '.html';
         if ($outputFilename === 'api.html') {
             throw new Exception('api.html cannot be used as the output file name');
         }
