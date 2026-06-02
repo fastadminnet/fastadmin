@@ -100,6 +100,24 @@ define(['fast', 'template', 'moment'], function (Fast, Template, Moment) {
             $(document).on("click", ".sidebar-toggle", function () {
                 $("body").toggleClass("sidebar-open");
             });
+
+            $(document).on("click", "a[href*='user/logout']", function () {
+                var that = this;
+                $.ajax({
+                    type: 'GET', dataType: 'html', url: $(that).attr("href"),
+                    success: function (data, status, xhr) {
+                        Fast.api.ajax({url: $(that).attr("href"), loading:false, data: {__token__: xhr.getResponseHeader('__token__')}}, function (data, ret) {
+                            Layer.msg(ret.msg, {icon: 1}, function () {
+                                location.reload();
+                            });
+                            return false;
+                        });
+                    }, error: function (xhr, type) {
+                        Layer.msg(__('Network error'), {icon: 2});
+                    }
+                });
+                return false;
+            });
         }
     };
     Frontend.api = $.extend(Fast.api, Frontend.api);
