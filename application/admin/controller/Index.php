@@ -127,7 +127,14 @@ class Index extends Backend
      */
     public function logout()
     {
+
         if ($this->request->isPost()) {
+            // 加强校验referer是否来自服务器
+            $referer = $this->request->server('HTTP_REFERER');
+            if (!$referer || strtolower(parse_url($referer, PHP_URL_HOST)) != strtolower($this->request->host())) {
+                $this->error(__('Invalid request'));
+            }
+
             $this->token();
             $this->auth->logout();
             Hook::listen("admin_logout_after", $this->request);

@@ -195,13 +195,14 @@ class User extends Frontend
      */
     public function logout()
     {
-        // 加强校验referer是否来自服务器
-        $referer = $this->request->server('HTTP_REFERER');
-        if (!$referer || strtolower(parse_url($referer, PHP_URL_HOST)) != strtolower($this->request->host())) {
-            $this->error(__('Invalid request'));
-        }
 
         if ($this->request->isPost()) {
+            // 加强校验referer是否来自服务器
+            $referer = $this->request->server('HTTP_REFERER');
+            if (!$referer || strtolower(parse_url($referer, PHP_URL_HOST)) != strtolower($this->request->host())) {
+                $this->error(__('Invalid request'));
+            }
+
             $this->token();
             //退出本站
             $this->auth->logout();

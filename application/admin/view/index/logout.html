@@ -2,6 +2,7 @@
 <html>
 <head>
     {include file="common/meta" /}
+    <meta name="referrer" content="origin" />
 
     <style type="text/css">
         body {
@@ -16,13 +17,13 @@
 
         .logout-main {
             text-align: center;
-            max-width: 500px;
+            max-width: 430px;
             margin: 0 auto;
             margin-top: 150px;
             background-color: #fff;
-            padding: 50px 30px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, .1);
+            padding: 40px 30px;
+            border-radius: 3px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
         }
 
     </style>
@@ -38,7 +39,7 @@
             {:token()}
             <div class="form-group">
                 <button type="submit" class="btn btn-primary btn-lg btn-block">{:__('Confirm sign out')}</button>
-                <button type="button" class="btn btn-default btn-lg btn-block mt-2" onclick="history.back()">{:__('Cancel')}</button>
+                <button type="button" class="btn btn-default btn-lg btn-block mt-3" onclick="history.back()">{:__('Cancel')}</button>
             </div>
         </form>
     </div>
