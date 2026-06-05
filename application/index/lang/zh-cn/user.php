@@ -76,6 +76,8 @@ return [
     'Operation failed'                           => '操作失败',
     'Invalid parameters'                         => '参数不正确',
     'Change password failure'                    => '修改密码失败',
+    'Are you sure you want to sign out?'         => '确定要退出登录吗？',
+    'Confirm sign out'                           => '确定退出',
     'All'                                        => '全部',
     'Url'                                        => '物理路径',
     'Imagewidth'                                 => '宽度',

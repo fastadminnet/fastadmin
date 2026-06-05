@@ -387,6 +387,24 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'adminlte', 'form'], functi
                 }
             });
 
+            $(document).on("click", "a[href*='index/logout']", function () {
+                var that = this;
+                $.ajax({
+                    type: 'GET', dataType: 'html', url: $(that).attr("href"),
+                    success: function (data, status, xhr) {
+                        Fast.api.ajax({url: $(that).attr("href"), loading: false, data: {__token__: xhr.getResponseHeader('__token__')}}, function (data, ret) {
+                            Layer.msg(ret.msg, {icon: 1, time: 1500}, function () {
+                                location.reload();
+                            });
+                            return false;
+                        });
+                    }, error: function (xhr, type) {
+                        Layer.msg(__('Network error'), {icon: 2});
+                    }
+                });
+                return false;
+            });
+
             $(window).resize();
 
         },

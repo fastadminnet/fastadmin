@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {include file="common/meta" /}
+
+    <style type="text/css">
+        body {
+            color: #999;
+            background-color: #f1f4fd;
+            background-size: cover;
+        }
+
+        a {
+            color: #444;
+        }
+
+        .logout-main {
+            text-align: center;
+            max-width: 430px;
+            margin: 0 auto;
+            margin-top: 150px;
+            background-color: #fff;
+            padding: 40px 30px;
+            border-radius: 3px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="logout-main text-center">
+        <div class="image">
+            <img src="__CDN__/assets/img/info.svg" alt="" width="100" />
+        </div>
+        <h3 class="my-4" style="font-size:16px;">{:__('Are you sure you want to sign out?')}</h3>
+        <form name="form" id="logout-form" class="form-vertical" method="POST" action="#">
+            {:token()}
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-lg btn-block">{:__('Confirm sign out')}</button>
+                <button type="button" class="btn btn-default btn-lg btn-block mt-3" onclick="history.back()">{:__('Cancel')}</button>
+            </div>
+        </form>
+    </div>
+</div>
+{include file="common/script" /}
+</body>
+</html>

@@ -32,16 +32,12 @@ class Index extends Backend
      */
     public function index()
     {
-        $cookieArr = ['adminskin' => "/^skin\-([a-z\-]+)\$/i", 'simplenav' => "/^(0|1)\$/", 'multiplenav' => "/^(0|1)\$/", 'multipletab' => "/^(0|1)\$/", 'show_submenu' => "/^(0|1)\$/"];
+        $cookieArr = ['adminskin' => "/^skin\-([a-z\-]+)\$/i", 'multiplenav' => "/^(0|1)\$/", 'multipletab' => "/^(0|1)\$/", 'show_submenu' => "/^(0|1)\$/"];
         foreach ($cookieArr as $key => $regex) {
             $cookieValue = $this->request->cookie($key);
             if (!is_null($cookieValue) && preg_match($regex, $cookieValue)) {
                 config('fastadmin.' . $key, $cookieValue);
             }
-        }
-        //如同时启用简洁和多级菜单，简洁菜单将失效
-        if (config('fastadmin.simplenav') && config('fastadmin.multiplenav')) {
-            config('fastadmin.simplenav', false);
         }
         //左侧菜单
         list($menulist, $navlist, $fixedmenu, $referermenu) = $this->auth->getSidebar([
@@ -70,22 +66,20 @@ class Index extends Backend
     public function login()
     {
         $url = $this->request->get('url', '', 'url_clean');
-        $url = $url && !preg_match('/\/index\/(login|logout)$/', $url) ? $url : 'index/index';
+        $url = $url ?: 'index/index';
         if ($this->auth->isLogin()) {
             $this->success(__("You've logged in, do not login again"), $url);
         }
         //保持会话有效时长，单位:小时
         $keeyloginhours = 24;
         if ($this->request->isPost()) {
-            AdminLog::setTitle(__('Login'));
-
             $username = $this->request->post('username');
             $password = $this->request->post('password', '', null);
             $keeplogin = $this->request->post('keeplogin');
             $token = $this->request->post('__token__');
             $rule = [
                 'username'  => 'require|length:3,30',
-                'password'  => 'require|length:6,30',
+                'password'  => 'require|length:3,30',
                 '__token__' => 'require|token',
             ];
             $data = [
@@ -133,22 +127,20 @@ class Index extends Backend
      */
     public function logout()
     {
+
         if ($this->request->isPost()) {
-            $user_id = $this->auth->id;
-            $username = $this->auth->username;
-            AdminLog::event('before_insert', function ($row) use ($user_id, $username) {
-                $row->admin_id = $user_id;
-                $row->username = $username;
-            });
-            AdminLog::setTitle(__('Logout'));
+            // 加强校验referer是否来自服务器，允许referer为空
+            $referer = $this->request->server('HTTP_REFERER');
+            if ($referer && strtolower(parse_url($referer, PHP_URL_HOST)) != strtolower($this->request->host())) {
+                $this->error(__('Invalid request'));
+            }
+
+            $this->token();
             $this->auth->logout();
             Hook::listen("admin_logout_after", $this->request);
             $this->success(__('Logout successful'), 'index/login');
         }
-        $html = "<form id='logout_submit' name='logout_submit' action='' method='post'>" . token() . "<input type='submit' value='ok' style='display:none;'></form>";
-        $html .= "<script>document.forms['logout_submit'].submit();</script>";
-
-        return $html;
+        return $this->view->fetch();
     }
 
 }

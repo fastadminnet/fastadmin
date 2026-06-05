@@ -192,8 +192,15 @@ class User extends Api
             }
             $user->nickname = $nickname;
         }
+        if ($avatar) {
+            //判断是否匹配config('upload.cdnurl')开头以及当前$SERVER['HTTP_HOST']开头。
+            if (preg_match('/^' . preg_quote(config('upload.cdnurl') . '/', '/') . '/i', $avatar)
+                || preg_match('/^' . preg_quote(substr(config('upload.savekey'), 0, strpos(config('upload.savekey'), '{')), '/') . '/i', $avatar)
+                || preg_match('/^' . preg_quote($_SERVER['HTTP_HOST'] . '/', '/') . '/i', $avatar)) {
+                $user->avatar = $avatar;
+            }
+        }
         $user->bio = $bio;
-        $user->avatar = $avatar;
         $user->save();
         $this->success();
     }

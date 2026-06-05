@@ -39,37 +39,20 @@ class Common extends Api
      * 加载初始化
      *
      * @ApiParams (name="version", type="string", required=true, description="版本号")
-     * @ApiParams (name="lng", type="string", required=true, description="经度")
-     * @ApiParams (name="lat", type="string", required=true, description="纬度")
      */
     public function init()
     {
         if ($version = $this->request->request('version')) {
-            $lng = $this->request->request('lng');
-            $lat = $this->request->request('lat');
-
             //配置信息
             $upload = Config::get('upload');
-            //如果非服务端中转模式需要修改为中转
-            if ($upload['storage'] != 'local' && isset($upload['uploadmode']) && $upload['uploadmode'] != 'server') {
-                //临时修改上传模式为服务端中转
-                set_addon_config($upload['storage'], ["uploadmode" => "server"], false);
 
-                $upload = \app\common\model\Config::upload();
-                // 上传信息配置后
-                Hook::listen("upload_config_init", $upload);
-
-                $upload = Config::set('upload', array_merge(Config::get('upload'), $upload));
-            }
-
-            $upload['cdnurl'] = $upload['cdnurl'] ? $upload['cdnurl'] : cdnurl('', true);
-            $upload['uploadurl'] = preg_match("/^((?:[a-z]+:)?\/\/)(.*)/i", $upload['uploadurl']) ? $upload['uploadurl'] : url($upload['storage'] == 'local' ? '/api/common/upload' : $upload['uploadurl'], '', false, true);
+            $uploaddata = [];
+            $uploaddata['cdnurl'] = $upload['cdnurl'] ?: cdnurl('', true);
+            $uploaddata['uploadurl'] = url('/api/common/upload', '', false, true);
 
             $content = [
-                'citydata'    => Area::getCityFromLngLat($lng, $lat),
                 'versiondata' => Version::check($version),
-                'uploaddata'  => $upload,
-                'coverdata'   => Config::get("cover"),
+                'uploaddata'  => $uploaddata,
             ];
             $this->success('', $content);
         } else {

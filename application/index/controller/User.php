@@ -255,16 +255,22 @@ class User extends Frontend
      */
     public function logout()
     {
+
         if ($this->request->isPost()) {
+            // 加强校验referer是否来自服务器
+            $referer = $this->request->server('HTTP_REFERER');
+            if (!$referer || strtolower(parse_url($referer, PHP_URL_HOST)) != strtolower($this->request->host())) {
+                $this->error(__('Invalid request'));
+            }
+
             $this->token();
             //退出本站
             $this->auth->logout();
             $this->success(__('Logout successful'), url('user/index'));
         }
-        $html = "<form id='logout_submit' name='logout_submit' action='' method='post'>" . token() . "<input type='submit' value='ok' style='display:none;'></form>";
-        $html .= "<script>document.forms['logout_submit'].submit();</script>";
 
-        return $html;
+        $this->view->assign('title', __('Logout'));
+        return $this->view->fetch();
     }
 
     /**
