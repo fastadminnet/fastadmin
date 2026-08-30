@@ -1,0 +1,84 @@
+name: fastadmin
+
+services:
+  web:
+    image: webdevops/php-dev:7.4
+    container_name: fastadmin-web
+    working_dir: /app
+    command: php -S 0.0.0.0:8000 -t public
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../:/app
+    environment:
+      PHP_DATE_TIMEZONE: Asia/Shanghai
+      PHP_DISPLAY_ERRORS: "1"
+      PHP_MEMORY_LIMIT: 512M
+      XDEBUG_MODE: debug,develop
+      XDEBUG_CLIENT_HOST: host.docker.internal
+      XDEBUG_CLIENT_PORT: "9003"
+      APP_DEBUG: "true"
+      APP_TRACE: "true"
+      DATABASE_TYPE: mysql
+      DATABASE_HOSTNAME: mysql
+      DATABASE_DATABASE: fastadmin
+      DATABASE_USERNAME: fastadmin
+      DATABASE_PASSWORD: fastadmin
+      DATABASE_HOSTPORT: "3306"
+      DATABASE_PREFIX: fa_
+      DATABASE_DEBUG: "true"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  mysql:
+    image: mysql:5.7
+    container_name: fastadmin-mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --sql-mode=NO_ENGINE_SUBSTITUTION
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./data:/var/lib/mysql
+      - ../application/admin/command/Install/fastadmin.sql:/docker-entrypoint-initdb.d/fastadmin.sql:ro
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: fastadmin
+      MYSQL_USER: fastadmin
+      MYSQL_PASSWORD: fastadmin
+      TZ: Asia/Shanghai
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: fastadmin-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - fastadmin-redis-data:/data
+
+  phpmyadmin:
+    image: phpmyadmin:5
+    container_name: fastadmin-phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: "3306"
+      PMA_USER: root
+      PMA_PASSWORD: root
+      UPLOAD_LIMIT: 256M
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  fastadmin-redis-data:
