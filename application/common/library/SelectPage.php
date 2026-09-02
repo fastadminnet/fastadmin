@@ -176,6 +176,7 @@ class SelectPage
 
         // 排序处理
         if ($keyValue !== null && $keyField) {
+            $pageSize = 999999;
             $this->applyPrimaryKeyOrder($keyField, $keyValue);
         } else {
             $this->model->order($order);
