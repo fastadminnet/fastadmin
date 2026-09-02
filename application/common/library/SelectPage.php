@@ -4,6 +4,7 @@ namespace app\common\library;
 
 use fast\Tree;
 use think\Db;
+use think\db\Query;
 use think\Exception;
 use think\Model;
 
@@ -65,10 +66,10 @@ class SelectPage
     protected $orderFields = [];
 
     /**
-     * @param Model  $model  模型实例
+     * @param Model | Query  $model  模型实例
      * @param string $fields SelectPage可显示的字段
      */
-    public function __construct(Model $model, $fields = '*')
+    public function __construct($model, $fields = '*')
     {
         $this->model = $model;
         $this->selectpageFields = $fields;
