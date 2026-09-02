@@ -3,6 +3,7 @@
 namespace app\common\library;
 
 use fast\Random;
+use think\Db;
 use think\Hook;
 
 /**
@@ -49,7 +50,7 @@ class Ems
      */
     public static function send($email, $code = null, $event = 'default')
     {
-        $code = is_null($code) ? Random::numeric(config('captcha.length')) : $code;
+        $code = is_null($code) ? Random::numeric(config('fastadmin.ems_captcha_length') ?: 6) : $code;
         $time = time();
         $ip = request()->ip();
         $ems = \app\common\model\Ems::create(['event' => $event, 'email' => $email, 'code' => $code, 'ip' => $ip, 'createtime' => $time]);
@@ -111,31 +112,77 @@ class Ems
      * @param int    $email 邮箱
      * @param int    $code  验证码
      * @param string $event 事件
+     * @param boolean $flush 验证成功是否删除
      * @return  boolean
      */
-    public static function check($email, $code, $event = 'default')
+    public static function check($email, $code, $event = 'default', $flush = false)
     {
-        $time = time() - self::$expire;
-        $ems = \app\common\model\Ems::where(['email' => $email, 'event' => $event])
-            ->order('id', 'DESC')
-            ->find();
-        if ($ems) {
-            if ($ems['createtime'] > $time && $ems['times'] <= self::$maxCheckNums) {
-                $correct = $code == $ems['code'];
-                if (!$correct) {
-                    $ems->times = $ems->times + 1;
-                    $ems->save();
-                    return false;
-                } else {
-                    $result = Hook::listen('ems_check', $ems, null, true);
-                    return true;
-                }
-            } else {
-                // 过期则清空该邮箱验证码
-                self::flush($email, $event);
+        if (empty($email) || empty($code)) {
+            return false;
+        }
+
+        $expireTime = time() - self::$expire;
+
+        // 开启事务
+        Db::startTrans();
+
+        try {
+            // 使用行锁查询最新的验证码记录
+            $ems = \app\common\model\Ems::where([
+                'email' => $email,
+                'event'  => $event
+            ])
+                ->order('id', 'desc')
+                ->lock(true)  // 行锁
+                ->find();
+
+            // 验证码记录不存在
+            if (!$ems) {
+                Db::rollback();
                 return false;
             }
-        } else {
+
+            // 验证码已过期
+            if ($ems['createtime'] <= $expireTime) {
+                self::flush($email, $event);
+                Db::rollback();
+                return false;
+            }
+
+            // 验证次数已超限
+            if ($ems['times'] >= self::$maxCheckNums) {
+                Db::rollback();
+                return false;
+            }
+
+            // 先增加验证次数（无论验证成功失败都计数）
+            Db::name('ems')
+                ->where('id', $ems['id'])
+                ->setInc('times');
+
+            // 验证码不匹配
+            if ($code != $ems['code']) {
+                Db::commit();  // 提交次数增加
+                return false;
+            }
+
+            // 删除验证码
+            if ($flush) {
+                self::flush($email, $event);
+            }
+
+            // 验证成功，提交事务
+            Db::commit();
+
+            // 触发验证成功钩子
+            Hook::listen('ems_check', $ems);
+
+            return true;
+
+        } catch (\Exception $e) {
+            Db::rollback();
+            // 记录错误日志
+            \think\Log::record('EMS验证异常: ' . $e->getMessage(), 'error');
             return false;
         }
     }

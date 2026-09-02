@@ -75,7 +75,7 @@ class User extends Api
         if (!Validate::regex($mobile, "^1\d{10}$")) {
             $this->error(__('Mobile is incorrect'));
         }
-        if (!Sms::check($mobile, $captcha, 'mobilelogin')) {
+        if (!Sms::check($mobile, $captcha, 'mobilelogin', true)) {
             $this->error(__('Captcha is incorrect'));
         }
         $user = \app\common\model\User::getByMobile($mobile);
@@ -123,12 +123,13 @@ class User extends Api
         if ($mobile && !Validate::regex($mobile, "^1\d{10}$")) {
             $this->error(__('Mobile is incorrect'));
         }
-        $ret = Sms::check($mobile, $code, 'register');
+        $ret = Sms::check($mobile, $code, 'register', true);
         if (!$ret) {
             $this->error(__('Captcha is incorrect'));
         }
         $ret = $this->auth->register($username, $password, $email, $mobile, []);
         if ($ret) {
+            Sms::flush($mobile, 'register');
             $data = ['userinfo' => $this->auth->getUserinfo()];
             $this->success(__('Sign up successful'), $data);
         } else {
@@ -213,7 +214,7 @@ class User extends Api
         if (\app\common\model\User::where('email', $email)->where('id', '<>', $user->id)->find()) {
             $this->error(__('Email already exists'));
         }
-        $result = Ems::check($email, $captcha, 'changeemail');
+        $result = Ems::check($email, $captcha, 'changeemail', true);
         if (!$result) {
             $this->error(__('Captcha is incorrect'));
         }
@@ -248,7 +249,7 @@ class User extends Api
         if (\app\common\model\User::where('mobile', $mobile)->where('id', '<>', $user->id)->find()) {
             $this->error(__('Mobile already exists'));
         }
-        $result = Sms::check($mobile, $captcha, 'changemobile');
+        $result = Sms::check($mobile, $captcha, 'changemobile', true);
         if (!$result) {
             $this->error(__('Captcha is incorrect'));
         }
@@ -324,7 +325,7 @@ class User extends Api
             if (!$user) {
                 $this->error(__('User not found'));
             }
-            $ret = Sms::check($mobile, $captcha, 'resetpwd');
+            $ret = Sms::check($mobile, $captcha, 'resetpwd', true);
             if (!$ret) {
                 $this->error(__('Captcha is incorrect'));
             }
@@ -337,7 +338,7 @@ class User extends Api
             if (!$user) {
                 $this->error(__('User not found'));
             }
-            $ret = Ems::check($email, $captcha, 'resetpwd');
+            $ret = Ems::check($email, $captcha, 'resetpwd', true);
             if (!$ret) {
                 $this->error(__('Captcha is incorrect'));
             }

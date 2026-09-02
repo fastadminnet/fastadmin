@@ -281,6 +281,10 @@ return [
         'loginip_check'         => true,
         //登录页默认背景图
         'login_background'      => "",
+        //短信验证码长度
+        'sms_captcha_length'    => 6,
+        //邮件验证码长度
+        'ems_captcha_length'    => 6,
         //是否启用多级菜单导航
         'multiplenav'           => false,
         //是否开启多选项卡(仅在开启多级菜单时起作用)
