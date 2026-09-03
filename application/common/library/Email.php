@@ -196,7 +196,7 @@ class Email
 
     /**
      * 设置错误
-     * @param string $error 信息信息
+     * @param string $error 错误信息
      */
     protected function setError($error)
     {
