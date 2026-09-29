@@ -1,11 +1,11 @@
 <!--@formatter:off-->
 {if "[type]" == 'email'}
-    <input type="text" name="captcha" class="form-control" data-rule="required;length({$Think.config.captcha.length});digits;remote({:url('api/validate/check_ems_correct')}, event=[event], email:#email)" />
+    <input type="text" name="captcha" class="form-control" data-rule="required;length({$Think.config.fastadmin.ems_captcha_length});digits;remote({:url('api/validate/check_ems_correct')}, event=[event], email:#email)" />
     <span class="input-group-btn" style="padding:0;border:none;">
         <a href="javascript:;" class="btn btn-info btn-captcha" data-url="{:url('api/ems/send')}" data-type="email" data-event="[event]">发送验证码</a>
     </span>
 {elseif "[type]" == 'mobile'/}
-    <input type="text" name="captcha" class="form-control" data-rule="required;length({$Think.config.captcha.length});digits;remote({:url('api/validate/check_sms_correct')}, event=[event], mobile:#mobile)" />
+    <input type="text" name="captcha" class="form-control" data-rule="required;length({$Think.config.fastadmin.sms_captcha_length});digits;remote({:url('api/validate/check_sms_correct')}, event=[event], mobile:#mobile)" />
     <span class="input-group-btn" style="padding:0;border:none;">
         <a href="javascript:;" class="btn btn-info btn-captcha" data-url="{:url('api/sms/send')}" data-type="mobile" data-event="[event]">发送验证码</a>
     </span>
