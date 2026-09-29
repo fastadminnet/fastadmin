@@ -44,7 +44,7 @@ class Sms
      * 发送验证码
      *
      * @param int    $mobile 手机号
-     * @param int    $code   验证码,为空时将自动生成4位数字
+     * @param int    $code   验证码,为空时将自动生成6位数字
      * @param string $event  事件
      * @return  boolean
      */
