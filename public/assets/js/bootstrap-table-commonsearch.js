@@ -75,7 +75,7 @@
                 htmlForm.push('<div class="col-xs-8">');
 
                 vObjCol.operate = vObjCol.operate ? vObjCol.operate.toUpperCase() : '=';
-                htmlForm.push(sprintf('<input type="hidden" class="form-control operate" name="%s-operate" data-name="%s" value="%s" readonly>', vObjCol.field, vObjCol.field, vObjCol.operate));
+                htmlForm.push(sprintf('<input type="hidden" class="form-control operate" name="%s-operate" data-name="%s" value="%s" readonly>', vObjCol.field, vObjCol.field, Fast.api.escape(vObjCol.operate)));
 
                 var addClass = typeof vObjCol.addClass === 'undefined' ? (typeof vObjCol.addclass === 'undefined' ? 'form-control' : 'form-control ' + vObjCol.addclass) : 'form-control ' + vObjCol.addClass;
                 var extend = typeof vObjCol.extend === 'undefined' ? '' : vObjCol.extend;
@@ -113,11 +113,13 @@
                         var defaultValueArr = defaultValue.toString().match(/\|/) ? defaultValue.split('|') : ['', ''];
                         var placeholderArr = placeholder.toString().match(/\|/) ? placeholder.split('|') : [placeholder, placeholder];
                         htmlForm.push('<div class="row row-between">');
-                        htmlForm.push(sprintf('<div class="col-xs-6"><input type="%s" class="%s" name="%s" value="%s" placeholder="%s" id="%s-min" data-index="%s" %s %s></div>', type, addClass, vObjCol.field, defaultValueArr[0], placeholderArr[0], vObjCol.field, i, style, extend));
-                        htmlForm.push(sprintf('<div class="col-xs-6"><input type="%s" class="%s" name="%s" value="%s" placeholder="%s" id="%s-max" data-index="%s" %s %s></div>', type, addClass, vObjCol.field, defaultValueArr[1], placeholderArr[1], vObjCol.field, i, style, extend));
+                        htmlForm.push(sprintf('<div class="col-xs-6"><input type="%s" class="%s" name="%s" value="%s" placeholder="%s" id="%s-min" data-index="%s" %s %s></div>', type, addClass, vObjCol.field, Fast.api.escape(defaultValueArr[0]), placeholderArr[0], vObjCol.field, i, style, extend));
+                        htmlForm.push(sprintf('<div class="col-xs-6"><input type="%s" class="%s" name="%s" value="%s" placeholder="%s" id="%s-max" data-index="%s" %s %s></div>', type, addClass, vObjCol.field, Fast.api.escape(defaultValueArr[1]), placeholderArr[1], vObjCol.field, i, style, extend));
+
                         htmlForm.push('</div>');
                     } else {
-                        htmlForm.push(sprintf('<input type="%s" class="%s" name="%s" value="%s" placeholder="%s" id="%s" data-index="%s" %s %s>', type, addClass, vObjCol.field, defaultValue, placeholder, vObjCol.field, i, style, extend));
+                        htmlForm.push(sprintf('<input type="%s" class="%s" name="%s" value="%s" placeholder="%s" id="%s" data-index="%s" %s %s>', type, addClass, vObjCol.field, Fast.api.escape(defaultValue), placeholder, vObjCol.field, i, style, extend));
+
                     }
                 }
 
