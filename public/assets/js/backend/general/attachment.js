@@ -249,7 +249,22 @@ define(['jquery', 'bootstrap', 'backend', 'form', 'table'], function ($, undefin
                 text: function (value) {
                     return Fast.api.escape(value == null ? '' : String(value));
                 },
+                legacytext: function (value) {
+                    value = value == null ? '' : String(value);
+                    value = value.replace(/&(amp|lt|gt|quot|#0*39|#x0*27);/gi, function (match, entity) {
+                        var entities = {
+                            amp: '&', lt: '<', gt: '>', quot: '"',
+                            '#39': "'", '#x27': "'"
+                        };
+                        entity = entity.toLowerCase().replace(/^#0+/, '#').replace(/^#x0+/, '#x');
+                        return entities[entity] || match;
+                    });
+                    return Controller.api.formatter.text(value);
+                },
                 search: function (value, row, index) {
+                    if (row && this.field && typeof row[this.field] !== 'undefined') {
+                        value = row[this.field];
+                    }
                     return Table.api.formatter.search.call(this, Controller.api.formatter.text(value), row, index);
                 },
                 thumb: function (value, row, index) {
@@ -268,7 +283,11 @@ define(['jquery', 'bootstrap', 'backend', 'form', 'table'], function ($, undefin
                     return '<a href="' + Controller.api.safeurl(row.fullurl) + '" target="_blank" class="label bg-green">' + Controller.api.formatter.text(row.url) + '</a>';
                 },
                 filename: function (value, row, index) {
-                    return '<div style="width:150px;margin:0 auto;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">' + Controller.api.formatter.search.call(this, value, row, index) + '</div>';
+                    if (row && typeof row.filename !== 'undefined') {
+                        value = row.filename;
+                    }
+                    value = Controller.api.formatter.legacytext(value);
+                    return '<div style="width:150px;margin:0 auto;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">' + Table.api.formatter.search.call(this, value, row, index) + '</div>';
                 },
                 mimetype: function (value, row, index) {
                     return '<div style="width:80px;margin:0 auto;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">' + Controller.api.formatter.search.call(this, value, row, index) + '</div>';
