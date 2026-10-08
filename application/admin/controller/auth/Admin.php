@@ -176,6 +176,7 @@ class Admin extends Backend
             $this->token();
             $params = $this->request->post("row/a");
             if ($params) {
+                $params = $this->preExcludePrimaryKey($params);
                 Db::startTrans();
                 try {
                     if ($params['password']) {
