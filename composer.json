@@ -36,6 +36,9 @@
         "allow-plugins": {
             "topthink/think-installer": true,
             "easywechat-composer/easywechat-composer": true
+        },
+        "platform": {
+            "php": "7.4.0"
         }
     },
     "autoload": {
