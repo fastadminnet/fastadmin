@@ -29,7 +29,8 @@
         "ext-json": "*",
         "ext-curl": "*",
         "ext-pdo": "*",
-        "ext-bcmath": "*"
+        "ext-bcmath": "*",
+        "ramsey/uuid": "^3.9"
     },
     "config": {
         "preferred-install": "dist",
