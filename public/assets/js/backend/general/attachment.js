@@ -37,10 +37,10 @@ define(['jquery', 'bootstrap', 'backend', 'form', 'table'], function ($, undefin
                                 return (size / Math.pow(1024, i)).toFixed(i < 2 ? 0 : 2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
                             }
                         },
-                        {field: 'imagewidth', title: __('Imagewidth'), sortable: true},
-                        {field: 'imageheight', title: __('Imageheight'), sortable: true},
-                        {field: 'imagetype', title: __('Imagetype'), sortable: true, formatter: Table.api.formatter.search, operate: 'like'},
-                        {field: 'storage', title: __('Storage'), formatter: Table.api.formatter.search, operate: 'like'},
+                        {field: 'imagewidth', title: __('Imagewidth'), sortable: true, formatter: Controller.api.formatter.text},
+                        {field: 'imageheight', title: __('Imageheight'), sortable: true, formatter: Controller.api.formatter.text},
+                        {field: 'imagetype', title: __('Imagetype'), sortable: true, formatter: Controller.api.formatter.search, operate: 'like'},
+                        {field: 'storage', title: __('Storage'), formatter: Controller.api.formatter.search, operate: 'like'},
                         {field: 'mimetype', title: __('Mimetype'), formatter: Controller.api.formatter.mimetype},
                         {
                             field: 'createtime',
@@ -234,24 +234,63 @@ define(['jquery', 'bootstrap', 'backend', 'form', 'table'], function ($, undefin
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"));
             },
+            safeurl: function (value) {
+                value = value == null ? '' : String(value);
+                if (/[\x00-\x1f\x7f]/.test(value)) {
+                    return '';
+                }
+                value = value.trim();
+                if (/^[a-z][a-z0-9+.-]*:/i.test(value) && !/^https?:\/\//i.test(value)) {
+                    return '';
+                }
+                return Fast.api.escape(value);
+            },
             formatter: {
+                text: function (value) {
+                    return Fast.api.escape(value == null ? '' : String(value));
+                },
+                legacytext: function (value) {
+                    value = value == null ? '' : String(value);
+                    value = value.replace(/&(amp|lt|gt|quot|#0*39|#x0*27);/gi, function (match, entity) {
+                        var entities = {
+                            amp: '&', lt: '<', gt: '>', quot: '"',
+                            '#39': "'", '#x27': "'"
+                        };
+                        entity = entity.toLowerCase().replace(/^#0+/, '#').replace(/^#x0+/, '#x');
+                        return entities[entity] || match;
+                    });
+                    return Controller.api.formatter.text(value);
+                },
+                search: function (value, row, index) {
+                    if (row && this.field && typeof row[this.field] !== 'undefined') {
+                        value = row[this.field];
+                    }
+                    return Table.api.formatter.search.call(this, Controller.api.formatter.text(value), row, index);
+                },
                 thumb: function (value, row, index) {
                     var html = '';
+                    var fullurl = Controller.api.safeurl(row.fullurl);
                     if (row.mimetype.indexOf("image") > -1) {
-                        html = '<a href="' + row.fullurl + '" target="_blank"><img src="' + row.fullurl + row.thumb_style + '" alt="" style="max-height:60px;max-width:120px"></a>';
+                        var thumburl = Controller.api.safeurl((row.fullurl || '') + (row.thumb_style || ''));
+                        html = '<a href="' + fullurl + '" target="_blank"><img src="' + thumburl + '" alt="" style="max-height:60px;max-width:120px"></a>';
                     } else {
-                        html = '<a href="' + row.fullurl + '" target="_blank"><img src="' + Fast.api.fixurl("ajax/icon") + "?suffix=" + row.imagetype + '" alt="" style="max-height:90px;max-width:120px"></a>';
+                        var iconurl = Controller.api.safeurl(Fast.api.fixurl("ajax/icon") + "?suffix=" + encodeURIComponent(row.imagetype || ''));
+                        html = '<a href="' + fullurl + '" target="_blank"><img src="' + iconurl + '" alt="" style="max-height:90px;max-width:120px"></a>';
                     }
                     return '<div style="width:120px;margin:0 auto;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">' + html + '</div>';
                 },
                 url: function (value, row, index) {
-                    return '<a href="' + row.fullurl + '" target="_blank" class="label bg-green">' + row.url + '</a>';
+                    return '<a href="' + Controller.api.safeurl(row.fullurl) + '" target="_blank" class="label bg-green">' + Controller.api.formatter.text(row.url) + '</a>';
                 },
                 filename: function (value, row, index) {
+                    if (row && typeof row.filename !== 'undefined') {
+                        value = row.filename;
+                    }
+                    value = Controller.api.formatter.legacytext(value);
                     return '<div style="width:150px;margin:0 auto;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">' + Table.api.formatter.search.call(this, value, row, index) + '</div>';
                 },
                 mimetype: function (value, row, index) {
-                    return '<div style="width:80px;margin:0 auto;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">' + Table.api.formatter.search.call(this, value, row, index) + '</div>';
+                    return '<div style="width:80px;margin:0 auto;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">' + Controller.api.formatter.search.call(this, value, row, index) + '</div>';
                 },
             }
         }
