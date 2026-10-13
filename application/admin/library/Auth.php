@@ -62,6 +62,7 @@ class Auth extends \fast\Auth
         $admin->loginip = request()->ip();
         $admin->token = Random::uuid();
         $admin->save();
+        Session::regenerate(true);
         Session::set("admin", $admin->toArray());
         Session::set("admin.safecode", $this->getEncryptSafecode($admin));
         $this->keeplogin($admin, $keeptime);
@@ -110,6 +111,7 @@ class Auth extends \fast\Auth
             if ($admin->loginip != $ip) {
                 return false;
             }
+            Session::regenerate(true);
             Session::set("admin", $admin->toArray());
             Session::set("admin.safecode", $this->getEncryptSafecode($admin));
             //刷新自动登录的时效
