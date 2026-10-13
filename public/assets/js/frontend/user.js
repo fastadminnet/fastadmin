@@ -6,6 +6,7 @@ define(['jquery', 'bootstrap', 'frontend', 'form', 'template'], function ($, und
             });
         }
     };
+    var AttachmentTable = null;
     var Controller = {
         login: function () {
 
@@ -99,6 +100,7 @@ define(['jquery', 'bootstrap', 'frontend', 'form', 'template'], function ($, und
         },
         attachment: function () {
             require(['table'], function (Table) {
+                AttachmentTable = Table;
 
                 // 初始化表格参数配置
                 Table.api.init({
@@ -143,24 +145,14 @@ define(['jquery', 'bootstrap', 'frontend', 'form', 'template'], function ($, und
                             {field: 'state', checkbox: multiple, visible: multiple, operate: false},
                             {field: 'id', title: __('Id'), operate: false},
                             {
-                                field: 'url', title: __('Preview'), formatter: function (value, row, index) {
-                                    var html = '';
-                                    if (row.mimetype.indexOf("image") > -1) {
-                                        html = '<a href="' + row.fullurl + '" target="_blank"><img src="' + row.fullurl + row.thumb_style + '" alt="" style="max-height:60px;max-width:120px"></a>';
-                                    } else {
-                                        html = '<a href="' + row.fullurl + '" target="_blank"><img src="' + Fast.api.fixurl("ajax/icon") + "?suffix=" + row.imagetype + '" alt="" style="max-height:90px;max-width:120px"></a>';
-                                    }
-                                    return '<div style="width:120px;margin:0 auto;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">' + html + '</div>';
-                                }
+                                field: 'url', title: __('Preview'), formatter: Controller.api.formatter.thumb
                             },
                             {
-                                field: 'filename', title: __('Filename'), formatter: function (value, row, index) {
-                                    return '<div style="width:150px;margin:0 auto;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">' + Table.api.formatter.search.call(this, value, row, index) + '</div>';
-                                }, operate: 'like'
+                                field: 'filename', title: __('Filename'), formatter: Controller.api.formatter.filename, operate: 'like'
                             },
-                            {field: 'imagewidth', title: __('Imagewidth'), operate: false},
-                            {field: 'imageheight', title: __('Imageheight'), operate: false},
-                            {field: 'mimetype', title: __('Mimetype'), formatter: Table.api.formatter.search},
+                            {field: 'imagewidth', title: __('Imagewidth'), operate: false, formatter: Controller.api.formatter.text},
+                            {field: 'imageheight', title: __('Imageheight'), operate: false, formatter: Controller.api.formatter.text},
+                            {field: 'mimetype', title: __('Mimetype'), formatter: Controller.api.formatter.mimetype},
                             {field: 'createtime', title: __('Createtime'), width: 120, formatter: Table.api.formatter.datetime, datetimeFormat: 'YYYY-MM-DD', operate: 'RANGE', addclass: 'datetimerange', sortable: true},
                             {
                                 field: 'operate', title: __('Operate'), width: 85, events: {
@@ -189,6 +181,62 @@ define(['jquery', 'bootstrap', 'frontend', 'form', 'template'], function ($, und
                 });
 
             });
+        },
+        api: {
+            safeurl: function (value) {
+                value = value == null ? '' : String(value);
+                if (/[\x00-\x1f\x7f]/.test(value)) {
+                    return '';
+                }
+                value = value.trim();
+                if (/^[a-z][a-z0-9+.-]*:/i.test(value) && !/^https?:\/\//i.test(value)) {
+                    return '';
+                }
+                return Fast.api.escape(value);
+            },
+            formatter: {
+                text: function (value) {
+                    return Fast.api.escape(value == null ? '' : String(value));
+                },
+                legacytext: function (value) {
+                    value = value == null ? '' : String(value);
+                    value = value.replace(/&(amp|lt|gt|quot|#0*39|#x0*27);/gi, function (match, entity) {
+                        var entities = {
+                            amp: '&', lt: '<', gt: '>', quot: '"',
+                            '#39': "'", '#x27': "'"
+                        };
+                        entity = entity.toLowerCase().replace(/^#0+/, '#').replace(/^#x0+/, '#x');
+                        return entities[entity] || match;
+                    });
+                    return Controller.api.formatter.text(value);
+                },
+                thumb: function (value, row, index) {
+                    var html = '';
+                    var fullurl = Controller.api.safeurl(row.fullurl);
+                    if (String(row.mimetype || '').indexOf("image") > -1) {
+                        var thumburl = Controller.api.safeurl((row.fullurl || '') + (row.thumb_style || ''));
+                        html = '<a href="' + fullurl + '" target="_blank"><img src="' + thumburl + '" alt="" style="max-height:60px;max-width:120px"></a>';
+                    } else {
+                        var iconurl = Controller.api.safeurl(Fast.api.fixurl("ajax/icon") + "?suffix=" + encodeURIComponent(row.imagetype || ''));
+                        html = '<a href="' + fullurl + '" target="_blank"><img src="' + iconurl + '" alt="" style="max-height:90px;max-width:120px"></a>';
+                    }
+                    return '<div style="width:120px;margin:0 auto;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">' + html + '</div>';
+                },
+                filename: function (value, row, index) {
+                    if (row && typeof row.filename !== 'undefined') {
+                        value = row.filename;
+                    }
+                    value = Controller.api.formatter.legacytext(value);
+                    return '<div style="width:150px;margin:0 auto;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">' + AttachmentTable.api.formatter.search.call(this, value, row, index) + '</div>';
+                },
+                mimetype: function (value, row, index) {
+                    if (row && typeof row.mimetype !== 'undefined') {
+                        value = row.mimetype;
+                    }
+                    value = Controller.api.formatter.text(value);
+                    return AttachmentTable.api.formatter.search.call(this, value, row, index);
+                }
+            }
         }
     };
     return Controller;

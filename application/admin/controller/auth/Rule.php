@@ -114,6 +114,7 @@ class Rule extends Backend
                         $this->error(__('Can not change the parent to child'));
                     }
                 }
+                $params = $this->preExcludePrimaryKey($params);
                 //这里需要针对name做唯一验证
                 $ruleValidate = \think\Loader::validate('AuthRule');
                 $ruleValidate->rule([
