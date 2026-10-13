@@ -39,6 +39,19 @@ trait Backend
     }
 
     /**
+     * Exclude model primary key fields from submitted update data
+     * @param $params
+     * @return array
+     */
+    protected function preExcludePrimaryKey($params)
+    {
+        foreach ((array)$this->model->getPk() as $key) {
+            unset($params[$key]);
+        }
+        return $params;
+    }
+
+    /**
      * 查看
      *
      * @return string|Json
@@ -156,6 +169,7 @@ trait Backend
             $this->error(__('Parameter %s can not be empty', ''));
         }
         $params = $this->preExcludeFields($params);
+        $params = $this->preExcludePrimaryKey($params);
         $result = false;
         Db::startTrans();
         try {

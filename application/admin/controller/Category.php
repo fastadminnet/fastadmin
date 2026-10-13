@@ -112,6 +112,7 @@ class Category extends Backend
             $params = $this->request->post("row/a");
             if ($params) {
                 $params = $this->preExcludeFields($params);
+                $params = $this->preExcludePrimaryKey($params);
 
                 if ($params['pid'] != $row['pid']) {
                     $childrenIds = Tree::instance()->init(collection(\app\common\model\Category::select())->toArray())->getChildrenIds($row['id'], true);
