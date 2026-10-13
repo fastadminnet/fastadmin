@@ -184,8 +184,7 @@ class Auth
             $this->_user = User::get($user->id);
 
             //设置Token
-            $this->_token = Random::uuid();
-            Token::set($this->_token, $user->id, $this->keeptime);
+            $this->_token = $this->generateToken($user->id);
 
             //设置登录状态
             $this->_logined = true;
@@ -325,8 +324,7 @@ class Auth
 
                 $this->_user = $user;
 
-                $this->_token = Random::uuid();
-                Token::set($this->_token, $user->id, $this->keeptime);
+                $this->_token = $this->generateToken($user->id);
 
                 $this->_logined = true;
 
@@ -558,6 +556,24 @@ class Auth
         }
         unset($v);
         return $datalist;
+    }
+
+    /**
+     * 生成并写入Token（如遇碰撞则重试）
+     * @param int $user_id
+     * @return string
+     * @throws Exception
+     */
+    private function generateToken($user_id): string
+    {
+        $maxAttempts = 5;
+        for ($i = 0; $i < $maxAttempts; $i++) {
+            $token = Random::uuid();
+            if (Token::set($token, $user_id, $this->keeptime)) {
+                return $token;
+            }
+        }
+        throw new Exception('Failed to generate unique token');
     }
 
     /**

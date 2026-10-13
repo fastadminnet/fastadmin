@@ -90,14 +90,20 @@ class Redis extends Driver
             $expire = $expire->getTimestamp() - time();
         }
         $key = $this->getEncryptedToken($token);
+        if ($this->handler->exists($key)) {
+            return false;
+        }
         if ($expire) {
             $result = $this->handler->setex($key, $expire, $user_id);
         } else {
-            $result = $this->handler->set($key, $user_id);
+            $result = $this->handler->setnx($key, $user_id);
+            if (!$result) {
+                return false;
+            }
         }
         //写入会员关联的token
         $this->handler->sAdd($this->getUserKey($user_id), $key);
-        return $result;
+        return (bool)$result;
     }
 
     /**
