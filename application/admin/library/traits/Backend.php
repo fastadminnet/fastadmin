@@ -169,7 +169,9 @@ trait Backend
             $this->error(__('Parameter %s can not be empty', ''));
         }
         $params = $this->preExcludeFields($params);
-        $params = $this->preExcludePrimaryKey($params);
+        $pk = $this->model->getPk();
+        $params[$pk] = $row[$pk];
+
         $result = false;
         Db::startTrans();
         try {

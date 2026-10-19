@@ -28,7 +28,7 @@
     <div class="form-group">
         <label for="c-email" class="control-label col-xs-12 col-sm-2">{:__('Email')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-email" data-rule="email" class="form-control" name="row[email]" type="text" value="{$row.email|htmlentities}">
+            <input id="c-email" data-rule="required;email" class="form-control" name="row[email]" type="text" value="{$row.email|htmlentities}">
         </div>
     </div>
     <div class="form-group">
