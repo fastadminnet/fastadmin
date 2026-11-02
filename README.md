@@ -1,5 +1,5 @@
-FastAdmin是一款基于 ThinkPHP 8 + Bootstrap 的极速后台开发框架。
-
+FastAdmin是一款基于ThinkPHP5+Bootstrap的极速后台开发框架。
+当前分支已将原版由fastadmin:1.6.x-dev升级为ThinkPHP8框架，因为近期的PHP漏洞急需要fastadmin + tp8来应对新的需求。
 
 ## 主要特性
 
