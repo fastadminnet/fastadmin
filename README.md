@@ -1,4 +1,4 @@
-FastAdmin是一款基于ThinkPHP+Bootstrap的极速后台开发框架。
+FastAdmin是一款基于 ThinkPHP 8 + Bootstrap 的极速后台开发框架。
 
 
 ## 主要特性
@@ -32,9 +32,56 @@ FastAdmin是一款基于ThinkPHP+Bootstrap的极速后台开发框架。
 * 第三方支付(微信、支付宝)无缝整合，微信支持PC端扫码支付
 * 丰富的插件应用市场
 
+## 环境要求
+
+| 依赖 | 版本 |
+| --- | --- |
+| PHP | `>= 8.2`（推荐 8.3） |
+| ThinkPHP | `8.1` |
+| Composer | `2.x` |
+| MySQL / MariaDB | MySQL `5.7+` / MariaDB `10.1+` |
+| Web 服务器 | Apache / Nginx，运行目录指向 `public` |
+
+PHP 扩展：`pdo`、`pdo_mysql`、`mbstring`、`curl`、`bcmath`、`gd`、`fileinfo`、`openssl`、`zip`、`json`。
+
 ## 安装使用
 
-https://doc.fastadmin.net
+1. 安装依赖：
+
+   ```bash
+   composer install
+   ```
+
+2. 复制环境配置文件并填写数据库信息：
+
+   ```bash
+   cp .env.sample .env
+   ```
+
+3. 将 Web 服务器的运行目录设置为 `public`，浏览器访问站点完成安装；也可以使用命令行安装：
+
+   ```bash
+   php think install
+   ```
+
+4. 安装完成后，安装程序会自动删除 `public/install.php`，并将 `public/admin.php` 重命名为随机入口文件，请妥善保存新的后台入口。
+
+更多文档：https://doc.fastadmin.net
+
+## 分支说明
+
+| 分支 | 框架 | PHP |
+| --- | --- | --- |
+| `tp8-adaptation` | ThinkPHP 8.1 | `>= 8.2` |
+| `1.6.x-dev` | ThinkPHP 5.0 | `7.4` / `8.0` |
+
+`tp8-adaptation` 分支是 ThinkPHP 8 的适配版本，目录结构、配置和事件机制与 TP5 版本不同；两个分支不能直接互相合并。
+
+### 已知问题
+
+* 邮件组件尚未完成 TP8 适配（`Tx\Mailer` 依赖已移除），邮件发送暂不可用。
+* 部分第三方插件仍按 ThinkPHP 5 的方式编写，接入前需要先做兼容性验证。
+* `route/*.php` 中返回数组的路由定义不会被 TP8 路由加载，目前依赖默认控制器路由。
 
 ## 在线演示
 
