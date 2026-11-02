@@ -146,7 +146,11 @@ class Date
                 break;
             }
         }
-        return __("%d $name%s $tense", [$count, ($count > 1 ? 's' : '')]);
+        $template = "%d $name%s $tense";
+        if (function_exists('__')) {
+            return __($template, [$count, ($count > 1 ? 's' : '')]);
+        }
+        return sprintf($template, $count, ($count > 1 ? 's' : ''));
     }
 
     /**

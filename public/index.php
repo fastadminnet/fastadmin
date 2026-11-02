@@ -1,23 +1,27 @@
 <?php
+declare(strict_types=1);
 
-// +----------------------------------------------------------------------
-// | ThinkPHP [ WE CAN DO IT JUST THINK ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2006-2016 http://thinkphp.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-// +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>
-// +----------------------------------------------------------------------
-// [ 应用入口文件 ]
-// 定义应用目录
-define('APP_PATH', __DIR__ . '/../application/');
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+$app = new think\App();
+$app->initialize();
 
 // 判断是否安装
-if (!is_file(APP_PATH . 'admin/command/Install/install.lock')) {
+if (!is_file($app->getAppPath() . 'admin/command/Install/install.lock')) {
     header("location:./install.php");
     exit;
 }
 
-// 加载框架引导文件
-require __DIR__ . '/../thinkphp/start.php';
+$request = $app->make('request', [], true);
+if (in_array($request->pathinfo(), ['', 'index.php'], true)) {
+    $request->setPathinfo('index/index');
+}
+$__pathinfo = $request->pathinfo();
+if (strpos($__pathinfo, 'index/') === 0 && $__pathinfo !== 'index/index') {
+    $request->setPathinfo(substr($__pathinfo, 6));
+}
+fastadmin_subdir_pathinfo($request, 'index');
+
+$response = $app->http->name('index')->run($request);
+$response->send();
+$app->http->end($response);

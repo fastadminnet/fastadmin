@@ -10,8 +10,10 @@
 // | Author: yunwuxin <448901948@qq.com>
 // +----------------------------------------------------------------------
 
-// 定义项目路径
-define('APP_PATH', __DIR__ . '/application/');
+namespace think;
 
-// 加载框架引导文件
-require __DIR__ . '/thinkphp/console.php';
+// 加载基础文件
+require __DIR__ . '/vendor/autoload.php';
+
+// 应用初始化
+(new App())->console->run();
