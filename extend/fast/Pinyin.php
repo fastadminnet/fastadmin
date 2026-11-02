@@ -22,10 +22,14 @@ class Pinyin
         $pinyin = new \Overtrue\Pinyin\Pinyin();
         if ($onlyfirst) {
             $result = $pinyin->abbr($chinese, $delimiter);
+            // overtrue/pinyin v6 返回 Collection，转换为字符串
+            if (is_object($result) && method_exists($result, 'all')) {
+                $result = implode($delimiter, $result->all());
+            }
         } else {
             $result = $pinyin->permalink($chinese, $delimiter);
         }
-        if ($ucfirst) {
+        if ($ucfirst && is_string($result)) {
             $pinyinArr = explode($delimiter, $result);
             $result = implode($delimiter, array_map('ucfirst', $pinyinArr));
         }

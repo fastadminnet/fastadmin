@@ -10,6 +10,7 @@
 .idea
 composer.lock
 *.log
+/app/admin/command/Install/install.lock
 *.css.map
 !.gitkeep
 .env

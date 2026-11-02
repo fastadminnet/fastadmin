@@ -1,30 +1,23 @@
 <?php
+declare(strict_types=1);
 
-// +----------------------------------------------------------------------
-// | ThinkPHP [ WE CAN DO IT JUST THINK ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2006-2016 http://thinkphp.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-// +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>
-// +----------------------------------------------------------------------
-// [ 安装文件 ]
-// 建议安装完成后移除此文件
-// 定义应用目录
-define('APP_PATH', __DIR__ . '/../application/');
+require dirname(__DIR__) . '/vendor/autoload.php';
 
-// 加载框架引导文件
-require __DIR__ . '/../thinkphp/base.php';
+$app = new think\App();
+$app->initialize();
 
-// 绑定到安装控制器
-\think\Route::bind('\app\admin\command\Install', 'controller');
+// 安装成功后本文件会被安装程序自动删除
+if (is_file(__DIR__ . '/../app/admin/command/Install/install.lock')) {
+    exit('The system has been installed.');
+}
 
-// 开启路由
-\think\App::route(true);
+$app->make('request', [], true);
 
-// 设置根url
-\think\Url::root('');
+$installer = new \app\admin\command\Install();
+$result = $installer->index();
 
-// 执行应用
-\think\App::run()->send();
+if ($result instanceof \think\Response) {
+    $result->send();
+} else {
+    echo $result;
+}

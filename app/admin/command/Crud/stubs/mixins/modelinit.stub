@@ -1,0 +1,8 @@
+
+    public static function onAfterInsert($row)
+    {
+        if (!$row['{%order%}']) {
+            $pk = $row->getPk();
+            $row->getQuery()->where($pk, $row[$pk])->update(['{%order%}' => $row[$pk]]);
+        }
+    }

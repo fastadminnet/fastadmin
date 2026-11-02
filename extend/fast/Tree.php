@@ -2,8 +2,6 @@
 
 namespace fast;
 
-use think\Config;
-
 /**
  * 通用的树型类
  * @author XiaoYao <476552238li@gmail.com>
@@ -31,7 +29,7 @@ class Tree
 
     public function __construct($options = [])
     {
-        if ($config = Config::get('tree')) {
+        if (function_exists('config') && $config = \config('tree')) {
             $this->options = array_merge($this->config, $config);
         }
         $this->options = array_merge($this->config, $options);
@@ -326,7 +324,7 @@ class Tree
                     '@addtabs'   => $childdata || !isset($value['@url']) ? "" : (stripos($value['@url'], "?") !== false ? "&" : "?") . "ref=addtabs",
                     '@caret'     => ($childdata && (!isset($value['@badge']) || !$value['@badge']) ? '<i class="fa fa-angle-left"></i>' : ''),
                     '@badge'     => $value['@badge'] ?? '',
-                    '@class'     => ($selected ? ' active' : '') . ($disabled ? ' disabled' : '') . ($childdata ? ' treeview' . (config('fastadmin.show_submenu') ? ' treeview-open' : '') : ''),
+                    '@class'     => ($selected ? ' active' : '') . ($disabled ? ' disabled' : '') . ($childdata ? ' treeview' . (function_exists('config') && \config('fastadmin.show_submenu') ? ' treeview-open' : '') : ''),
                 );
                 $str .= strtr($nstr, $value);
             }
