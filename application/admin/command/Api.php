@@ -164,49 +164,82 @@ class Api extends Command
         $skipNext = false;
         $namespace = '';
         $class = '';
-        foreach (\PhpToken::tokenize(file_get_contents($filename)) as $token) {
-            if (!$token->isIgnorable()) {
-                $name = $token->getTokenName();
-                switch ($name) {
-                    case 'T_NAMESPACE':
-                        $isNamespace = true;
-                        break;
-                    case 'T_EXTENDS':
-                    case 'T_USE':
-                    case 'T_IMPLEMENTS':
-                        $skipNext = true;
-                        break;
-                    case 'T_CLASS':
-                        if ($skipNext) {
-                            $skipNext = false;
+        foreach ($this->tokenizeSource(file_get_contents($filename)) as $token) {
+            list($name, $text) = $token;
+            switch ($name) {
+                case 'T_NAMESPACE':
+                    $isNamespace = true;
+                    break;
+                case 'T_EXTENDS':
+                case 'T_USE':
+                case 'T_IMPLEMENTS':
+                    $skipNext = true;
+                    break;
+                case 'T_CLASS':
+                    if ($skipNext) {
+                        $skipNext = false;
+                    } else {
+                        $getNext = strtolower(substr($name, 2));
+                    }
+                    break;
+                case 'T_NAME_QUALIFIED':
+                case 'T_NS_SEPARATOR':
+                case 'T_STRING':
+                case ';':
+                    if ($isNamespace) {
+                        if ($name == ';') {
+                            $isNamespace = false;
                         } else {
-                            $getNext = strtolower(substr($name, 2));
+                            $namespace .= $text;
                         }
-                        break;
-                    case 'T_NAME_QUALIFIED':
-                    case 'T_NS_SEPARATOR':
-                    case 'T_STRING':
-                    case ';':
-                        if ($isNamespace) {
-                            if ($name == ';') {
-                                $isNamespace = false;
-                            } else {
-                                $namespace .= $token->text;
-                            }
-                        } elseif ($skipNext) {
-                            $skipNext = false;
-                        } elseif ($getNext == 'class') {
-                            $class = $token->text;
-                            $getNext = null;
-                            break 2;
-                        }
-                        break;
-                    default:
+                    } elseif ($skipNext) {
+                        $skipNext = false;
+                    } elseif ($getNext == 'class') {
+                        $class = $text;
                         $getNext = null;
-                }
+                        break 2;
+                    }
+                    break;
+                default:
+                    $getNext = null;
             }
         }
         $className = $namespace . '\\' . $class;
         return preg_match('/([a-z0-9_\\]+)([a-z0-9_]+)$/i', $className) ? $className : '';
+    }
+
+    /**
+     * 词法分析源码，返回 [token 名称, 文本] 列表
+     *
+     * PhpToken 是 PHP8.0 才引入的类，这里做统一封装以兼容 PHP7.4
+     *
+     * @param string $source
+     * @return array
+     */
+    protected function tokenizeSource($source)
+    {
+        $result = [];
+        if (class_exists('\PhpToken')) {
+            foreach (\PhpToken::tokenize($source) as $token) {
+                if ($token->isIgnorable()) {
+                    continue;
+                }
+                $result[] = [$token->getTokenName(), $token->text];
+            }
+        } else {
+            foreach (token_get_all($source) as $token) {
+                if (is_array($token)) {
+                    // 跳过空白与注释，与 PhpToken::isIgnorable() 行为一致
+                    if (in_array($token[0], [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT], true)) {
+                        continue;
+                    }
+                    $result[] = [token_name($token[0]), $token[1]];
+                } else {
+                    // 单字符 token（如 ";") 名称与文本相同
+                    $result[] = [$token, $token];
+                }
+            }
+        }
+        return $result;
     }
 }

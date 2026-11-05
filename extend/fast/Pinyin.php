@@ -18,7 +18,8 @@ class Pinyin
      */
     public static function get($chinese, $onlyfirst = false, $delimiter = '', $ucfirst = false)
     {
-
+        // PHP8.1 起向内部函数传入 null 会触发弃用告警，提前归一化
+        $chinese = (string)$chinese;
         $pinyin = new \Overtrue\Pinyin\Pinyin();
         if ($onlyfirst) {
             $result = $pinyin->abbr($chinese, $delimiter);

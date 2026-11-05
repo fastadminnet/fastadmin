@@ -66,6 +66,8 @@ class Date
      */
     public static function span($remote, $local = null, $output = 'years,months,weeks,days,hours,minutes,seconds')
     {
+        // PHP8 起非数值入参不再隐式转换，需先归一化
+        $remote = self::normalizeTimestamp($remote);
         // Normalize output
         $output = trim(strtolower((string)$output));
         if (!$output) {
@@ -124,6 +126,8 @@ class Date
      */
     public static function human($remote, $local = null)
     {
+        // PHP8 起非数值入参不再隐式转换，需先归一化
+        $remote = self::normalizeTimestamp($remote);
         $time_diff = (is_null($local) ? time() : $local) - $remote;
         $tense = $time_diff < 0 ? 'after' : 'ago';
         $time_diff = abs($time_diff);
@@ -226,5 +230,22 @@ class Date
         } else {
             return date('t', mktime(0, 0, 0, $month, 1, $year));
         }
+    }
+
+    /**
+     * 归一化时间戳入参
+     *
+     * PHP7 中 null/非数值字符串参与算术运算会被静默转成 0，
+     * PHP8 则直接抛出 TypeError，这里统一按旧行为处理。
+     *
+     * @param mixed $timestamp 时间戳或可解析的日期字符串
+     * @return int|float
+     */
+    protected static function normalizeTimestamp($timestamp)
+    {
+        if (is_numeric($timestamp)) {
+            return $timestamp + 0;
+        }
+        return (int)strtotime((string)$timestamp);
     }
 }

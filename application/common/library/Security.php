@@ -434,12 +434,7 @@ class Security
             }
         }
 
-        // Unfortunately, none of the following PRNGs is guaranteed to exist ...
-        if (defined('MCRYPT_DEV_URANDOM') && ($output = mcrypt_create_iv($length, MCRYPT_DEV_URANDOM)) !== false) {
-            return $output;
-        }
-
-
+        // mcrypt 扩展自 PHP7.2 起已移除，mcrypt_create_iv 不可用，此处仅保留其它回退方案
         if (is_readable('/dev/urandom') && ($fp = fopen('/dev/urandom', 'rb')) !== false) {
             // Try not to waste entropy ...
             stream_set_chunk_size($fp, $length);
@@ -851,6 +846,8 @@ class Security
      */
     public function remove_invisible_characters($str, $url_encoded = true)
     {
+        // PHP8.1 起 preg_replace() 的 subject 不接受 null
+        $str = (string)$str;
         $non_displayables = array();
 
         // every control character except newline (dec 10),

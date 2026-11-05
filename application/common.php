@@ -39,6 +39,8 @@ if (!function_exists('format_bytes')) {
      */
     function format_bytes($size, $delimiter = '', $precision = 2)
     {
+        // PHP8 起 round() 不再接受 null/非数值字符串，提前归一化
+        $size = (float)$size;
         $units = array('B', 'KB', 'MB', 'GB', 'TB', 'PB');
         for ($i = 0; $size >= 1024 && $i < 5; $i++) {
             $size /= 1024;
@@ -57,7 +59,7 @@ if (!function_exists('datetime')) {
      */
     function datetime($time, $format = 'Y-m-d H:i:s')
     {
-        $time = is_numeric($time) ? $time : strtotime($time);
+        $time = is_numeric($time) ? $time : strtotime((string)$time);
         return date($format, $time);
     }
 }
@@ -86,6 +88,8 @@ if (!function_exists('cdnurl')) {
      */
     function cdnurl($url, $domain = false)
     {
+        // PHP8.1 起向 preg_match/stripos 传入 null 会触发弃用告警
+        $url = (string)$url;
         $regex = "/^((?:[a-z]+:)?\/\/|data:image\/)(.*)/i";
         $cdnurl = \think\Config::get('upload.cdnurl');
         if (is_bool($domain) || stripos($cdnurl, '/') === 0) {
@@ -291,6 +295,8 @@ if (!function_exists('letter_avatar')) {
      */
     function letter_avatar($text)
     {
+        // PHP8.1 起 hash()/mb_substr() 不接受 null
+        $text = (string)$text;
         $total = unpack('L', hash('adler32', $text, true))[1];
         $hue = $total % 360;
         list($r, $g, $b) = hsv2rgb($hue / 360, 0.3, 0.9);
@@ -364,7 +370,7 @@ if (!function_exists('check_nav_active')) {
     {
         $auth = \app\common\library\Auth::instance();
         $requestUrl = $auth->getRequestUri();
-        $url = ltrim($url, '/');
+        $url = ltrim((string)$url, '/');
         return $requestUrl === str_replace(".", "/", $url) ? $classname : '';
     }
 }
@@ -487,7 +493,7 @@ if (!function_exists('build_suffix_image')) {
      */
     function build_suffix_image($suffix, $background = null)
     {
-        $suffix = mb_substr(strtoupper($suffix), 0, 4);
+        $suffix = mb_substr(strtoupper((string)$suffix), 0, 4);
         $total = unpack('L', hash('adler32', $suffix, true))[1];
         $hue = $total % 360;
         list($r, $g, $b) = hsv2rgb($hue / 360, 0.3, 0.9);
