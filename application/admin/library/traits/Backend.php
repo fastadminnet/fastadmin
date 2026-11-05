@@ -366,19 +366,36 @@ trait Backend
      */
     protected function import()
     {
-        $file = $this->request->request('file');
+        if(!$this->request->isPost()) {
+            $this->error(__('Invalid parameters'));
+        }
+        $file = $this->request->post('file');
         if (!$file) {
             $this->error(__('Parameter %s can not be empty', 'file'));
         }
-        $filePath = ROOT_PATH . DS . 'public' . DS . $file;
-        if (!is_file($filePath)) {
+        //禁止目录穿越及非法字符
+        if (strpos($file, '..') !== false || strpos($file, "\0") !== false || preg_match('/[<>:"|?*\\\\]/', $file)) {
             $this->error(__('No results were found'));
         }
-        //实例化reader
-        $ext = pathinfo($filePath, PATHINFO_EXTENSION);
+        //校验扩展名,只允许表格文件
+        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
         if (!in_array($ext, ['csv', 'xls', 'xlsx'])) {
             $this->error(__('Unknown data format'));
         }
+        $filePath = ROOT_PATH . DS . 'public' . DS . ltrim($file, DS);
+        if (!is_file($filePath)) {
+            $this->error(__('No results were found'));
+        }
+        //二次校验真实路径未越出public目录
+        if (strpos(realpath($filePath), realpath(ROOT_PATH . DS . 'public') . DS) !== 0) {
+            $this->error(__('No results were found'));
+        }
+        //校验文件是否归属当前上传用户
+        $attachment = \app\common\model\Attachment::getByUrl($file);
+        if(!$attachment || $attachment['admin_id'] != $this->auth->id){
+            $this->error(__('No results were found'));
+        }
+        //实例化reader
         if ($ext === 'csv') {
             $file = fopen($filePath, 'r');
             $filePath = tempnam(sys_get_temp_dir(), 'import_csv');
