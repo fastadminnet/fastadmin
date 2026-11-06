@@ -39,10 +39,12 @@
 
     BootstrapTable.prototype.initBody = function () {
         var that = this;
-        $.extend(that.options, {
-            showHeader: !that.options.templateView ? $.fn.bootstrapTable.defaults.showHeader : false,
-            showFooter: !that.options.templateView ? $.fn.bootstrapTable.defaults.showFooter : false,
-        });
+        if (that.options.templateView) {
+            $.extend(that.options, {
+                showHeader: false,
+                showFooter: false,
+            });
+        }
         $(that.$el).toggleClass(that.options.templateTableClass, that.options.templateView);
 
         _initBody.apply(this, Array.prototype.slice.apply(arguments));
