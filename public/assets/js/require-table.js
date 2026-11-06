@@ -26,7 +26,7 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                 },
                 ignoreColumn: [0, 'operate'] //默认不导出第一列(checkbox)与操作(operate)列
             },
-            pageSize: Config.pagesize || localStorage.getItem("pagesize") || 10,
+            pageSize: Config.pagesize || 10,
             pageList: [10, 15, 20, 25, 50, 'All'],
             pagination: true,
             clickToSelect: true, //是否启用点击选中
@@ -108,6 +108,10 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
             }
         },
         api: {
+            // 获取表格对应的分页大小存储键(按表格隔离)
+            pagesizeKey: function (table) {
+                return 'pagesize-' + Config.controllername + '-' + Config.actionname + '-' + (table.$el.attr('id') || '');
+            },
             init: function (defaults, columnDefaults, locales) {
                 defaults = defaults ? defaults : {};
                 columnDefaults = columnDefaults ? columnDefaults : {};
@@ -115,11 +119,41 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                 $.fn.bootstrapTable.Constructor.prototype.getSelectItem = function () {
                     return this.$selectItem;
                 };
+                // 按表格隔离分页大小：存储键为请求URL(不含查询参数)并附加表格ID，无URL时退回表格ID或控制器名
+                var _init = $.fn.bootstrapTable.Constructor.prototype.init;
+                $.fn.bootstrapTable.Constructor.prototype.init = function () {
+                    // 仅当表格JS未显式指定pageSize时才读取记忆值
+                    if (this.options.pageSize === $.fn.bootstrapTable.defaults.pageSize) {
+                        var pageSize = localStorage.getItem(Table.api.pagesizeKey(this));
+                        if (pageSize === null) {
+                            pageSize = localStorage.getItem('pagesize'); // 兼容旧版全局存储
+                        }
+                        if (pageSize !== null) {
+                            this.options.pageSize = pageSize;
+                        }
+                    }
+                    _init.apply(this, Array.prototype.slice.apply(arguments));
+                };
                 var _onPageListChange = $.fn.bootstrapTable.Constructor.prototype.onPageListChange;
                 $.fn.bootstrapTable.Constructor.prototype.onPageListChange = function () {
                     _onPageListChange.apply(this, Array.prototype.slice.apply(arguments));
-                    localStorage.setItem('pagesize', this.options.pageSize);
+                    localStorage.setItem(Table.api.pagesizeKey(this), this.options.pageSize);
                     return false;
+                };
+                // 修复：pageSize为All时initServer取totalRows作为limit，首次为0、刷新后为上次响应的总数，
+                // 导致新增记录后首次刷新缺行；改为0，服务端(Backend::buildparams)按不限制处理
+                var _initServer = $.fn.bootstrapTable.Constructor.prototype.initServer;
+                $.fn.bootstrapTable.Constructor.prototype.initServer = function (silent, query, url) {
+                    var all = this.options.pageSize === this.options.formatAllRows();
+                    var totalRows;
+                    if (all) {
+                        totalRows = this.options.totalRows;
+                        this.options.totalRows = 0;
+                    }
+                    _initServer.apply(this, Array.prototype.slice.apply(arguments));
+                    if (all) {
+                        this.options.totalRows = totalRows;
+                    }
                 };
                 // 写入bootstrap-table默认配置
                 $.extend(true, $.fn.bootstrapTable.defaults, Table.defaults, defaults);
