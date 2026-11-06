@@ -372,7 +372,10 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'adminlte', 'form'], functi
 
             var sidebarExpandOnHover = localStorage.getItem('sidebarExpandOnHover');
             if (sidebarExpandOnHover == '1') {
-                $("[data-enable='expandOnHover']").trigger("click");
+                //需等AdminLTE在DOM ready时执行_init()定义pushMenu后才能触发,否则生产模式下模块加载过快会报错
+                $(function () {
+                    $("[data-enable='expandOnHover']").trigger("click");
+                });
             }
 
             $.each(my_skins, function (i, j) {
